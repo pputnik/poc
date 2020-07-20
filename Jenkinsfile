@@ -17,6 +17,7 @@ pipeline {
                     sh './aws/install -i ./ '
                     sh 'ls -la ./aws/'
                     sh 'ls -laR ~/.aws/'*/
+                    sh 'mkdir ~/.aws'
                     sh 'echo "[default]\noutput = json\nregion = us-east-1\n" > ~/.aws/config'
                     sh 'cat ~/.aws/config'
                     sh 'aws sts get-caller-identity'
