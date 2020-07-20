@@ -8,9 +8,9 @@ pipeline {
                 echo 'Testing..'
                 checkout scm
                 dir("tmp"){
-                    sh 'pwd'
-                    sh 'ls -la'
-                    sh 'set'
+                    sh 'ls -laR ~/.aws/'
+                    sh 'aws --version'
+                    sh 'aws sts get-caller-identity'
                 }
             }
         }
