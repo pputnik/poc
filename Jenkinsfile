@@ -1,6 +1,7 @@
 pipeline {
-    agent any
-    //git 'https://github.com/ALutchko/poc'
+    //agent any
+    agent { label "ec2-fleet" }
+
 
     stages {
         stage('Test') {
