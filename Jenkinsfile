@@ -8,14 +8,14 @@ pipeline {
                 echo 'Testing..'
                 checkout scm
                 dir("tmp"){
-                    sh 'python --version'
+                    sh 'aws --version'
+                    /*sh 'python --version'
                     sh 'echo $PATH'
                     sh 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"'
                     sh 'unzip awscliv2.zip'
                     sh './aws/install -i ./ '
                     sh 'ls -la ./aws/'
-                    sh 'ls -laR ~/.aws/'
-                    sh 'aws --version'
+                    sh 'ls -laR ~/.aws/'*/
                     sh 'aws sts get-caller-identity'
                 }
             }
