@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    git 'https://github.com/ALutchko/poc'
+    //git 'https://github.com/ALutchko/poc'
 
     stages {
         stage('Test') {
