@@ -10,7 +10,7 @@ pipeline {
                 checkout scm
                 dir("tmp"){
                     sh 'aws --version'
-                    sh 'curl http://169.254.169.254/latest/meta-data/instance-id/'
+                    sh 'aws ec2 describe-instances'
                     sh 'curl http://169.254.169.254/latest/meta-data/iam/info'
                     /*sh 'python --version'
                     sh 'echo $PATH'
