@@ -1,40 +1,46 @@
 pipeline {
-    //agent any
     agent { label "ec2-fleet" }
-
-
-    stages {
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-                checkout scm
-                dir("tmp"){
-                    sh 'aws --version'
-                    sh 'aws ec2 describe-instances'
-                    sh 'curl http://169.254.169.254/latest/meta-data/iam/info'
-                    /*sh 'python --version'
-                    sh 'echo $PATH'
-                    sh 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"'
-                    sh 'unzip awscliv2.zip'
-                    sh './aws/install -i ./ '
-                    sh 'ls -la ./aws/'
-                    sh 'ls -laR ~/.aws/'*/
-                    sh 'mkdir ~/.aws'
-                    sh 'echo "[default]\noutput = json\nregion = us-east-1\n" > ~/.aws/config'
-                    sh 'cat ~/.aws/config'
-                    sh 'aws sts get-caller-identity'
-                }
-            }
+    stage('Prepare env') {
+        steps {
+            sh 'echo "Prepare env: $(date +%F-%H:%M:%S)"'
+            // AWS CLI setup
+            sh 'if [ !-x ./aws ] ; then echo re-setup needed; fi'
+            sh '/bin/rm -rf aws aws_cli aws_dist aws_completer && mkdir -p aws_cli'
+            sh 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"'
+            sh 'unzip -o awscliv2.zip'
+            sh 'mv ./aws ./aws_dist'    // to have aws executable as just './aws'
+            sh './aws_dist/install -i  ./aws_cli/  -b ./'
+            // little hack because aws installer is broken if you run it as non-root
+            sh 'ln -f -s ./aws_cli/v2/$(ls ./aws_cli/v2/ | grep 2)/dist/aws ./aws'
+            sh './aws --version'
+            sh '/bin/rm -rf ./aws_completer ./aws_dist awslogs-agent-setup.py ./current'
+            // aws default setup
+            sh 'mkdir -p ~/.aws'    // don't mess './aws' with '.aws'!!!
+            sh 'echo "[default]\noutput = json\nregion = eu-central-1\n" > ~/.aws/config'
+            sh 'ls -laR ~/.aws/'
+            //sh 'aws ec2 describe-instances'
+            sh './aws sts get-caller-identity'
+            sh 'wget https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip'
+            sh 'unzip -o terraform_0.12.29_linux_amd64.zip && /bin/rm terraform_0.12.29_linux_amd64.zip'
+            sh './terraform -v'
+            sh 'ls -l'
         }
-        /*stage('Build') {
-            steps {
-                echo 'Building..'
-            }
+    }
+    stage('Test') {
+        steps {
+            sh 'echo "Validating: $(date +%F-%H:%M:%S)"'
+            checkout scm
+            sh 'export TF_IN_AUTOMATION=1'
+            //sh 'export TF_LOG=DEBUG'
+            sh './terraform init -input=false -no-color'
+            sh './terraform validate -no-color'
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }*/
+    }
+    stage('apply') {
+        steps {
+            sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
+            sh 'export TF_IN_AUTOMATION=1'
+            sh './terraform apply -auto-approve -input=false -no-color'
+        }
     }
 }
