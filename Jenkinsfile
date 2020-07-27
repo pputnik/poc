@@ -1,6 +1,17 @@
 pipeline {
     agent { label "ec2-fleet" }
     stages {
+        stage("Git creds"){
+            withCredentials([sshUserPrivateKey(credentialsId: 'dodaxbuilder-rsa-dev01', keyFileVariable: 'git_key', passphraseVariable: 'git_passphrase', usernameVariable: 'git_user')]) {
+                sh("""
+                git config credential.username {GIT_USERNAME}
+                git config credential.helper "!echo password={GITPASSWORD}; echo"
+                #git clone {your_repository}
+                """)
+            }
+        }
+
+
         stage('Prepare env') {
             steps {
                 sh 'echo "Prepare env: $(date +%F-%H:%M:%S)"'
