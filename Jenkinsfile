@@ -34,7 +34,7 @@ pipeline {
         stage('Test') {
             environment {
                 TF_IN_AUTOMATION = 1
-                TF_LOG = 'DEBUG'
+                TF_LOG = 'TRACE'
                 //TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
             }
             steps {
@@ -45,8 +45,6 @@ pipeline {
                 )]) {
                     sh 'echo "Validating: $(date +%F-%H:%M:%S)"'
                     checkout scm
-                    //sh 'export TF_IN_AUTOMATION=1'
-                    //sh 'export TF_LOG=DEBUG'
                     sh("""
                     git config credential.username {GIT_USERNAME}
                     git config credential.helper "!echo password={GITPASSWORD}; echo"
