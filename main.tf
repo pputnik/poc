@@ -1,5 +1,5 @@
 module "vpc"{
-	source = "git@github.com:dodax/terraform-aws-vpc?ref=1.0.0"
+	source = "git@github.com:dodax/terraform-aws-vpc?ref=v1.0.0"
 	DEFAULT_REGION = var.region
 	ENVIRONMENT = var.tags["environment"]
 	LB_SSL_DOMAIN              = "eks-test.local"

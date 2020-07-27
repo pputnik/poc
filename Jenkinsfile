@@ -37,12 +37,12 @@ pipeline {
                 sh './terraform validate -no-color'
             }
         }
-        stage('apply') {
+        /*stage('apply') {
             steps {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
                 sh 'export TF_IN_AUTOMATION=1'
                 sh './terraform apply -auto-approve -input=false -no-color'
             }
-        }
+        }*/
     }
 }
