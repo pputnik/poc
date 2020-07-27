@@ -5,7 +5,7 @@ pipeline {
             steps {
                 sh 'echo "Prepare env: $(date +%F-%H:%M:%S)"'
                 // AWS CLI setup
-                sh 'if [ !-x ./aws ] ; then echo re-setup needed; fi'
+                sh 'if [ ! -x ./aws ] ; then echo re-setup needed; fi'
                 sh '/bin/rm -rf aws aws_cli aws_dist aws_completer && mkdir -p aws_cli'
                 sh 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"'
                 sh 'unzip -q -o awscliv2.zip'
