@@ -8,7 +8,7 @@ pipeline {
                 sh 'if [ !-x ./aws ] ; then echo re-setup needed; fi'
                 sh '/bin/rm -rf aws aws_cli aws_dist aws_completer && mkdir -p aws_cli'
                 sh 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"'
-                sh 'unzip -o awscliv2.zip'
+                sh 'unzip -q -o awscliv2.zip'
                 sh 'mv ./aws ./aws_dist'    // to have aws executable as just './aws'
                 sh './aws_dist/install -i  ./aws_cli/  -b ./'
                 // little hack because aws installer is broken if you run it as non-root
@@ -21,7 +21,7 @@ pipeline {
                 sh 'ls -laR ~/.aws/'
                 //sh 'aws ec2 describe-instances'
                 sh './aws sts get-caller-identity'
-                sh 'wget https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip'
+                sh 'wget -nv https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip'
                 sh 'unzip -o terraform_0.12.29_linux_amd64.zip && /bin/rm terraform_0.12.29_linux_amd64.zip'
                 sh './terraform -v'
                 sh 'ls -l'
