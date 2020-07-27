@@ -32,7 +32,7 @@ pipeline {
                 sh 'echo "Validating: $(date +%F-%H:%M:%S)"'
                 checkout scm
                 sh 'export TF_IN_AUTOMATION=1'
-                //sh 'export TF_LOG=DEBUG'
+                sh 'export TF_LOG=DEBUG'
                 sh './terraform init -input=false -no-color'
                 sh './terraform validate -no-color'
             }
