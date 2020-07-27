@@ -14,7 +14,7 @@ pipeline {
                 mv ./aws ./aws_dist  # to have aws executable as just './aws'
                 ./aws_dist/install -i  ./aws_cli/  -b ./
                 # little hack because aws installer is broken if you run it as non-root
-                ln -f -s ./aws_cli/v2/$(ls ./aws_cli/v2/ | grep 2)/dist/aws ./aws
+                ln -f -s ./aws_cli/v2/\$(ls ./aws_cli/v2/ | grep 2)/dist/aws ./aws
                 /bin/rm -rf ./aws_completer ./aws_dist awslogs-agent-setup.py ./current
                 // aws default setup
                 mkdir -p ~/.aws # don't mess './aws' with '.aws'!!!
