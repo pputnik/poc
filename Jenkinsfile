@@ -6,7 +6,7 @@ pipeline {
                 sh 'echo "Prepare env: $(date +%F-%H:%M:%S)"'
                 sh "echo 'NODE_NAME=${env.NODE_NAME}'"
                 // AWS CLI setup
-                sh """if [ ! -x ./aws ] ; then
+                sh("""if [ ! -x ./aws ] ; then
                 echo re-setup needed
                 /bin/rm -rf aws aws_cli aws_dist aws_completer && mkdir -p aws_cli
                 curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'
