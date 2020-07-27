@@ -1,7 +1,7 @@
 pipeline {
     agent { label "ec2-fleet" }
     stages {
-        stage("Git creds"){
+        /*stage("Git creds"){
             withCredentials([sshUserPrivateKey(credentialsId: 'dodaxbuilder-rsa-dev01', keyFileVariable: 'git_key', passphraseVariable: 'git_passphrase', usernameVariable: 'git_user')]) {
                 sh("""
                 git config credential.username {GIT_USERNAME}
@@ -9,12 +9,14 @@ pipeline {
                 #git clone {your_repository}
                 """)
             }
-        }
+        }*/
 
 
         stage('Prepare env') {
             steps {
                 sh 'echo "Prepare env: $(date +%F-%H:%M:%S)"'
+                sh "echo 'EXECUTOR_NUMBER=${env.EXECUTOR_NUMBER}'"
+                sh "echo 'NODE_NAME=${env.NODE_NAME}'"
                 // AWS CLI setup
                 sh 'if [ ! -x ./aws ] ; then echo re-setup needed; fi'
                 sh '/bin/rm -rf aws aws_cli aws_dist aws_completer && mkdir -p aws_cli'
@@ -39,11 +41,16 @@ pipeline {
             }
         }
         stage('Test') {
+            environment {
+                TF_IN_AUTOMATION = 1
+                TF_LOG = 'DEBUG'
+                TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
+            }
             steps {
                 sh 'echo "Validating: $(date +%F-%H:%M:%S)"'
                 checkout scm
-                sh 'export TF_IN_AUTOMATION=1'
-                sh 'export TF_LOG=DEBUG'
+                //sh 'export TF_IN_AUTOMATION=1'
+                //sh 'export TF_LOG=DEBUG'
                 sh './terraform init -input=false -no-color'
                 sh './terraform validate -no-color'
             }
