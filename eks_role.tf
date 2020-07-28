@@ -1,6 +1,6 @@
 ### role to run EKS
 resource "aws_iam_role" "eks" {
-	name          = "${var.tags["project"]}_eks_clus"
+	name_prefix        = "${var.tags["project"]}_eks_clus"
 	assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
