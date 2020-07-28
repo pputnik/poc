@@ -65,7 +65,7 @@ pipeline {
     }
     /*post {
         always {
-            junit '**/target/*.xml'
+            do something
         }
         failure {
             mail to: alutchko@dodax.com, subject: 'The Pipeline failed :('
