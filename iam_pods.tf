@@ -9,7 +9,7 @@ resource "aws_iam_role" "pod1" {
       "Sid": "",
       "Action": "sts:AssumeRole",
       "Principal": {
-        "Service": "!!!eks.amazonaws.com"
+        "Service": "eks.amazonaws.com"
       },
       "Effect": "Allow"
     }
