@@ -1,5 +1,8 @@
 pipeline {
     agent { label "ec2-fleet" }
+    environment {
+        TF_IN_AUTOMATION = 1
+    }
     stages {
         stage('Prepare env') {
             steps {
@@ -34,8 +37,7 @@ pipeline {
         }
         stage('Test') {
             environment {
-                TF_IN_AUTOMATION = 1
-                TF_LOG = 'TRACE'
+                //TF_LOG = 'TRACE'
                 //TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
             }
             steps {
@@ -56,13 +58,12 @@ pipeline {
                 }
             }
         }
-        /*stage('apply') {
+        stage('apply') {
             steps {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
-                sh 'export TF_IN_AUTOMATION=1'
                 sh './terraform apply -auto-approve -input=false -no-color'
             }
-        }*/
+        }
     }
     /*post {
         always {
