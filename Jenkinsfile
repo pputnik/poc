@@ -73,6 +73,7 @@ pipeline {
         stage('apply') {
             steps {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
+                sh './terraform plan -input=false -no-color'
                 sh './terraform apply -auto-approve -input=false -no-color'
             }
         }
