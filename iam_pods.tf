@@ -24,7 +24,7 @@ EOF
 data "template_file" "pod1_policy" {
   template = file("iam_pods.json")
   vars = {
-    action     = "ec2.Describe*"
+    action     = "ec2:Describe*"
   }
 }
 
