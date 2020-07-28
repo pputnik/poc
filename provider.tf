@@ -9,6 +9,6 @@ provider "aws" {
     session_name = "EKS_deployment_session_${var.tags["environment"]}"
   }
   region  = var.region
-  version = "~> 2.28.1"
+  version = "~> 2.70"
 }
 
