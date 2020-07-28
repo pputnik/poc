@@ -63,12 +63,12 @@ pipeline {
             }
         }*/
     }
-    post {
-        /*always {
+    /*post {
+        always {
             junit '**/target/*.xml'
-        }*/
+        }
         failure {
             mail to: alutchko@dodax.com, subject: 'The Pipeline failed :('
         }
-    }
+    }*/
 }
