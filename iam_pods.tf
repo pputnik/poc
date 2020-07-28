@@ -1,6 +1,6 @@
 ### role to run POD1
 resource "aws_iam_role" "pod1" {
-	name          = "${var.tags["project"]}_pod1"
+	name_prefix        = "${var.tags["project"]}_pod1"
 	assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -29,8 +29,8 @@ data "template_file" "pod1_policy" {
 }
 
 resource "aws_iam_policy" "pod1" {
-  name = "${var.tags["project"]}_pod1"
-  policy = data.template_file.pod1_policy.rendered
+  name_prefix = "${var.tags["project"]}_pod1"
+  policy      = data.template_file.pod1_policy.rendered
 }
 
 resource "aws_iam_role_policy_attachment" "pod1_role" {
