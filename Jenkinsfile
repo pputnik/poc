@@ -17,6 +17,7 @@ pipeline {
                 ln -f -s ./aws_cli/v2/\$(ls ./aws_cli/v2/ | grep 2)/dist/aws ./aws
                 /bin/rm -rf ./aws_completer ./aws_dist awslogs-agent-setup.py ./current
                 // aws default setup
+                ls -la
                 mkdir -p ~/.aws # don't mess './aws' with '.aws'!!!
                 echo \"[default]\noutput = json\nregion = eu-central-1\n\" > ~/.aws/config
                 ls -laR ~/.aws/
