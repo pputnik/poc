@@ -36,6 +36,7 @@ pipeline {
                         ./aws --version
                         """
                     }
+                }
                 stage('Terraform') {
                     steps {
                         sh """if [ ! -x ./terraform ] ; then
