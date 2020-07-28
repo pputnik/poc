@@ -37,7 +37,7 @@ pipeline {
         }
         stage('Test') {
             environment {
-                //TF_LOG = 'TRACE'
+                TF_LOG = 'WARN'
                 //TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
             }
             steps {
