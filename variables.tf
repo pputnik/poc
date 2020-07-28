@@ -11,7 +11,7 @@ variable "subnet-public-az-a-id" {
 }
 
 variable "subnet-private-az-a-id" {
-  default = "subnet-b4fbbcdc"
+  default = "subnet-5e890624"
 }
 
 variable "assume_role_arn" {
