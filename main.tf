@@ -20,7 +20,7 @@
 }*/
 
 resource "aws_security_group" "this" {
-  name        = "allow_tls"
+  name_prefix = "allow_tls"
   description = "Allow TLS inbound traffic"
   //vpc_id      = module.vpc.vpc-id
   vpc_id      = var.vpc_id
