@@ -1,4 +1,4 @@
-### role to run container
+### role to run EKS
 resource "aws_iam_role" "eks" {
 	name          = "${var.tags["project"]}_eks_clus"
 	assume_role_policy = <<EOF
@@ -51,9 +51,4 @@ resource "aws_iam_role_policy_attachment" "eks_AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "eks_AmazonEKSServiceRolePolicy" {
-  role       = aws_iam_role.eks.name
-  policy_arn = "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSServiceRolePolicy"
-}
-
-### /role to run container
+### /role to run EKS
