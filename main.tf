@@ -1,4 +1,4 @@
-module "vpc"{
+/*module "vpc"{
 	source = "git@github.com:dodax/terraform-aws-vpc?ref=v1.0.1"
 	DEFAULT_REGION = var.region
 	ENVIRONMENT = var.tags["environment"]
@@ -17,12 +17,13 @@ module "vpc"{
 	
 	//assume_role_arn_infra = var.assume_role_arn_infra
 	//tags  = var.tags
-}
+}*/
 
 resource "aws_security_group" "this" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic"
-  vpc_id      = module.vpc.vpc-id
+  //vpc_id      = module.vpc.vpc-id
+  vpc_id      = var.vpc_id
 
   ingress {
     description = "internal"
@@ -52,7 +53,7 @@ resource "aws_eks_cluster" "this" {
 	role_arn                  = aws_iam_role.eks.arn
 	version                   = "1.16"
 	vpc_config {
-		subnet_ids              = flatten([module.vpc.subnet-public-az-a-id, module.vpc.subnet-private-az-a-id])
+		subnet_ids              = flatten([var.subnet-public-az-a-id, var.subnet-private-az-a-id])
 		security_group_ids      = [aws_security_group.this.id]
 		endpoint_private_access = "true"
 		endpoint_public_access  = "true"
@@ -60,8 +61,8 @@ resource "aws_eks_cluster" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  name_prefix	= "/aws/eks/${var.cluster_name}"
-  retention_in_days = 1
+  	name_prefix	= "/aws/eks/${var.cluster_name}"
+  	retention_in_days = 1
 	tags  = var.tags
 }
 
