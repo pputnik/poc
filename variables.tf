@@ -3,15 +3,15 @@ variable "cluster_name" {
 }
 
 variable "vpc_id" {
-  default = "vpc-0287de7d6e2df9308"
+  default = "vpc-5379fd3b"
 }
 
 variable "subnet-public-az-a-id" {
-  default = "subnet-07f78926aae0161c9"
+  default = "subnet-54fabd3c"
 }
 
 variable "subnet-private-az-a-id" {
-  default = "subnet-0009f1c693692f092"
+  default = "subnet-b4fbbcdc"
 }
 
 variable "assume_role_arn" {
