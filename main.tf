@@ -1,5 +1,5 @@
 module "vpc"{
-	source = "git@github.com:dodax/terraform-aws-vpc?ref=v1.0.0"
+	source = "git@github.com:dodax/terraform-aws-vpc?ref=v1.0.1"
 	DEFAULT_REGION = var.region
 	ENVIRONMENT = var.tags["environment"]
 	LB_SSL_DOMAIN              = "eks-test.local"
@@ -15,8 +15,8 @@ module "vpc"{
 	SUBNET_CIDR_DATABASES_AZ-b = "10.31.8.0/24"
 	SUBNET_CIDR_DATABASES_AZ-c = "10.31.9.0/24"
 	
-	assume_role_arn_infra = var.assume_role_arn_infra
-	tags  = var.tags
+	//assume_role_arn_infra = var.assume_role_arn_infra
+	//tags  = var.tags
 }
 
 resource "aws_security_group" "this" {

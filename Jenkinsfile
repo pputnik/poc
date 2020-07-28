@@ -6,7 +6,7 @@ pipeline {
                 sh 'echo "Prepare env: $(date +%F-%H:%M:%S)"'
                 sh "echo 'NODE_NAME=${env.NODE_NAME}'"
                 // AWS CLI setup
-                sh("""if [ ! -x ./aws ] ; then
+                sh """if [ ! -x ./aws ] ; then
                 echo re-setup needed
                 /bin/rm -rf aws aws_cli aws_dist aws_completer && mkdir -p aws_cli
                 curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'
@@ -24,7 +24,7 @@ pipeline {
                 ./aws sts get-caller-identity
                 fi
                 ./aws --version
-                """)
+                """
                 sh 'wget -nv https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip'
                 sh 'unzip -o terraform_0.12.29_linux_amd64.zip && /bin/rm terraform_0.12.29_linux_amd64.zip'
                 sh './terraform -v'
@@ -62,5 +62,13 @@ pipeline {
                 sh './terraform apply -auto-approve -input=false -no-color'
             }
         }*/
+    }
+    post {
+        /*always {
+            junit '**/target/*.xml'
+        }*/
+        failure {
+            mail to: alutchko@dodax.com, subject: 'The Pipeline failed :('
+        }
     }
 }
