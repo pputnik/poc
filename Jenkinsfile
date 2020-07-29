@@ -45,6 +45,17 @@ pipeline {
                         """
                     }
                 }
+                /*stage('Terraform') {
+                    steps {
+                        sh """if [ ! -x ./terraform ] ; then
+                        wget -nv ${TF_url}
+                        unzip -o ${TF_zip}
+                        /bin/rm ${TF_zip}
+                        fi
+                        ./terraform -v
+                        """
+                    }
+                }*/
             }
         }
         stage('Test') {

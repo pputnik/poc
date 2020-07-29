@@ -51,7 +51,7 @@ resource "aws_eks_cluster" "this" {
 	depends_on = [ aws_cloudwatch_log_group.this ]
 	enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 	role_arn                  = aws_iam_role.eks.arn
-	version                   = "1.16"
+	version                   = var.k8s_version
 	vpc_config {
 		subnet_ids              = flatten([var.subnet-public-az-a-id, var.subnet-private-az-a-id])
 		security_group_ids      = [aws_security_group.this.id]
@@ -70,5 +70,19 @@ resource "aws_cloudwatch_log_group" "this" {
 resource "aws_iam_openid_connect_provider" "cluster" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = []
+  url             = aws_eks_cluster.this.identity.0.oidc.0.issuer
+}
+
+data "aws_region" "current" {}
+
+# Fetch OIDC provider thumbprint for root CA
+data "external" "thumbprint" {
+  program = ["./oidc-thumbprint.sh", data.aws_region.current.name]
+}
+
+resource "aws_iam_openid_connect_provider" "cluster" {
+  client_id_list  = ["sts.amazonaws.com"]
+  //thumbprint_list = concat([data.external.thumbprint.result.thumbprint], var.oidc_thumbprint_list)
+  thumbprint_list = [data.external.thumbprint.result.thumbprint]
   url             = aws_eks_cluster.this.identity.0.oidc.0.issuer
 }

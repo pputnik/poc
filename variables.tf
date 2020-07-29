@@ -2,6 +2,10 @@ variable "cluster_name" {
   default = "Alex_test"
 }
 
+variable "k8s_version" {
+  default = "1.17"
+}
+
 variable "vpc_id" {
   default = "vpc-5379fd3b"
 }
