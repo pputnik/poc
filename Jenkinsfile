@@ -86,7 +86,9 @@ pipeline {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
                 sh """chmod 700 ./oidc-thumbprint.sh
                 ls -la
+                export TF_LOG=TRACE
                 ./terraform plan -input=false -no-color
+                export TF_LOG=WARN
                 ./terraform apply -auto-approve -input=false -no-color
                 """
             }

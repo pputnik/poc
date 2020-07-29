@@ -47,7 +47,7 @@ resource "aws_security_group" "this" {
 
 ### EKS cluster config
 resource "aws_eks_cluster" "this" {
-	name = "${var.cluster_name}"
+	name = var.cluster_name
 	depends_on = [ aws_cloudwatch_log_group.this ]
 	enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 	role_arn                  = aws_iam_role.eks.arn
@@ -71,6 +71,7 @@ data "aws_region" "current" {}
 
 # Fetch OIDC provider thumbprint for root CA
 data "external" "thumbprint" {
+  depends_on = [ aws_eks_cluster.this ]
   program = ["./oidc-thumbprint.sh", data.aws_region.current.name]
 }
 
