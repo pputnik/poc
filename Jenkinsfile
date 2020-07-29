@@ -96,11 +96,11 @@ pipeline {
                 ls -la
                 #export TF_LOG=TRACE
                 ./terraform plan -input=false -no-color
-                export TF_LOG=INFO
+                export TF_LOG=
                 ./terraform apply -auto-approve -input=false -no-color
                 /bin/rm -rf  .kube/config
-                ./terraform output -json | jq -S -r '.cluster_name.value'
-                ./aws eks update-kubeconfig --name Alex_test2
+                clus_name=\$(./terraform output -json | jq -S -r '.cluster_name.value')
+                ./aws eks update-kubeconfig --name \$clus_name
                 ./kubectl get nodes
                 """
             }
