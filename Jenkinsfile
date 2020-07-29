@@ -80,10 +80,10 @@ pipeline {
                     sh """
                     /bin/rm -rf ./.terraform terraform.tfstate terraform.tfstate.backup
                     ls -la
-                    export TF_LOG=DEBUG
+                    #export TF_LOG=DEBUG
                     ./terraform init -no-color
                     export TF_LOG=INFO
-                    ./terraform validate -no-color'
+                    ./terraform validate -no-color
                     """
                 //}
             }
