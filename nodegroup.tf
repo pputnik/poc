@@ -32,7 +32,9 @@ resource "aws_eks_node_group" "example" {
     aws_iam_role_policy_attachment.example-AmazonEC2ContainerRegistryReadOnly
   ]
 
-  tags = var.tags
+  tags = merge(var.tags, {
+      Name      = "${var.cluster_name}_node"
+  })
 }
 
 resource "aws_iam_role" "eks_node" {

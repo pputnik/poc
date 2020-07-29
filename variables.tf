@@ -40,7 +40,8 @@ variable "environment" {
 variable "tags" {
   type    = map(string)
   default = {
-		environment= "testing"
-		project	= "eks_poc"
-	}
+    environment = "testing"
+    project	    = "eks_poc"
+    Terraform   = "true"
+  }
 }

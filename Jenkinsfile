@@ -102,8 +102,17 @@ pipeline {
                 clus_name=\$(./terraform output -json | jq -S -r '.cluster_name.value')
                 ./aws eks update-kubeconfig --name \$clus_name
                 export PATH=\$(pwd):\$PATH
-                echo PATH=\$PATH=
                 ./kubectl get nodes
+                ./kubectl apply -f sa_aws_node.yaml
+                ./kubectl rollout restart -n kube-system daemonset.apps/aws-node
+
+                """
+            }
+        }
+       stage('destroy') {
+            steps {
+                sh 'destroy "Apply: $(date +%F-%H:%M:%S)"'
+                sh """./terraform destroy -auto-approve -input=false -no-color
                 """
             }
         }
