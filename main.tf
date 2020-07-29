@@ -48,7 +48,7 @@ resource "aws_security_group" "this" {
 ### EKS cluster config
 resource "aws_eks_cluster" "this" {
 	//name = var.cluster_name
-	name = "${var.cluster_name}2"
+	name = var.cluster_name
 	enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 	role_arn                  = aws_iam_role.eks.arn
 	version                   = var.k8s_version
