@@ -16,7 +16,8 @@ pipeline {
                         // AWS CLI setup
                         sh """if [ ! -x ./aws ] ; then
                         echo re-setup needed
-                        /bin/rm -rf aws aws_cli aws_dist aws_completer && mkdir -p aws_cli
+                        /bin/rm -rf aws aws_cli aws_dist aws_completer .kube
+                        mkdir -p aws_cli && mkdir -p .kube
                         curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'
                         unzip -q -o awscliv2.zip
                         mv ./aws ./aws_dist  # to have aws executable as just './aws'
@@ -97,6 +98,9 @@ pipeline {
                 ./terraform plan -input=false -no-color
                 export TF_LOG=INFO
                 ./terraform apply -auto-approve -input=false -no-color
+                /bin/rm -rf  .kube/config
+                ./terraform output -json
+                #./aws eks update-kubeconfig --name $CLUS_NAME
                 """
             }
         }
