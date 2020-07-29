@@ -100,7 +100,7 @@ pipeline {
                 ./terraform apply -auto-approve -input=false -no-color
                 /bin/rm -rf  .kube/config
                 ./terraform output -json
-                #./aws eks update-kubeconfig --name $CLUS_NAME
+                ./aws eks update-kubeconfig --name Alex_test2
                 """
             }
         }
