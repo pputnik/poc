@@ -60,7 +60,7 @@ pipeline {
         }
         stage('Test') {
             environment {
-                TF_LOG = 'WARN'
+                TF_LOG = 'INFO'
                 //TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
             }
             steps {
@@ -88,7 +88,7 @@ pipeline {
                 ls -la
                 #export TF_LOG=TRACE
                 ./terraform plan -input=false -no-color
-                export TF_LOG=WARN
+                export TF_LOG=INFO
                 ./terraform apply -auto-approve -input=false -no-color
                 """
             }

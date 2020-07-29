@@ -9,7 +9,7 @@ data "template_file" "node_role_policy" {
   }
 }
 
-resource "aws_iam_role" "aws_node" {
+resource "aws_iam_role" "pod2" {
   name = "${var.cluster_name}-aws-node"
   //assume_role_policy =  templatefile("oidc_assume_role_policy.json", { OIDC_ARN = aws_iam_openid_connect_provider.cluster.arn, OIDC_URL = replace(aws_iam_openid_connect_provider.cluster.url, "https://", ""), NAMESPACE = "kube-system", SA_NAME = "aws-node" })
   assume_role_policy =  data.template_file.node_role_policy.rendered
@@ -22,9 +22,9 @@ resource "aws_iam_role" "aws_node" {
 }
 
 resource "aws_iam_role_policy_attachment" "aws_node" {
-  role       = aws_iam_role.aws_node.name
+  role       = aws_iam_role.pod2.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  depends_on = [aws_iam_role.aws_node]
+  depends_on = [aws_iam_role.pod2]
 }
 
 ### role to run POD1
