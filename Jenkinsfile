@@ -61,6 +61,7 @@ pipeline {
         stage('Test') {
             environment {
                 TF_LOG = 'INFO'
+                TF_INPUT = 0
                 //TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
             }
             steps {
@@ -78,8 +79,9 @@ pipeline {
                     """)*/
                     sh """
                     /bin/rm -rf ./.terraform
+                    ls -la
                     export TF_LOG=DEBUG
-                    ./terraform init -input=false -no-color
+                    ./terraform init -no-color
                     export TF_LOG=INFO
                     ./terraform validate -no-color'
                     """
