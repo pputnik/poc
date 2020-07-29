@@ -47,7 +47,7 @@ resource "aws_security_group" "this" {
 
 ### EKS cluster config
 resource "aws_eks_cluster" "this" {
-	name = "${var.cluster_name}2"
+	name = "${var.cluster_name}"
 	depends_on = [ aws_cloudwatch_log_group.this ]
 	enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 	role_arn                  = aws_iam_role.eks.arn
