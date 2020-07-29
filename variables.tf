@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default = "Alex_test"
+  default = "Alex_test2"
 }
 
 variable "k8s_version" {
