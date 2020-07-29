@@ -5,6 +5,9 @@ variable "cluster_name" {
 variable "k8s_version" {
   default = "1.17"
 }
+variable "ssh_key" {
+  default = "build-temp-bastion"
+}
 
 variable "vpc_id" {
   default = "vpc-5379fd3b"
@@ -30,7 +33,7 @@ variable "region" {
   default = "eu-central-1"
 }
 
-variable "envronment" {
+variable "environment" {
   default = "testing"
 }
 

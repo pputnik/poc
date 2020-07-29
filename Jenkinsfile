@@ -4,6 +4,7 @@ pipeline {
         TF_IN_AUTOMATION = 1
         TF_url = "https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip"
         TF_zip = "terraform_0.12.29_linux_amd64.zip"
+        kubectl_url = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl"
     }
     stages {
         stage('Prepare env') {
@@ -45,17 +46,16 @@ pipeline {
                         """
                     }
                 }
-                /*stage('Terraform') {
+                stage('kubectl') {
                     steps {
-                        sh """if [ ! -x ./terraform ] ; then
-                        wget -nv ${TF_url}
-                        unzip -o ${TF_zip}
-                        /bin/rm ${TF_zip}
+                        sh """if [ ! -x ./kubectl ] ; then
+                        curl -o kubectl ${kubectl_url}
+                        chmod +x ./kubectl
                         fi
-                        ./terraform -v
+                        kubectl version --short --client
                         """
                     }
-                }*/
+                }
             }
         }
         stage('Test') {
@@ -86,7 +86,7 @@ pipeline {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
                 sh """chmod 700 ./oidc-thumbprint.sh
                 ls -la
-                export TF_LOG=TRACE
+                #export TF_LOG=TRACE
                 ./terraform plan -input=false -no-color
                 export TF_LOG=WARN
                 ./terraform apply -auto-approve -input=false -no-color

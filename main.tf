@@ -30,7 +30,15 @@ resource "aws_security_group" "this" {
     from_port   = 0
     to_port     = 65535
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.0.0/0"]
+  }
+  ingress {
+    description = "ssh"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["85.128.77.0/24"]
+    description = "Warsaw 360CL office"
   }
 
   egress {
@@ -58,6 +66,9 @@ resource "aws_eks_cluster" "this" {
 		endpoint_private_access = "true"
 		endpoint_public_access  = "true"
 	}
+    tags = merge(var.tags, {
+      "test"      = "1"
+    })
 }
 
 ### OIDC config
