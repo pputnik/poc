@@ -111,7 +111,7 @@ pipeline {
         }
        stage('destroy') {
             steps {
-                sh 'destroy "Apply: $(date +%F-%H:%M:%S)"'
+                sh 'echo "destroy: $(date +%F-%H:%M:%S)"'
                 sh """./terraform destroy -auto-approve -input=false -no-color
                 """
             }
