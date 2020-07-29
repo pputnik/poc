@@ -77,6 +77,7 @@ pipeline {
                     #git clone {your_repository}
                     """)*/
                     sh """
+                    /bin/rm -rf ./.terraform
                     export TF_LOG=DEBUG
                     ./terraform init -input=false -no-color
                     export TF_LOG=INFO
