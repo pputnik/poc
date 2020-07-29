@@ -101,6 +101,8 @@ pipeline {
                 /bin/rm -rf  .kube/config
                 clus_name=\$(./terraform output -json | jq -S -r '.cluster_name.value')
                 ./aws eks update-kubeconfig --name \$clus_name
+                export PATH=\$(pwd):\$PATH
+                echo PATH=\$PATH=
                 ./kubectl get nodes
                 """
             }
