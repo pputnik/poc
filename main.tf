@@ -47,8 +47,8 @@ resource "aws_security_group" "this" {
 
 ### EKS cluster config
 resource "aws_eks_cluster" "this" {
-	name = var.cluster_name
-	depends_on = [ aws_cloudwatch_log_group.this ]
+	//name = var.cluster_name
+	name = "${var.cluster_name}2"
 	enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 	role_arn                  = aws_iam_role.eks.arn
 	version                   = var.k8s_version
@@ -58,12 +58,6 @@ resource "aws_eks_cluster" "this" {
 		endpoint_private_access = "true"
 		endpoint_public_access  = "true"
 	}
-}
-
-resource "aws_cloudwatch_log_group" "this" {
-  	name_prefix	= "/aws/eks/${var.cluster_name}"
-  	retention_in_days = 1
-	tags  = var.tags
 }
 
 ### OIDC config
