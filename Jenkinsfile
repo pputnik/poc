@@ -99,8 +99,9 @@ pipeline {
                 export TF_LOG=INFO
                 ./terraform apply -auto-approve -input=false -no-color
                 /bin/rm -rf  .kube/config
-                ./terraform output -json
+                ./terraform output -json | jq -S -r '.cluster_name.value'
                 ./aws eks update-kubeconfig --name Alex_test2
+                ./kubectl get nodes
                 """
             }
         }
