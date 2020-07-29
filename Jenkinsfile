@@ -29,9 +29,9 @@ pipeline {
                         echo \"[default]\noutput = json\nregion = eu-central-1\n\" > ~/.aws/config
                         ls -laR ~/.aws/
                         # aws ec2 describe-instances
-                        ./aws sts get-caller-identity
                         fi
                         ./aws --version
+                        ./aws sts get-caller-identity
                         """
                     }
                 }
@@ -76,8 +76,12 @@ pipeline {
                     git config credential.helper "!echo password={GITPASSWORD}; echo"
                     #git clone {your_repository}
                     """)*/
-                    sh './terraform init -input=false -no-color'
-                    sh './terraform validate -no-color'
+                    sh """
+                    export TF_LOG=DEBUG
+                    ./terraform init -input=false -no-color
+                    export TF_LOG=INFO
+                    ./terraform validate -no-color'
+                    """
                 //}
             }
         }
