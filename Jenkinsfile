@@ -78,7 +78,7 @@ pipeline {
                     #git clone {your_repository}
                     """)*/
                     sh """
-                    /bin/rm -rf ./.terraform
+                    /bin/rm -rf ./.terraform terraform.tfstate terraform.tfstate.backup
                     ls -la
                     export TF_LOG=DEBUG
                     ./terraform init -no-color
