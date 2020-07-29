@@ -23,7 +23,8 @@ resource "aws_iam_role" "aws_node" {
 
 resource "aws_iam_role_policy_attachment" "aws_node" {
   role       = aws_iam_role.aws_node.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"depends_on = [aws_iam_role.aws_node]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  depends_on = [aws_iam_role.aws_node]
 }
 
 ### role to run POD1
