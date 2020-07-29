@@ -42,6 +42,8 @@ pipeline {
                         /bin/rm ${TF_zip}
                         fi
                         ./terraform -v
+                        chmod 700 ./oidc-thumbprint.sh
+                        ls -la
                         """
                     }
                 }
