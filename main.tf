@@ -33,12 +33,11 @@ resource "aws_security_group" "this" {
     cidr_blocks = ["10.0.0.0/0"]
   }
   ingress {
-    description = "ssh"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["85.128.77.0/24"]
-    description = "Warsaw 360CL office"
+    description = "ssh for Warsaw 360CL office"
   }
 
   egress {
