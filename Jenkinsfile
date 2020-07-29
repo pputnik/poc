@@ -49,10 +49,10 @@ pipeline {
                 stage('kubectl') {
                     steps {
                         sh """if [ ! -x ./kubectl ] ; then
-                        curl -o kubectl ${kubectl_url}
+                        curl -s -o kubectl ${kubectl_url}
                         chmod +x ./kubectl
                         fi
-                        kubectl version --short --client
+                        ./kubectl version --short --client
                         """
                     }
                 }
