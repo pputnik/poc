@@ -35,6 +35,28 @@ resource "aws_eks_node_group" "example" {
       Name      = "${var.cluster_name}_node"
   })
 }
+### Service account role
+data "template_file" "serv_acc_policy" {
+  template = "iam_service_acc.json"
+  vars = {
+    action = "\"s3:*\""
+  }
+}
+
+resource "aws_iam_policy" "serv_acc_policy" {
+  name = "${var.cluster_name}-srev-acc-pol"
+  policy = data.template_file.serv_acc_policy.rendered
+}
+
+data "template_file" "service_account_policy" {
+  template = file("oidc_assume_role_policy.json")
+  vars = {
+    OIDC_ARN  = aws_iam_openid_connect_provider.cluster.arn
+    OIDC_URL  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
+    NAMESPACE = "kube-system"
+    SA_NAME   = "aws-node"
+  }
+}
 
 ### node group role
 resource "aws_iam_role" "eks_node" {
