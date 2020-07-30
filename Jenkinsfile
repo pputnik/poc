@@ -109,6 +109,7 @@ pipeline {
                 # apply service account
                 #./kubectl apply -f sa_aws_node.yaml
                 #./kubectl rollout restart -n kube-system daemonset.apps/aws-node
+                #timeout 50 ./kubectl get -n kube-system daemonset.apps/aws-node --watch
 
                 #./terraform destroy -auto-approve -input=false -no-color
                 """
