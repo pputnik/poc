@@ -26,6 +26,7 @@ resource "aws_eks_node_group" "example" {
   depends_on = [
     aws_iam_role_policy_attachment.eks_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.eks_AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.service-acc-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.node-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node-AmazonEC2ContainerRegistryReadOnly
@@ -34,6 +35,34 @@ resource "aws_eks_node_group" "example" {
   tags = merge(var.tags, {
       Name      = "${var.cluster_name}_node"
   })
+}
+
+### service account role
+data "template_file" "service_account_policy" {
+  template = file("oidc_assume_role_policy.json")
+  vars = {
+    OIDC_ARN  = aws_iam_openid_connect_provider.cluster.arn
+    OIDC_URL  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
+    NAMESPACE = "kube-system"
+    SA_NAME   = "aws-node"
+  }
+}
+
+resource "aws_iam_role" "service_account" {
+  name = "eks-service-account"
+  //assume_role_policy =  templatefile("oidc_assume_role_policy.json", { OIDC_ARN = aws_iam_openid_connect_provider.cluster.arn, OIDC_URL = replace(aws_iam_openid_connect_provider.cluster.url, "https://", ""), NAMESPACE = "kube-system", SA_NAME = "aws-node" })
+  assume_role_policy =  data.template_file.service_account_policy.rendered
+
+  tags = merge(var.tags, {
+      "ServiceAccountName"      = "aws-node"
+      "ServiceAccountNameSpace" = "kube-system"
+  })
+  depends_on = [aws_iam_openid_connect_provider.cluster]
+}
+
+resource "aws_iam_role_policy_attachment" "service-acc-AmazonEKS_CNI_Policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.service_account.name
 }
 
 ### node group role
