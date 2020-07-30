@@ -94,9 +94,9 @@ pipeline {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
                 sh """chmod 700 ./oidc-thumbprint.sh
                 ls -la
+                #export TF_LOG=DEBUG
                 ./terraform plan -input=false -no-color
                 export TF_LOG=
-                export TF_LOG=DEBUG
                 ./terraform apply -auto-approve -input=false -no-color
                 /bin/rm -rf  .kube/config
                 clus_name=\$(./terraform output -json | jq -S -r '.cluster_name.value')

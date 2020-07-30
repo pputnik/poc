@@ -1,6 +1,6 @@
 resource "aws_eks_node_group" "example" {
   cluster_name    = aws_eks_cluster.this.name
-  node_group_name = "${var.cluster_name}2"
+  node_group_name = "${var.cluster_name}-ng"
   node_role_arn   = aws_iam_role.eks_node.arn
   subnet_ids      = flatten([var.subnet-public-az-a-id, var.subnet-private-az-a-id])
   instance_types  = ["t3a.small"]
@@ -26,6 +26,7 @@ resource "aws_eks_node_group" "example" {
   depends_on = [
     aws_iam_role_policy_attachment.eks_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.eks_AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.service-acc-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.node-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node-AmazonEC2ContainerRegistryReadOnly
@@ -36,8 +37,8 @@ resource "aws_eks_node_group" "example" {
   })
 }
 
-### node role
-data "template_file" "node_role_policy" {
+### service account role
+data "template_file" "service_account_policy" {
   template = file("oidc_assume_role_policy.json")
   vars = {
     OIDC_ARN  = aws_iam_openid_connect_provider.cluster.arn
@@ -47,10 +48,10 @@ data "template_file" "node_role_policy" {
   }
 }
 
-resource "aws_iam_role" "eks_node" {
-  name = "eks-node-group-example"
+resource "aws_iam_role" "service_account" {
+  name = "eks-service-account"
   //assume_role_policy =  templatefile("oidc_assume_role_policy.json", { OIDC_ARN = aws_iam_openid_connect_provider.cluster.arn, OIDC_URL = replace(aws_iam_openid_connect_provider.cluster.url, "https://", ""), NAMESPACE = "kube-system", SA_NAME = "aws-node" })
-  assume_role_policy =  data.template_file.node_role_policy.rendered
+  assume_role_policy =  data.template_file.service_account_policy.rendered
 
   tags = merge(var.tags, {
       "ServiceAccountName"      = "aws-node"
@@ -59,13 +60,14 @@ resource "aws_iam_role" "eks_node" {
   depends_on = [aws_iam_openid_connect_provider.cluster]
 }
 
-resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
-  role       = aws_iam_role.eks_node.name
+resource "aws_iam_role_policy_attachment" "service-acc-AmazonEKS_CNI_Policy" {
+  role       = aws_iam_role.service_account.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
-/*resource "aws_iam_role" "eks_node_bad" {
-  name = "eks-node-group-example-bad"
+### node group role
+resource "aws_iam_role" "eks_node" {
+  name = "eks-node-group"
 
   assume_role_policy = jsonencode({
     Statement = [{
@@ -77,7 +79,7 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
     }]
     Version = "2012-10-17"
   })
-}*/
+}
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
@@ -87,4 +89,9 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
 resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.eks_node.name
+}
+
+resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
+  role       = aws_iam_role.eks_node.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
