@@ -4,7 +4,8 @@
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "${OIDC_ARN}"
+            "Federated": "${OIDC_ARN}",
+            "Service": "ec2.amazonaws.com"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
