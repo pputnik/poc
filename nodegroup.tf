@@ -39,7 +39,7 @@ resource "aws_eks_node_group" "example" {
 data "template_file" "serv_acc_policy" {
   template = "iam_service_acc.json"
   vars = {
-    action = "\"s3:*\""
+    action = "s3:*"
   }
 }
 
