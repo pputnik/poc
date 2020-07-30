@@ -1,7 +1,7 @@
 resource "aws_eks_node_group" "example" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "${var.cluster_name}-ng"
-  node_role_arn   = "arn:aws:iam::464194041274:role/jenkins" #aws_iam_role.eks_node.arn
+  node_role_arn   = aws_iam_role.eks_node.arn
   subnet_ids      = flatten([var.subnet-public-az-a-id, var.subnet-private-az-a-id])
   instance_types  = ["t3a.small"]
   //ami_type
