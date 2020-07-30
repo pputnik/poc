@@ -106,6 +106,8 @@ pipeline {
                 ./kubectl apply -f sa_aws_node.yaml
                 ./kubectl rollout restart -n kube-system daemonset.apps/aws-node
                 ./kubectl describe configmap -n kube-system aws-auth
+                ./kubectl apply -f aws-auth-cm.yaml
+                ./kubectl describe configmap -n kube-system aws-auth
 
                 #./terraform destroy -auto-approve -input=false -no-color
                 """
