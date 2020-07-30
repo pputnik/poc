@@ -95,6 +95,8 @@ pipeline {
                 sh """chmod 700 ./oidc-thumbprint.sh
                 ls -la
                 #export TF_LOG=DEBUG
+                ./terraform destroy -auto-approve -input=false -no-color
+                exot 0
                 ./terraform plan -input=false -no-color
                 export TF_LOG=
                 ./terraform apply -auto-approve -input=false -no-color
@@ -111,7 +113,6 @@ pipeline {
                 #./kubectl rollout restart -n kube-system daemonset.apps/aws-node
                 #timeout 50 ./kubectl get -n kube-system daemonset.apps/aws-node --watch
 
-                #./terraform destroy -auto-approve -input=false -no-color
                 """
             }
         }
