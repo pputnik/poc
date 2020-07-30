@@ -1,24 +1,3 @@
-/*module "vpc"{
-	source = "git@github.com:dodax/terraform-aws-vpc?ref=v1.0.1"
-	DEFAULT_REGION = var.region
-	ENVIRONMENT = var.tags["environment"]
-	LB_SSL_DOMAIN              = "eks-test.local"
-	PROJECTNAME                = "eks-test"
-	VPC_CIDR                   = "10.31.0.0/16"
-	SUBNET_CIDR_PUBLIC_AZ-a    = "10.31.1.0/24"
-	SUBNET_CIDR_PUBLIC_AZ-b    = "10.31.2.0/24"
-	SUBNET_CIDR_PUBLIC_AZ-c    = "10.31.3.0/24"
-	SUBNET_CIDR_PRIVATE_AZ-a   = "10.31.4.0/24"
-	SUBNET_CIDR_PRIVATE_AZ-b   = "10.31.5.0/24"
-	SUBNET_CIDR_PRIVATE_AZ-c   = "10.31.6.0/24"
-	SUBNET_CIDR_DATABASES_AZ-a = "10.31.7.0/24"
-	SUBNET_CIDR_DATABASES_AZ-b = "10.31.8.0/24"
-	SUBNET_CIDR_DATABASES_AZ-c = "10.31.9.0/24"
-	
-	//assume_role_arn_infra = var.assume_role_arn_infra
-	//tags  = var.tags
-}*/
-
 resource "aws_security_group" "this" {
   name_prefix = "allow_tls"
   description = "Allow TLS inbound traffic"

@@ -61,14 +61,13 @@ resource "aws_iam_role" "service_account" {
 }
 
 resource "aws_iam_role_policy_attachment" "service-acc-AmazonEKS_CNI_Policy" {
-  role       = aws_iam_role.service_account.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.service_account.name
 }
 
 ### node group role
 resource "aws_iam_role" "eks_node" {
   name = "eks-node-group"
-
   assume_role_policy = jsonencode({
     Statement = [{
       Action = "sts:AssumeRole"
@@ -92,6 +91,6 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
-  role       = aws_iam_role.eks_node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.eks_node.name
 }

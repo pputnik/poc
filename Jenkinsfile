@@ -83,7 +83,7 @@ pipeline {
                     ls -la
                     #export TF_LOG=DEBUG
                     ./terraform init -no-color
-                    export TF_LOG=INFO
+                    #export TF_LOG=INFO
                     ./terraform validate -no-color
                     """
                 //}

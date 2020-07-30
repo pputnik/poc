@@ -1,4 +1,4 @@
-### role to run EKS
+### role to run EKS cluster itself
 resource "aws_iam_role" "eks" {
 	name_prefix        = "${var.tags["project"]}_eks_clus"
 	assume_role_policy = <<EOF
@@ -51,4 +51,4 @@ resource "aws_iam_role_policy_attachment" "eks_AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
 }
 
-### /role to run EKS
+### /role to run EKS cluster itself
