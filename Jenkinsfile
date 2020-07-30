@@ -106,13 +106,7 @@ pipeline {
                 ./kubectl apply -f sa_aws_node.yaml
                 ./kubectl rollout restart -n kube-system daemonset.apps/aws-node
 
-                """
-            }
-        }
-       stage('destroy') {
-            steps {
-                sh 'echo "destroy: $(date +%F-%H:%M:%S)"'
-                sh """./terraform destroy -auto-approve -input=false -no-color
+                #./terraform destroy -auto-approve -input=false -no-color
                 """
             }
         }
