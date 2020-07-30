@@ -101,10 +101,11 @@ pipeline {
                 /bin/rm -rf  .kube/config
                 clus_name=\$(./terraform output -json | jq -S -r '.cluster_name.value')
                 ./aws eks update-kubeconfig --name \$clus_name
-                export PATH=\$(pwd):\$PATH
+                export PATH=\$(pwd):\$PATH # we need it because looks like kubectl uses "aws" from path
                 ./kubectl get nodes
                 ./kubectl apply -f sa_aws_node.yaml
                 ./kubectl rollout restart -n kube-system daemonset.apps/aws-node
+                ./kubectl describe configmap -n kube-system aws-auth
 
                 #./terraform destroy -auto-approve -input=false -no-color
                 """
