@@ -6,13 +6,6 @@ data "template_file" "serv_acc_policy" {
   }
 }
 
-data "template_file" "serv_acc_policy_2" {
-  template = file("iam_service_acc.json")
-  vars = {
-    action = "s3:*"
-  }
-}
-
 resource "aws_iam_policy" "serv_acc_policy" {
   name = "${var.cluster_name}-srev-acc-pol"
   policy = data.template_file.serv_acc_policy.rendered
