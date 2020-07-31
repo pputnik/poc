@@ -94,8 +94,8 @@ pipeline {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
                 sh """chmod 700 ./oidc-thumbprint.sh
                 ls -la
+                #./terraform destroy -auto-approve -input=false -no-color; exit 0
                 #export TF_LOG=DEBUG
-                ./terraform destroy -auto-approve -input=false -no-color; exit 0
                 ./terraform plan -input=false -no-color
                 export TF_LOG=
                 ./terraform apply -auto-approve -input=false -no-color
