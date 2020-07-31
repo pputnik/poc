@@ -55,6 +55,18 @@ resource "aws_iam_role" "eks_node" {
 
 }
 
+data "template_file" "eks_node_extra_policy" {
+  template = file("iam_service_acc.json")
+  vars = {
+    action = "s3:*"
+  }
+}
+
+resource "aws_iam_policy" "eks_node_extra_policy_policy" {
+  name = "${var.cluster_name}-eks_node_extra"
+  policy = data.template_file.eks_node_extra_policy.rendered
+}
+
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.eks_node.name

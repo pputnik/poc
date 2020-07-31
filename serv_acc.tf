@@ -1,8 +1,15 @@
 ### Service account role
-data "template_file" "serv_acc_policy" {
+data "template_file" "serv_acc_policy_2" {
   template = file("iam_service_acc.json")
   vars = {
     action = "[\"s3:*\",\"sts:AssumeRoleWithWebIdentity\", \"ec2:DescribeNetworkInterfaces\"]"
+  }
+}
+
+data "template_file" "serv_acc_policy" {
+  template = file("iam_service_acc.json")
+  vars = {
+    action = "s3:*"
   }
 }
 
