@@ -26,6 +26,7 @@ resource "aws_eks_node_group" "example" {
   depends_on = [
     aws_iam_role_policy_attachment.eks_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.eks_AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.eks_node_extra_policy_policy,
     aws_iam_role_policy_attachment.node-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.node-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node-AmazonEC2ContainerRegistryReadOnly,
@@ -65,6 +66,11 @@ data "template_file" "eks_node_extra_policy" {
 resource "aws_iam_policy" "eks_node_extra_policy_policy" {
   name = "${var.cluster_name}-eks_node_extra"
   policy = data.template_file.eks_node_extra_policy.rendered
+}
+
+resource "aws_iam_role_policy_attachment" "eks_node_extra_policy_policy" {
+  policy_arn = aws_iam_policy.eks_node_extra_policy_policy.arn
+  role       = aws_iam_role.eks_node.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
