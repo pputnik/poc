@@ -58,7 +58,7 @@ resource "aws_iam_role" "eks_node" {
 data "template_file" "eks_node_extra_policy" {
   template = file("iam_service_acc.json")
   vars = {
-    action = "s3:*"
+    action = "[\"s3:*\"]"
   }
 }
 
