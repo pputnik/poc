@@ -2,7 +2,7 @@
 data "template_file" "serv_acc_policy" {
   template = file("iam_service_acc.json")
   vars = {
-    action = "s3:*"
+    action = "[\"s3:*\",\"sts:AssumeRoleWithWebIdentity\", \"ec2:DescribeNetworkInterfaces\"]"
   }
 }
 
