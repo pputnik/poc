@@ -43,10 +43,10 @@ data "template_file" "serv_acc_policy" {
   }
 }
 
-/*resource "aws_iam_policy" "serv_acc_policy" {
+resource "aws_iam_policy" "serv_acc_policy" {
   name = "${var.cluster_name}-srev-acc-pol"
   policy = data.template_file.serv_acc_policy.rendered
-}*/
+}
 
 data "template_file" "service_account_policy" {
   template = file("oidc_assume_role_policy.json")
