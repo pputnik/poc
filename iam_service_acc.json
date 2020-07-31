@@ -3,6 +3,7 @@
     "Statement": [
 		{
             "Action": [
+                "${action}"
             ],
             "Resource": "*",
             "Effect": "Allow"
