@@ -15,5 +15,5 @@ output "openid_connect_provider_url" {
 }
 
 output "tmp" {
-  value = data.template_file.serv_acc_policy.rendered
+  value = data.template_file.serv_acc_policy.template
 }
