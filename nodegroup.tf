@@ -66,7 +66,7 @@ resource "aws_iam_role" "serv_acc" {
 }
 
 resource "aws_iam_role_policy_attachment" "serv_acc_policy" {
-  policy_arn = aws_iam_policy.serv_acc_policy
+  policy_arn = aws_iam_policy.serv_acc_policy.arn
   role       = aws_iam_role.serv_acc.name
 }
 
