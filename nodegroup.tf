@@ -28,7 +28,8 @@ resource "aws_eks_node_group" "example" {
     aws_iam_role_policy_attachment.eks_AmazonEKSServicePolicy,
     aws_iam_role_policy_attachment.node-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.node-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.node-AmazonEC2ContainerRegistryReadOnly
+    aws_iam_role_policy_attachment.node-AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.serv_acc_policy
   ]
 
   tags = merge(var.tags, {
@@ -48,7 +49,7 @@ resource "aws_iam_policy" "serv_acc_policy" {
   policy = data.template_file.serv_acc_policy.rendered
 }
 
-data "template_file" "service_account_policy" {
+data "template_file" "serv_acc_assume_policy" {
   template = file("oidc_assume_role_policy.json")
   vars = {
     OIDC_ARN  = aws_iam_openid_connect_provider.cluster.arn
@@ -56,6 +57,17 @@ data "template_file" "service_account_policy" {
     NAMESPACE = "kube-system"
     SA_NAME   = "aws-node"
   }
+}
+
+resource "aws_iam_role" "serv_acc" {
+  name_prefix = "eks-serv-acc-"
+  assume_role_policy = data.template_file.serv_acc_assume_policy.rendered
+  force_detach_policies = true
+}
+
+resource "aws_iam_role_policy_attachment" "serv_acc_policy" {
+  policy_arn = aws_iam_policy.serv_acc_policy
+  role       = aws_iam_role.serv_acc.name
 }
 
 ### node group role
@@ -71,6 +83,8 @@ resource "aws_iam_role" "eks_node" {
     }]
     Version = "2012-10-17"
   })
+  force_detach_policies = true
+
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {

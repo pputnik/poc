@@ -14,6 +14,6 @@ output "openid_connect_provider_url" {
   value = aws_iam_openid_connect_provider.cluster.url
 }
 
-output "tmp" {
+/*output "tmp" {
   value = data.template_file.serv_acc_policy.template
-}
+}*/
