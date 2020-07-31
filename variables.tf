@@ -6,7 +6,7 @@ variable "k8s_version" {
   default = "1.17"
 }
 variable "ssh_key" {
-  default = "build-temp-bastion"
+  default = "Alex-test"
 }
 
 variable "vpc_id" {
