@@ -1,15 +1,6 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: s3-managers-sa
-  namespace: s3-managers
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::464194041274:role/eks-pod1
-
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
   name: aws-node
   namespace: kube-system
   annotations:

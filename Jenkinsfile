@@ -103,6 +103,7 @@ pipeline {
                 clus_name=\$(./terraform output -json | jq -S -r '.cluster_name.value')
                 ./aws eks update-kubeconfig --name \$clus_name
                 export PATH=\$(pwd):\$PATH # we need it because looks like kubectl uses "aws" from path
+
                 # allow access to the cluster for SysAdmin-Test-Env
                 ./kubectl apply -f aws-auth-cm.yaml
                 ./kubectl describe configmap -n kube-system aws-auth
