@@ -21,26 +21,6 @@ EOF
 	
 }
 
-# maybe common policies will be enough
-#data "template_file" "eks_role_policy" {
-#  template = file("eks_role.json")
-#  #vars = {
-#  #  project     = local.project
-#  #  account     = data.aws_caller_identity.identity.account_id
-#  #}
-#}
-#
-#
-#resource "aws_iam_policy" "this" {
-#  name = "${var.tags["project"]}_eks_clus"
-#  policy = data.template_file.eks_role_policy.rendered
-#}
-#
-#resource "aws_iam_role_policy_attachment" "eks_role" {
-#  role       = aws_iam_role.eks.name
-#  policy_arn = aws_iam_policy.eks_role_policy.arn
-#}
-
 resource "aws_iam_role_policy_attachment" "eks_AmazonEKSClusterPolicy" {
   role       = aws_iam_role.eks.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"

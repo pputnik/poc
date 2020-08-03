@@ -22,7 +22,7 @@ data "template_file" "serv_acc_assume_policy" {
 }
 
 resource "aws_iam_role" "serv_acc" {
-  name_prefix = "eks-service-account"
+  name = "eks-service-account"
   assume_role_policy = data.template_file.serv_acc_assume_policy.rendered
   force_detach_policies = true
 }

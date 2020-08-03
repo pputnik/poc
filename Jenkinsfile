@@ -111,6 +111,8 @@ pipeline {
                 #./kubectl apply -f sa_aws_node.yaml
                 #./kubectl rollout restart -n kube-system daemonset.apps/aws-node
                 #timeout 50 ./kubectl get -n kube-system daemonset.apps/aws-node --watch
+                ./kubectl apply -f pod1-example.yaml
+                ./kubectl apply -f pod2-example.yaml
 
                 """
             }
