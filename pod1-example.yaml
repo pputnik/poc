@@ -23,4 +23,13 @@ spec:
   containers:
   - name: webcontainer
     image: ubuntu:14.04
+    volumeMounts:
+    - name: html
+      mountPath: /html
+    command: ["/bin/sh", "-c"]
+    args:
+      - while true; do
+         date >> /html/index.html;
+         sleep 1;
+        done
 
