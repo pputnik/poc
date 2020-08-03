@@ -3,9 +3,7 @@
     "Statement": [
 		{
             "Action": [
-              "s3:*",
-              "sts:AssumeRoleWithWebIdentity",
-              "ec2:DescribeNetworkInterfaces"
+              "s3:*"
             ],
             "Resource": "*",
             "Effect": "Allow"
