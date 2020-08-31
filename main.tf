@@ -5,37 +5,13 @@ locals {
   acc_id      = data.aws_caller_identity.current.account_id
 }
 
-
-resource "aws_db_instance" "this" {
-  allocated_storage                   = 20
-  apply_immediately                   = true
-  auto_minor_version_upgrade          = true
-  backup_retention_period             = 1
-  storage_type                        = "gp2"
-  engine                              = "mysql"
-  engine_version                      = "5.7"
-  instance_class                      = "db.t2.micro"
-  multi_az                            = false
-  iam_database_authentication_enabled = true
-  name                                = "mydb"
-  username                            = "foo"
-  password                            = "foo123bar567baz"
-}
-
-resource "aws_db_security_group" "this" {
-  name = "rds_sg"
-
-  ingress {
-    cidr = "10.0.0.0/24"
-  }
-}
-
 data "external" "dbuser" {
   depends_on = [aws_db_instance.this]
   program    = ["./adduser.sh", aws_db_instance.this.name]
 }
 
 resource "aws_lambda_function" "this" {
+  depends_on = [data.external.dbuser]
   function_name    = var.project
   handler          = "index.handler"
   role             = aws_iam_role.this.arn
@@ -53,7 +29,7 @@ resource "aws_lambda_function" "this" {
       DB_USER = "lambda-user"
     }
   }
-
+  tags = var.tags
 }
 
 data "null_data_source" "file" {
