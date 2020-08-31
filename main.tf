@@ -1,6 +1,10 @@
+data "aws_caller_identity" "current" {}
+
 locals {
   environment = var.workspace_to_environment[terraform.workspace]
+  acc_id      = data.aws_caller_identity.current.account_id
 }
+
 
 resource "aws_db_instance" "this" {
   allocated_storage                   = 20
@@ -15,7 +19,7 @@ resource "aws_db_instance" "this" {
   iam_database_authentication_enabled = true
   name                                = "mydb"
   username                            = "foo"
-  password                            = "foobarbaz"
+  password                            = "foo123bar567baz"
 }
 
 resource "aws_db_security_group" "this" {
@@ -24,6 +28,11 @@ resource "aws_db_security_group" "this" {
   ingress {
     cidr = "10.0.0.0/24"
   }
+}
+
+data "external" "dbuser" {
+  depends_on = [aws_db_instance.this]
+  program    = ["./adduser.sh", aws_db_instance.this.name]
 }
 
 resource "aws_lambda_function" "this" {
@@ -36,6 +45,14 @@ resource "aws_lambda_function" "this" {
   publish          = true
   filename         = data.archive_file.this.output_path
   source_code_hash = data.archive_file.this.output_base64sha256
+
+  environment {
+    variables = {
+      DB_HOST = aws_db_instance.this.address
+      DB_NAME = aws_db_instance.this.name
+      DB_USER = "lambda-user"
+    }
+  }
 
 }
 
@@ -77,7 +94,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "default" {
-  role       = "${aws_iam_role.this.name}"
+  role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
@@ -86,9 +103,11 @@ data "aws_iam_policy_document" "this" {
     effect = "Allow"
 
     actions = [
-      "s3:*",
+      "rds-db:connect",
     ]
-    resources = "*"
+    resources = [
+      "arn:aws:rds:${var.region}:${local.acc_id}:dbuser:myworld/username"
+    ]
   }
 }
 

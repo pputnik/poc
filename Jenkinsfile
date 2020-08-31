@@ -67,9 +67,9 @@ pipeline {
                     /bin/rm -rf ./.terraform terraform.tfstate terraform.tfstate.backup
                     ls -la
                     #export TF_LOG=DEBUG
-                    ./terraform init -no-color
+                    ./terraform init
                     #export TF_LOG=
-                    ./terraform validate -no-color
+                    ./terraform validate
                     """
                 //}
             }
@@ -79,11 +79,11 @@ pipeline {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
                 sh """chmod 700 ./oidc-thumbprint.sh
                 ls -la
-                ./terraform destroy -auto-approve -input=false -no-color; exit 0
+                ./terraform destroy -auto-approve -input=false; exit 0
                 #export TF_LOG=DEBUG
-                ./terraform plan -input=false -no-color
+                ./terraform plan -input=false
                 export TF_LOG=
-                ./terraform apply -auto-approve -input=false -no-color
+                ./terraform apply -auto-approve -input=false
 
                 """
             }

@@ -1,7 +1,7 @@
 ### Backend and provider config for reference
 terraform {
   required_version = "~> 0.12.29"
-  experiments      = [variable_validation]
+  #experiments      = [variable_validation]
 }
 
 provider "aws" {
