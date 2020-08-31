@@ -5,6 +5,12 @@ pipeline {
         TF_url = "https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip"
         TF_zip = "terraform_0.12.29_linux_amd64.zip"
     }
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '100'))
+        timestamps()
+        ansiColor('xterm')
+    }
     stages {
         stage('Prepare env') {
             parallel {
