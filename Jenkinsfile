@@ -46,16 +46,6 @@ pipeline {
                         """
                     }
                 }
-                stage('kubectl') {
-                    steps {
-                        sh """if [ ! -x ./kubectl ] ; then
-                        curl -s -o kubectl ${kubectl_url}
-                        chmod +x ./kubectl
-                        fi
-                        ./kubectl version --short --client
-                        """
-                    }
-                }
             }
         }
         stage('Test') {
