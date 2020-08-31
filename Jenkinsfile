@@ -77,9 +77,10 @@ pipeline {
         stage('apply') {
             steps {
                 sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
-                sh """chmod 700 ./oidc-thumbprint.sh
+                sh """
+                chmod 700 ./adduser.sh
                 ls -la
-                ./terraform destroy -auto-approve -input=false; exit 0
+                #./terraform destroy -auto-approve -input=false; exit 0
                 #export TF_LOG=DEBUG
                 ./terraform plan -input=false
                 export TF_LOG=
