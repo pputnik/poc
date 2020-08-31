@@ -4,7 +4,6 @@ pipeline {
         TF_IN_AUTOMATION = 1
         TF_url = "https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip"
         TF_zip = "terraform_0.12.29_linux_amd64.zip"
-        kubectl_url = "https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl"
     }
     stages {
         stage('Prepare env') {
@@ -66,18 +65,8 @@ pipeline {
                 //TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
             }
             steps {
-                /*withCredentials(bindings: [sshUserPrivateKey( \
-                    credentialsId: 'dodaxbuilder-rsa-dev01', \
-                    keyFileVariable: 'git_key', \
-                    usernameVariable: 'git' \
-                )]) {*/
                     sh 'echo "Validating: $(date +%F-%H:%M:%S)"'
                     checkout scm
-                    /*sh("""
-                    git config credential.username {GIT_USERNAME}
-                    git config credential.helper "!echo password={GITPASSWORD}; echo"
-                    #git clone {your_repository}
-                    """)*/
                     sh """
                     /bin/rm -rf ./.terraform terraform.tfstate terraform.tfstate.backup
                     ls -la
@@ -99,31 +88,9 @@ pipeline {
                 ./terraform plan -input=false -no-color
                 export TF_LOG=
                 ./terraform apply -auto-approve -input=false -no-color
-                /bin/rm -rf  .kube/config
-                clus_name=\$(./terraform output -json | jq -S -r '.cluster_name.value')
-                ./aws eks update-kubeconfig --name \$clus_name
-                export PATH=\$(pwd):\$PATH # we need it because looks like kubectl uses "aws" from path
-
-                # allow access to the cluster for SysAdmin-Test-Env
-                ./kubectl apply -f aws-auth-cm.yaml
-                ./kubectl describe configmap -n kube-system aws-auth
-
-                # apply service account
-                ###./kubectl apply -f sa_aws_node.yaml
-                ###./kubectl rollout restart -n kube-system daemonset.apps/aws-node
-                ###timeout 50 ./kubectl get -n kube-system daemonset.apps/aws-node --watch
-                #./kubectl apply -f pod1-example.yaml
 
                 """
             }
         }
     }
-    /*post {
-        always {
-            do something
-        }
-        failure {
-            mail to: alutchko@dodax.com, subject: 'The Pipeline failed :('
-        }
-    }*/
 }

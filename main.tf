@@ -1,66 +1,103 @@
-resource "aws_security_group" "this" {
-  name_prefix = "allow_tls"
-  description = "Allow TLS inbound traffic"
-  //vpc_id      = module.vpc.vpc-id
-  vpc_id      = var.vpc_id
+locals {
+  environment = var.workspace_to_environment[terraform.workspace]
+}
+
+resource "aws_db_instance" "this" {
+  allocated_storage                   = 20
+  apply_immediately                   = true
+  auto_minor_version_upgrade          = true
+  backup_retention_period             = 1
+  storage_type                        = "gp2"
+  engine                              = "mysql"
+  engine_version                      = "5.7"
+  instance_class                      = "db.t2.micro"
+  multi_az                            = false
+  iam_database_authentication_enabled = true
+  name                                = "mydb"
+  username                            = "foo"
+  password                            = "foobarbaz"
+}
+
+resource "aws_db_security_group" "this" {
+  name = "rds_sg"
 
   ingress {
-    description = "internal"
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/8"]
+    cidr = "10.0.0.0/24"
   }
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["85.128.77.0/24"]
-    description = "ssh for Warsaw 360CL office"
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = merge({
-	Name = "allow_internal"
-  }, var.tags)
 }
 
-### EKS cluster config
-resource "aws_eks_cluster" "this" {
-	//name = var.cluster_name
-	name = var.cluster_name
-	enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-	role_arn                  = aws_iam_role.eks.arn
-	version                   = var.k8s_version
-	vpc_config {
-		subnet_ids              = flatten([var.subnet-public-az-a-id, var.subnet-private-az-a-id])
-		security_group_ids      = [aws_security_group.this.id]
-		endpoint_private_access = "true"
-		endpoint_public_access  = "true"
-	}
-    tags = merge(var.tags, {
-      "test"      = "1"
-    })
+resource "aws_lambda_function" "this" {
+  function_name    = var.project
+  handler          = "index.handler"
+  role             = aws_iam_role.this.arn
+  runtime          = "python3.7"
+  memory_size      = 128
+  timeout          = 3
+  publish          = true
+  filename         = data.archive_file.this.output_path
+  source_code_hash = data.archive_file.this.output_base64sha256
+
 }
 
-### OIDC config
-data "aws_region" "current" {}
-
-# Fetch OIDC provider thumbprint for root CA
-data "external" "thumbprint" {
-  depends_on = [ aws_eks_cluster.this ]
-  program = ["./oidc-thumbprint.sh", data.aws_region.current.name]
+data "null_data_source" "file" {
+  inputs = {
+    filename = "test.py"
+  }
 }
 
-resource "aws_iam_openid_connect_provider" "cluster" {
-  client_id_list  = ["sts.amazonaws.com"]
-  //thumbprint_list = concat([data.external.thumbprint.result.thumbprint], var.oidc_thumbprint_list)
-  thumbprint_list = [data.external.thumbprint.result.thumbprint]
-  url             = aws_eks_cluster.this.identity.0.oidc.0.issuer
+data "null_data_source" "archive" {
+  inputs = {
+    filename = "test.zip"
+  }
+}
+
+data "archive_file" "this" {
+  type        = "zip"
+  source_file = data.null_data_source.file.outputs.filename
+  output_path = data.null_data_source.archive.outputs.filename
+}
+
+resource "aws_iam_role" "this" {
+  name               = "content-cache-image-provider"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "default" {
+  role       = "${aws_iam_role.this.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+data "aws_iam_policy_document" "this" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:*",
+    ]
+    resources = "*"
+  }
+}
+
+resource "aws_iam_policy" "this" {
+  name   = "lambda-iam-rds"
+  policy = data.aws_iam_policy_document.this.json
+}
+
+resource "aws_iam_role_policy_attachment" "lir" {
+  policy_arn = aws_iam_policy.this.arn
+  role       = aws_iam_role.this.name
 }
