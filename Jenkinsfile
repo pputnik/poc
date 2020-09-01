@@ -81,7 +81,7 @@ pipeline {
                 ls -la
                 #./terraform destroy -auto-approve -input=false; exit 0
                 ./terraform plan -input=false
-                export TF_LOG=DEBUG
+                #export TF_LOG=DEBUG
                 ./terraform apply -auto-approve -input=false
                 export TF_LOG=
 
