@@ -16,16 +16,16 @@ resource "aws_db_instance" "this" {
   skip_final_snapshot      = true
 
   iam_database_authentication_enabled = true
-  db_subnet_group_name                = aws_db_subnet_group.default.name
-  vpc_security_group_ids              = [aws_security_group.allow_mysql.id]
+  #db_subnet_group_name                = aws_db_subnet_group.default.name
+  #vpc_security_group_ids              = [aws_security_group.allow_mysql.id]
 }
 
-resource "aws_db_subnet_group" "default" {
+/*resource "aws_db_subnet_group" "default" {
   name       = var.project
   subnet_ids = ["subnet-099b892eba3ec327c", "subnet-0a134a94188b08f24"]
 
   tags = var.tags
-}
+}*/
 
 
 resource "aws_security_group" "allow_mysql" {
