@@ -17,7 +17,7 @@ resource "aws_db_instance" "this" {
 
 resource "aws_db_subnet_group" "default" {
   name       = var.project
-  subnet_ids = ["subnet-099b892eba3ec327c"]
+  subnet_ids = ["subnet-099b892eba3ec327c", "subnet-0a134a94188b08f24"]
 
   tags = var.tags
 }
