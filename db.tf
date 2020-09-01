@@ -17,7 +17,7 @@ resource "aws_db_instance" "this" {
 
 resource "aws_db_subnet_group" "default" {
   name       = var.project
-  subnet_ids = ["subnet-43f3b42b", "subnet-34f17e4e"]
+  subnet_ids = ["subnet-fa83afb0", "subnet-fbf2b593"]
 
   tags = var.tags
 }
@@ -28,4 +28,5 @@ resource "aws_db_security_group" "this" {
   ingress {
     cidr = "10.0.0.0/24"
   }
+  tags = var.tags
 }
