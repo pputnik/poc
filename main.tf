@@ -8,13 +8,13 @@ locals {
 
 data "external" "dbuser" {
   depends_on = [aws_db_instance.this]
-  program    = ["./adduser.sh", aws_db_instance.this.name]
+  program    = ["./adduser.sh", aws_db_instance.this.name, aws_db_instance.this.username, aws_db_instance.this.password]
 }
 
 resource "aws_lambda_function" "this" {
   depends_on       = [data.external.dbuser]
   function_name    = var.project
-  handler          = "index.handler"
+  handler          = "test.handler"
   role             = aws_iam_role.this.arn
   runtime          = "python3.7"
   memory_size      = 128
@@ -38,6 +38,7 @@ resource "aws_lambda_function" "this" {
   tags = var.tags
 }
 
+# lambda stuff
 data "null_data_source" "file" {
   inputs = {
     filename = "test.py"
@@ -56,7 +57,6 @@ data "archive_file" "this" {
   output_path = data.null_data_source.archive.outputs.filename
 }
 
-# lambda stuff
 resource "aws_iam_role" "this" {
   name               = "content-cache-image-provider"
   assume_role_policy = <<EOF
@@ -88,13 +88,8 @@ resource "aws_iam_role_policy_attachment" "lambda-vpc" {
 data "aws_iam_policy_document" "this" {
   statement {
     effect = "Allow"
-
-    actions = [
-      "rds-db:connect",
-    ]
-    resources = [
-      "arn:aws:rds:${var.region}:${local.acc_id}:dbuser:myworld/username"
-    ]
+    actions = [ "rds-db:connect" ]
+    resources = [ "arn:aws:rds:${var.region}:${local.acc_id}:dbuser:${aws_db_instance.this.id}/lambda-user" ]
   }
 }
 
