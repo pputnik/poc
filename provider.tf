@@ -10,7 +10,7 @@ provider "aws" {
     session_name = "eks_${local.environment}"
   }
   region  = var.region
-  version = "~> 3.3"
+  version = "~> 3.4"
 }
 
 terraform {
