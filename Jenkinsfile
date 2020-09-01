@@ -29,17 +29,9 @@ pipeline {
 
     stages {
         stage('Initialization') {
-            parallel {
-                stage('addGithubToKnownHosts') {
-                    steps {
-                        addGithubToKnownHosts()
-                    }
-                }
-                stage('terraformInit') {
-                    steps {
-                        terraformInit()
-                    }
-                }
+            steps {
+                addGithubToKnownHosts()
+                terraformInit()
             }
         }
 
