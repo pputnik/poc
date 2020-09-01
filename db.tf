@@ -1,19 +1,23 @@
 resource "aws_db_instance" "this" {
-  allocated_storage                   = 20
-  apply_immediately                   = true
-  auto_minor_version_upgrade          = true
-  backup_retention_period             = 1
-  storage_type                        = "gp2"
-  engine                              = "mysql"
-  engine_version                      = "5.7"
-  instance_class                      = "db.t2.micro"
-  multi_az                            = false
+  allocated_storage          = 20
+  auto_minor_version_upgrade = true
+  storage_type               = "gp2"
+  engine                     = "mysql"
+  engine_version             = "5.7"
+  instance_class             = "db.t2.micro"
+  multi_az                   = false
+  name                       = var.project
+  username                   = "foo"
+  password                   = "foo123bar567baz"
+
+  apply_immediately        = true
+  backup_retention_period  = 0
+  delete_automated_backups = true
+  skip_final_snapshot      = true
+
   iam_database_authentication_enabled = true
-  name                                = var.project
-  username                            = "foo"
-  password                            = "foo123bar567baz"
   db_subnet_group_name                = aws_db_subnet_group.default.name
-  vpc_security_group_ids = [aws_security_group.allow_mysql.id]
+  vpc_security_group_ids              = [aws_security_group.allow_mysql.id]
 }
 
 resource "aws_db_subnet_group" "default" {
