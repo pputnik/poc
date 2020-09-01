@@ -74,9 +74,7 @@ resource "aws_security_group" "allow_mysql" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = var.tags
-  }
+  tags = var.tags
 }
 
 resource "aws_iam_role" "this" {
