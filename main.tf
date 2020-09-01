@@ -76,11 +76,11 @@ resource "aws_iam_role" "this" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "default" {
+resource "aws_iam_role_policy_attachment" "lambda-basic" {
   role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
-resource "aws_iam_role_policy_attachment" "default" {
+resource "aws_iam_role_policy_attachment" "lambda-vpc" {
   role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
