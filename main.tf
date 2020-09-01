@@ -10,6 +10,7 @@ data "external" "dbuser" {
   program    = ["./adduser.sh", aws_db_instance.this.name]
 }
 
+/*
 resource "aws_lambda_function" "this" {
   depends_on       = [data.external.dbuser]
   function_name    = var.project
@@ -102,3 +103,4 @@ resource "aws_iam_role_policy_attachment" "lir" {
   policy_arn = aws_iam_policy.this.arn
   role       = aws_iam_role.this.name
 }
+*/

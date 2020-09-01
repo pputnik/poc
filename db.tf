@@ -9,6 +9,7 @@ resource "aws_db_instance" "this" {
   name                       = var.project
   username                   = "foo"
   password                   = "foo123bar567baz"
+  tags = var.tags
 
   apply_immediately        = true
   backup_retention_period  = 0
@@ -20,12 +21,13 @@ resource "aws_db_instance" "this" {
   #vpc_security_group_ids              = [aws_security_group.allow_mysql.id]
 }
 
-/*resource "aws_db_subnet_group" "default" {
+/*
+resource "aws_db_subnet_group" "default" {
   name       = var.project
   subnet_ids = ["subnet-099b892eba3ec327c", "subnet-0a134a94188b08f24"]
 
   tags = var.tags
-}*/
+}
 
 
 resource "aws_security_group" "allow_mysql" {
@@ -49,3 +51,4 @@ resource "aws_security_group" "allow_mysql" {
 
   tags = var.tags
 }
+*/
