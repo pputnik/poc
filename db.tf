@@ -13,6 +13,7 @@ resource "aws_db_instance" "this" {
   username                            = "foo"
   password                            = "foo123bar567baz"
   db_subnet_group_name                = aws_db_subnet_group.default.name
+  vpc_security_group_ids = aws_security_group.allow_mysql.id
 }
 
 resource "aws_db_subnet_group" "default" {
@@ -22,14 +23,6 @@ resource "aws_db_subnet_group" "default" {
   tags = var.tags
 }
 
-resource "aws_db_security_group" "this" {
-  name = "rds_sg"
-
-  ingress {
-    cidr = "10.0.0.0/16"
-  }
-  tags = var.tags
-}
 
 resource "aws_security_group" "allow_mysql" {
   name   = "allow_mysql"
