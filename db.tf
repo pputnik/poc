@@ -13,7 +13,7 @@ resource "aws_db_instance" "this" {
   username                            = "foo"
   password                            = "foo123bar567baz"
   db_subnet_group_name                = aws_db_subnet_group.default.name
-  vpc_security_group_ids = aws_security_group.allow_mysql.id
+  vpc_security_group_ids = [aws_security_group.allow_mysql.id]
 }
 
 resource "aws_db_subnet_group" "default" {

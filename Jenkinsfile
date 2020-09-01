@@ -65,7 +65,6 @@ pipeline {
                     checkout scm
                     sh """
                     /bin/rm -rf ./.terraform terraform.tfstate terraform.tfstate.backup
-                    ls -la
                     #export TF_LOG=DEBUG
                     ./terraform init
                     #export TF_LOG=
