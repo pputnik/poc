@@ -5,12 +5,12 @@ locals {
   acc_id      = data.aws_caller_identity.current.account_id
 }
 
+/*
 data "external" "dbuser" {
   depends_on = [aws_db_instance.this]
   program    = ["./adduser.sh", aws_db_instance.this.name]
 }
 
-/*
 resource "aws_lambda_function" "this" {
   depends_on       = [data.external.dbuser]
   function_name    = var.project
