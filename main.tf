@@ -5,7 +5,7 @@ locals {
   acc_id      = data.aws_caller_identity.current.account_id
 }
 
-/*
+
 data "external" "dbuser" {
   depends_on = [aws_db_instance.this]
   program    = ["./adduser.sh", aws_db_instance.this.name]
@@ -56,7 +56,7 @@ data "archive_file" "this" {
   output_path = data.null_data_source.archive.outputs.filename
 }
 
-
+# lambda stuff
 resource "aws_iam_role" "this" {
   name               = "content-cache-image-provider"
   assume_role_policy = <<EOF
@@ -103,4 +103,4 @@ resource "aws_iam_role_policy_attachment" "lir" {
   policy_arn = aws_iam_policy.this.arn
   role       = aws_iam_role.this.name
 }
-*/
+

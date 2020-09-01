@@ -1,4 +1,4 @@
-/*resource "aws_db_instance" "this" {
+resource "aws_db_instance" "this" {
   allocated_storage          = 20
   auto_minor_version_upgrade = true
   storage_type               = "gp2"
@@ -51,4 +51,4 @@ resource "aws_security_group" "allow_mysql" {
 
   tags = var.tags
 }
-*/
+
