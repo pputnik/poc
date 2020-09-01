@@ -11,7 +11,7 @@ data "external" "dbuser" {
 }
 
 resource "aws_lambda_function" "this" {
-  depends_on = [data.external.dbuser]
+  depends_on       = [data.external.dbuser]
   function_name    = var.project
   handler          = "index.handler"
   role             = aws_iam_role.this.arn
@@ -22,8 +22,8 @@ resource "aws_lambda_function" "this" {
   filename         = data.archive_file.this.output_path
   source_code_hash = data.archive_file.this.output_base64sha256
 
-   vpc_config {
-    subnet_ids         = ["subnet-fa83afb0", "subnet-fbf2b593"]
+  vpc_config {
+    subnet_ids         = ["subnet-099b892eba3ec327c"]
     security_group_ids = [aws_security_group.allow_mysql.id]
   }
 
@@ -56,8 +56,8 @@ data "archive_file" "this" {
 }
 
 resource "aws_security_group" "allow_mysql" {
-  name        = "allow_mysql"
-  vpc_id      = "vpc-0973f761"
+  name   = "allow_mysql"
+  vpc_id = "vpc-0ad836f1b7bb4b621"
 
   ingress {
     description = "TLS from VPC"

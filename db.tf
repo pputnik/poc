@@ -12,12 +12,12 @@ resource "aws_db_instance" "this" {
   name                                = var.project
   username                            = "foo"
   password                            = "foo123bar567baz"
-  db_subnet_group_name = aws_db_subnet_group.default.name
+  db_subnet_group_name                = aws_db_subnet_group.default.name
 }
 
 resource "aws_db_subnet_group" "default" {
   name       = var.project
-  subnet_ids = ["subnet-fa83afb0", "subnet-fbf2b593"]
+  subnet_ids = ["subnet-099b892eba3ec327c"]
 
   tags = var.tags
 }
