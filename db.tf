@@ -9,7 +9,7 @@ resource "aws_db_instance" "this" {
   name                       = var.project
   username                   = "foo"
   password                   = "foo123bar567baz"
-  tags = var.tags
+  tags                       = var.tags
 
   apply_immediately        = true
   backup_retention_period  = 0
