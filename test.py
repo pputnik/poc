@@ -1,24 +1,19 @@
 import os
 import sys
 import logging
-import rds_config
-import pymysql
+import mysql.connector
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.Connecting.Python.html
 
-#rds settings
+# rds settings
 rds_host = str(os.environ["DB_HOST"])
 db_name = str(os.environ["DB_NAME"])
 name = str(os.environ["DB_USER"])
-password = rds_config.db_password
 
-try:
-    conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
-except pymysql.MySQLError as e:
-    logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
-    logger.error(e)
-    sys.exit()
+os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
 
 def handler(event, context):
     """
@@ -28,7 +23,17 @@ def handler(event, context):
     for item in os.environ:
         print(str(item) + ":" + str(os.environ[item]))
 
+    session = boto3.Session(profile_name='RDSCreds')
+    client = boto3.client('rds')
 
+    token = client.generate_db_auth_token(DBHostname=ENDPOINT, Port=PORT, DBUsername=USR, Region=REGION)
+
+    try:
+        conn = mysql.connector.connect(rds_host, user=name, passwd=token, db=db_name, connect_timeout=5)
+    except mysql.connector.MySQLError as e:
+        logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
+        logger.error(e)
+        sys.exit()
 
     logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
     item_count = 0
@@ -43,7 +48,7 @@ def handler(event, context):
         for row in cur:
             item_count += 1
             logger.info(row)
-            #print(row)
+            # print(row)
     conn.commit()
 
-    return "Added %d items from RDS MySQL table" %(item_count)
+    return "Added %d items from RDS MySQL table" % (item_count)
