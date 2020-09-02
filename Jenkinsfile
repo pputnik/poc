@@ -1,145 +1,92 @@
 pipeline {
+    agent { label "ec2-fleet" }
     environment {
-        TF_IN_AUTOMATION = true
-        TF_INPUT = false
-        S3_BUCKET_SSH = "com.dodax.infrastructure.terraform.sshkeys"
-        S3_BUCKET_SSL = "com.dodax.infrastructure.terraform.ssl"
-        TF_WORKSPACE = "${DEPLOY_ENV}"
-        destination_role = "arn:aws:iam::313829517975:role/jenkins_executor"
-        tf_vars=" " //-var cluster_name=${cluster_name}"
+        TF_IN_AUTOMATION = 1
+        TF_url = "https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip"
+        TF_zip = "terraform_0.12.29_linux_amd64.zip"
     }
-    agent {
-        dockerfile {
-            label "ec2-fleet"
-            filename 'terraform.Dockerfile'
-            dir 'ci'
-        }
-    }
-    parameters {
-        choice(name: 'ACTION', choices: ['Plan/Apply', 'Nada', 'Destroy'], description: 'What should we do with the stack?')
-        choice(name: 'DEPLOY_ENV', choices: ['test', 'prod'], description: 'Choose the environment to deploy to')
-    }
-
     options {
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
         ansiColor('xterm')
     }
-
     stages {
-        stage('Initialization') {
-            steps {
-                addGithubToKnownHosts()
-                terraformInit()
+        stage('Prepare env') {
+            parallel {
+                stage('AWS CLI') {
+                    steps {
+                        sh 'echo "Prepare env: $(date +%F-%H:%M:%S)"'
+                        sh "echo 'NODE_NAME=${env.NODE_NAME}'"
+                        // AWS CLI setup
+                        sh """if [ ! -x ./aws ] ; then
+                        echo re-setup needed
+                        /bin/rm -rf aws aws_cli aws_dist aws_completer .kube
+                        mkdir -p aws_cli && mkdir -p .kube
+                        curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'
+                        unzip -q -o awscliv2.zip
+                        mv ./aws ./aws_dist  # to have aws executable as just './aws'
+                        ./aws_dist/install -i  ./aws_cli/  -b ./
+                        # little hack because aws installer is broken if you run it as non-root
+                        ln -f -s ./aws_cli/v2/\$(ls ./aws_cli/v2/ | grep 2)/dist/aws ./aws
+                        /bin/rm -rf ./aws_completer ./aws_dist awslogs-agent-setup.py ./current
+                        # aws default setup
+                        mkdir -p ~/.aws # don't mess './aws' with '.aws'!!!
+                        echo \"[default]\noutput = json\nregion = eu-central-1\n\" > ~/.aws/config
+                        ls -laR ~/.aws/
+                        # aws ec2 describe-instances
+                        fi
+                        ./aws --version
+                        ./aws sts get-caller-identity
+                        """
+                    }
+                }
+                stage('Terraform') {
+                    steps {
+                        sh """if [ ! -x ./terraform ] ; then
+                        wget -nv ${TF_url}
+                        unzip -o ${TF_zip}
+                        /bin/rm ${TF_zip}
+                        fi
+                        ./terraform -v
+                        """
+                    }
+                }
             }
         }
-
-        stage('Plan') {
-            when {
-                expression { params.ACTION == "Plan/Apply" }
+        stage('Test') {
+            environment {
+                TF_LOG = ''
+                TF_INPUT = 0
+                //TF_VAR_GITHUB_CREDENTIALS = credentials('dodaxbuilder-rsa-dev01')
             }
             steps {
-                terraformPlan(env.TF_WORKSPACE)
+                    sh 'echo "Validating: $(date +%F-%H:%M:%S)"'
+                    checkout scm
+                    sh """
+                    /bin/rm -rf ./.terraform terraform.tfstate terraform.tfstate.backup
+                    #export TF_LOG=DEBUG
+                    ./terraform init
+                    #export TF_LOG=
+                    ./terraform validate
+                    """
+                //}
             }
         }
-
-        stage ('Approval') {
-            when {
-                expression { params.ACTION == "Nada" }
-            }
-            options {
-                timeout(time: 20, unit: 'MINUTES')
-            }
+        stage('apply') {
             steps {
-                input message: "Do you want to proceed with: $ACTION?"
-            }
-        }
-
-        stage('Destroy') {
-            when {
-                expression { params.ACTION == "Destroy" }
-            }
-            steps {
+                sh 'echo "Apply: $(date +%F-%H:%M:%S)"'
                 sh """
-                terraform destroy ${tf_vars} -auto-approve
-                export TF_WORKSPACE=
-                terraform workspace select default
-                terraform workspace delete ${TF_WORKSPACE}
-                """
-            }
-        }
-
-        stage ('Terraform Apply') {
-            when {
-                expression { params.ACTION == "Plan/Apply" }
-            }
-            steps {
-                sh """
-                ls -l
+                chmod 700 ./adduser.sh
+                ls -la
+                ./terraform destroy -auto-approve -input=false; exit 0
+                ./terraform plan -input=false
                 #export TF_LOG=DEBUG
-                terraform apply ./${TF_WORKSPACE}.tfplan
-                #export TF_LOG=
+                ./terraform apply -auto-approve -input=false
+                export TF_LOG=
+
                 """
             }
         }
     }
-
-    post {
-        cleanup {
-            node("ec2-fleet") {
-            cleanWs() }
-        }
-    }
-}
-
-def prepareSSHKeys(String environment) {
-    sh "mkdir /tmp/ssh_keys-$environment"
-    sh "aws s3 sync s3://${S3_BUCKET_SSH}/$environment /tmp/ssh_keys-$environment/"
-    sh "chmod 600 /tmp/ssh_keys-$environment/*"
-}
-
-def prepareSSLFiles(String environment) {
-    sh "mkdir /tmp/ssl-$environment"
-    sh "aws s3 sync s3://${S3_BUCKET_SSL}/$environment /tmp/ssl-$environment/"
-}
-
-def addGithubToKnownHosts() {
-    sh """
-    whoami
-    mkdir -p ~/.ssh
-    ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-    mkdir -p ~/.aws
-    echo \"[default]\noutput = json\nregion = eu-central-1\n\" > ~/.aws/config
-    """
-}
-
-def terraformInit() {
-    withCredentials([
-        sshUserPrivateKey(credentialsId: 'dodaxbuilder-rsa-dev01', keyFileVariable: 'ID_RSA'),
-    ]) {
-        sh """
-        eval `ssh-agent -s`
-        ssh-add -k ${ID_RSA}
-        aws --version
-        aws sts get-caller-identity
-        terraform --version
-        echo TF_WORKSPACE: ${TF_WORKSPACE}
-        rm -rf ./terraform
-        export TF_WORKSPACE=
-        terraform init
-        export TF_WORKSPACE=${DEPLOY_ENV}
-        if [ \$(terraform workspace list | grep -c " ${TF_WORKSPACE}\$") -eq 0 ] ; then
-            terraform workspace new ${TF_WORKSPACE}
-        fi
-        """
-    }
-}
-
-def terraformPlan(String environment) {
-    sh """
-    terraform plan ${tf_vars} -out=${environment}.tfplan
-    terraform show ./${environment}.tfplan > ${environment}-tfplan.txt
-    """
-    archiveArtifacts artifacts: '*-tfplan.txt', fingerprint: true
 }
