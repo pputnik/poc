@@ -6,7 +6,7 @@ pipeline {
         S3_BUCKET_SSL = "com.dodax.infrastructure.terraform.ssl"
         TF_WORKSPACE = "${DEPLOY_ENV}"
         destination_role = "arn:aws:iam::313829517975:role/jenkins_executor"
-        tf_vars=""//-var cluster_name=${cluster_name}"
+        tf_vars=" " //-var cluster_name=${cluster_name}"
     }
     agent {
         dockerfile {
