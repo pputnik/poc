@@ -62,7 +62,7 @@ pipeline {
             }
             steps {
                 sh """
-                terraform destroy -var-file ${TF_WORKSPACE}.tfvars ${tf_vars} -auto-approve
+                terraform destroy ${tf_vars} -auto-approve
                 export TF_WORKSPACE=
                 terraform workspace select default
                 terraform workspace delete ${TF_WORKSPACE}
@@ -138,7 +138,7 @@ def terraformInit() {
 
 def terraformPlan(String environment) {
     sh """
-    terraform plan -var-file=${environment}.tfvars ${tf_vars} -out=${environment}.tfplan
+    terraform plan ${tf_vars} -out=${environment}.tfplan
     terraform show ./${environment}.tfplan > ${environment}-tfplan.txt
     """
     archiveArtifacts artifacts: '*-tfplan.txt', fingerprint: true
