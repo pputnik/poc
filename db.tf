@@ -17,6 +17,7 @@ resource "aws_db_instance" "this" {
   skip_final_snapshot      = true
 
   iam_database_authentication_enabled = true
+  publicly_accessible                 = true
   db_subnet_group_name                = aws_db_subnet_group.default.name
   vpc_security_group_ids              = [aws_security_group.allow_mysql.id]
 }
@@ -35,7 +36,7 @@ resource "aws_security_group" "allow_mysql" {
   vpc_id = "vpc-0ad836f1b7bb4b621"
 
   ingress {
-    description = "TLS from VPC"
+    description = "mysql"
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"

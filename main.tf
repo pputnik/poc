@@ -8,7 +8,9 @@ locals {
 
 data "external" "dbuser" {
   depends_on = [aws_db_instance.this]
-  program    = ["./adduser.sh", aws_db_instance.this.address, aws_db_instance.this.username, aws_db_instance.this.password]
+  # it makes sense to get mysql pass directly by shell script from parameter store
+  # here it is explicit for POC purpose only
+  program = ["./adduser.sh", aws_db_instance.this.address, aws_db_instance.this.username, aws_db_instance.this.password]
 }
 
 resource "aws_lambda_function" "this" {
@@ -87,9 +89,9 @@ resource "aws_iam_role_policy_attachment" "lambda-vpc" {
 
 data "aws_iam_policy_document" "this" {
   statement {
-    effect = "Allow"
-    actions = [ "rds-db:connect" ]
-    resources = [ "arn:aws:rds:${var.region}:${local.acc_id}:dbuser:${aws_db_instance.this.id}/lambda-user" ]
+    effect    = "Allow"
+    actions   = ["rds-db:connect"]
+    resources = ["arn:aws:rds:${var.region}:${local.acc_id}:dbuser:${aws_db_instance.this.id}/lambda-user"]
   }
 }
 
