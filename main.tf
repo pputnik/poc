@@ -8,7 +8,7 @@ locals {
 
 data "external" "dbuser" {
   depends_on = [aws_db_instance.this]
-  program    = ["./adduser.sh", aws_db_instance.this.domain, aws_db_instance.this.username, aws_db_instance.this.password]
+  program    = ["./adduser.sh", aws_db_instance.this.address, aws_db_instance.this.username, aws_db_instance.this.password]
 }
 
 resource "aws_lambda_function" "this" {
