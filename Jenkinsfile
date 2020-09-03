@@ -17,7 +17,7 @@ pipeline {
     }
     parameters {
         choice(name: 'ACTION', choices: ['Plan/Apply', 'Nada', 'Destroy'], description: 'What should we do with the stack?')
-        choice(name: 'DEPLOY_ENV', choices: ['test', 'prod'], description: 'Choose the environment to deploy to')
+        choice(name: 'DEPLOY_ENV', choices: ['alex', 'test', 'prod'], description: 'Choose the environment to deploy to')
     }
 
     options {
