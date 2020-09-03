@@ -23,6 +23,6 @@ module "vpc" {
   }
 
   subnet_databases_creation = false
-  peering_creation = true
+  peering_creation = false
   tags = var.tags
 }
