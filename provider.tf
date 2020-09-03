@@ -7,7 +7,7 @@ terraform {
 provider "aws" {
   assume_role {
     role_arn     = var.assume_role_arn
-    session_name = "eks_${local.environment}"
+    session_name = "${var.tags["project"]}-${terraform.workspace}"
   }
   region  = var.region
   version = "~> 3.4"
