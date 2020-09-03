@@ -132,7 +132,6 @@ def terraformInit() {
         if [ \$(terraform workspace list | grep -c " ${TF_WORKSPACE}\$") -eq 0 ] ; then
             terraform workspace new ${TF_WORKSPACE}
         fi
-        chmod 700 adduser.sh
         """
     }
 }
