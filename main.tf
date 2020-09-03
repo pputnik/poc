@@ -8,6 +8,7 @@ locals {
 module "vpc" {
   source       = "git@github.com:dodax/terraform-aws-vpc?ref=workspaces"
   project = var.tags["project"]
+  env = local.environment
 
   vpc_cidr = "${var.cidr_head}.128.0/17"
   subnet_cidr_public = {
