@@ -27,6 +27,6 @@ module "vpc" {
     az_c = "${var.cidr_head}.246.0/24"
   }
   subnet_databases_creation = true
-
+  peering_creation = true
   tags = var.tags
 }
