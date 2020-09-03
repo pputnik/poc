@@ -5,7 +5,7 @@ terraform {
 
 provider "aws" {
   assume_role {
-    role_arn     = var.assume_role_arn
+    role_arn     = "arn:aws:iam::313829517975:role/jenkins_executor"
     session_name = "${var.tags["project"]}-${terraform.workspace}"
   }
   region  = var.region
@@ -17,8 +17,8 @@ provider "aws" {
   region = var.region
 
   assume_role {
-    role_arn     = "arn:aws:iam::609350192073:role/jenkins_executor" # infrastructure
-    session_name = "${var.tags["project"]}-${terraform.workspace}"
+    role_arn     = "arn:aws:iam::313829517975:role/jenkins_executor" # infrastructure-test
+    session_name = "${var.tags["project"]}-${terraform.workspace}2"
   }
 }
 

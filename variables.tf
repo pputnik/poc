@@ -26,7 +26,3 @@ variable "workspace_to_environment" {
   }
 }
 
-variable "assume_role_arn" { # infra-test
-  default = "arn:aws:iam::313829517975:role/jenkins_executor"
-}
-
