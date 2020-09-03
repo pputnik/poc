@@ -33,7 +33,6 @@ resource "aws_vpc_peering_connection" "peer-infrastructure" {
   peer_owner_id = "313829517975"
   peer_region   = "eu-central-1"
   auto_accept   = true
-
   tags = { "Name" = "${var.project}-Infrastructure" }
 }
 
