@@ -13,6 +13,15 @@ provider "aws" {
   version = "~> 3.4"
 }
 
+provider "aws" {
+  alias = "infrastructure"
+
+  assume_role {
+    role_arn     = "arn:aws:iam::609350192073:role/jenkins_executor"  # infrastructure
+    session_name = "${var.tags["project"]}-${terraform.workspace}"
+  }
+}
+
 terraform {
   backend "s3" {
     bucket  = "com.dodax.infrastructure.terraform.testing" # at aws.infrastructure acc
