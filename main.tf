@@ -21,7 +21,12 @@ module "vpc" {
     az_b = "${var.cidr_head}.145.0/24"
     az_c = "${var.cidr_head}.146.0/24"
   }
-  subnet_databases_creation = false
+  subnet_cidr_private = {
+    az_a = "${var.cidr_head}.244.0/24"
+    az_b = "${var.cidr_head}.245.0/24"
+    az_c = "${var.cidr_head}.246.0/24"
+  }
+  subnet_databases_creation = true
 
   tags = var.tags
 }
