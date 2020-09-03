@@ -10,7 +10,8 @@ provider "aws" {
     session_name = "${var.tags["project"]}-${terraform.workspace}"
   }
   region  = var.region
-  version = "~> 3.4"
+  version = "~> 2.70"
+  #version = "~> 3.4"
 }
 
 provider "aws" {
