@@ -2,11 +2,11 @@ pipeline {
     environment {
         TF_IN_AUTOMATION = true
         TF_INPUT = false
+        TF_PLUGIN_CACHE_DIR = "${env.WORKSPACE}/.terraform.d/plugin-cache"
         S3_BUCKET_SSH = "com.dodax.infrastructure.terraform.sshkeys"
         S3_BUCKET_SSL = "com.dodax.infrastructure.terraform.ssl"
         TF_WORKSPACE = "${DEPLOY_ENV}"
-        destination_role = "arn:aws:iam::313829517975:role/jenkins_executor"
-        tf_vars=" " //-var cluster_name=${cluster_name}"
+        destination_role = "arn:aws:iam::313829517975:role/jenkins_executor" // Infra-TEST account
     }
     agent {
         dockerfile {
@@ -62,10 +62,10 @@ pipeline {
             }
             steps {
                 sh """
-                terraform destroy ${tf_vars} -auto-approve
-                export TF_WORKSPACE=
+                terraform destroy -var-file ${TF_WORKSPACE}.tfvars -auto-approve
+                export TF_WORKSPACE=    # required, or switch to "default" won't work
                 terraform workspace select default
-                terraform workspace delete ${TF_WORKSPACE}
+                terraform workspace delete ${DEPLOY_ENV}
                 """
             }
         }
@@ -87,8 +87,7 @@ pipeline {
 
     post {
         cleanup {
-            node("ec2-fleet") {
-            cleanWs() }
+            cleanWs disableDeferredWipeout: true, deleteDirs: true
         }
     }
 }
@@ -138,7 +137,7 @@ def terraformInit() {
 
 def terraformPlan(String environment) {
     sh """
-    terraform plan ${tf_vars} -out=${environment}.tfplan
+    terraform plan -var-file=${environment}.tfvars -out=${environment}.tfplan
     terraform show ./${environment}.tfplan > ${environment}-tfplan.txt
     """
     archiveArtifacts artifacts: '*-tfplan.txt', fingerprint: true
