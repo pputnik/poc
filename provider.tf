@@ -15,6 +15,7 @@ provider "aws" {
 
 provider "aws" {
   alias = "infrastructure"
+  region  = var.region
 
   assume_role {
     role_arn     = "arn:aws:iam::609350192073:role/jenkins_executor"  # infrastructure
