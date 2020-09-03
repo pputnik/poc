@@ -137,9 +137,9 @@ def terraformInit() {
 
 def terraformPlan(String environment) {
     sh """
-    export TF_LOG=DEBUG
+    #export TF_LOG=DEBUG
     terraform plan -var-file=${environment}.tfvars -out=${environment}.tfplan
-    export TF_LOG=
+    #export TF_LOG=
     terraform show ./${environment}.tfplan > ${environment}-tfplan.txt
     """
     archiveArtifacts artifacts: '*-tfplan.txt', fingerprint: true
