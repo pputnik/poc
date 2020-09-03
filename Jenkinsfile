@@ -77,7 +77,7 @@ pipeline {
             steps {
                 sh """
                 ls -l
-                #export TF_LOG=DEBUG
+                export TF_LOG=DEBUG
                 terraform apply ./${TF_WORKSPACE}.tfplan
                 #export TF_LOG=
                 """
