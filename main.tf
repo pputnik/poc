@@ -16,7 +16,7 @@ data "terraform_remote_state" "infrastructure" {
 
   config = {
     #bucket   = "${var.vpc_remote_state_bucket_base}.${var.environment}"
-    bucket   = "com.dodax.infrastructure.terraform.testing"
+    bucket   = "com.dodax.infrastructure.terraform.${local.environment}"
     key      = "infrastructure-vpc/terraform.tfstate"
     region   = "eu-central-1"
     role_arn = "arn:aws:iam::609350192073:role/jenkins_executor"
