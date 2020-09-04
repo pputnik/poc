@@ -1,50 +1,28 @@
+data "aws_caller_identity" "current" {}
+
 locals {
   environment = var.workspace_to_environment["test"]
+  acc_id      = data.aws_caller_identity.current.account_id
 }
 
-variable "project" {
-  default = "bug-test"
-}
+module "vpc" {
+  source       = "git@github.com:dodax/terraform-aws-vpc?ref=workspaces"
+  project = var.tags["project"]
+  env = local.environment
 
-resource "aws_vpc" "vpc" {
-  cidr_block = "10.35.128.0/17"
-  tags       = { "Name" = "${var.project}-Infrastructure" }
-}
-
-data "terraform_remote_state" "infrastructure" {
-  backend = "s3"
-
-  config = {
-    #bucket   = "${var.vpc_remote_state_bucket_base}.${var.environment}"
-    bucket   = "com.dodax.infrastructure.terraform.${local.environment}"
-    key      = "infrastructure-vpc/terraform.tfstate"
-    region   = "eu-central-1"
-    role_arn = "arn:aws:iam::609350192073:role/jenkins_executor"
+  vpc_cidr = "${var.cidr_head}.128.0/17"
+  subnet_cidr_public = {
+    az_a = "${var.cidr_head}.128.0/24"
+    az_b = "${var.cidr_head}.129.0/24"
+    az_c = "${var.cidr_head}.130.0/24"
   }
-}
-#------------------------------------------#
-# Requester's side of the connection
-#------------------------------------------#
+  subnet_cidr_private = {
+    az_a = "${var.cidr_head}.144.0/24"
+    az_b = "${var.cidr_head}.145.0/24"
+    az_c = "${var.cidr_head}.146.0/24"
+  }
 
-resource "aws_vpc_peering_connection" "peer-infrastructure" {
-  vpc_id        = aws_vpc.vpc.id
-  #peer_vpc_id   = "vpc-0973f761"
-  #peer_owner_id = "313829517975"
-  peer_vpc_id   = data.terraform_remote_state.infrastructure.outputs.vpc-id
-  peer_owner_id = data.terraform_remote_state.infrastructure.outputs.account-id
-  auto_accept   = true
-  tags = { "Name" = "${var.project}-Infrastructure" }
-}
-
-#------------------------------------------#
-# Accepter's side of the connection
-#------------------------------------------#
-
-resource "aws_vpc_peering_connection_accepter" "peer" {
-  provider = aws.infrastructure
-
-  vpc_peering_connection_id = aws_vpc_peering_connection.peer-infrastructure.id
-  auto_accept               = true
-
-  tags = { "Name" = "${var.project}-Infrastructure" }
+  subnet_databases_creation = false
+  peering_creation = true
+  tags = var.tags
 }
