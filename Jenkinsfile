@@ -78,7 +78,7 @@ pipeline {
                 sh """
                 ls -l
                 export TF_LOG=DEBUG
-                terraform apply ./${TF_WORKSPACE}.tfplan
+                terraform apply ./${TF_WORKSPACE}.tfplan || terraform output
                 #export TF_LOG=
                 """
             }
