@@ -10,7 +10,7 @@ aws sts $profile get-caller-identity
 
 echo -n testing prep
 templatebody="--template-body file://spinnaker.yml"
-aws cloudformation validate-template $templatebody >/dev/null
+aws cloudformation $profile validate-template $templatebody >/dev/null
 if [ $? -ne 0 ]; then
         echo " syntax error"
         exit -1
