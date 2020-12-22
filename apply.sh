@@ -8,7 +8,8 @@ git pull --no-edit
 aws sts get-caller-identity &
 
 echo -n testing prep
-aws cloudformation validate-template --template-body file://WordPress_Multi_AZ_prep.yml >/dev/null
+templatebody="--template-body file://spinnaker.yml"
+aws cloudformation validate-template --template-body $templatebody >/dev/null
 if [ $? -ne 0 ]; then
         echo " syntax error"
         exit -1
@@ -18,7 +19,6 @@ name="spinnaker"
 tags="--tags Key=Name,Value=$name Key=Responsible,Value=Alex"
 stackname="--profile sandbox --stack-name $name"
 capab="--capabilities CAPABILITY_IAM"
-templatebody="--template-body file://spinnaker.yml"
 params="--parameters file://spinnaker.params"
 
 #===============================
