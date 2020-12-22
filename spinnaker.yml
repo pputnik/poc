@@ -20,11 +20,11 @@ Parameters:
   VpcId:
     Description: ip range to whitelist in SG
     Type: "AWS::EC2::VPC::Id"
-  HalyardSize:
-    Description: instance type
-    Type: String
   HalyardAmi:
     Description: AMI id
+    Type: String
+  HalyardSize:
+    Description: instance type
     Type: String
 
 # ===
