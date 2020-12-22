@@ -33,7 +33,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
 
     Properties:
-      SecurityGroups:
+      SecurityGroupIds:
         - !Ref SgId
       ImageId: !Ref HalyardAmi
       AvailabilityZone: !Select
