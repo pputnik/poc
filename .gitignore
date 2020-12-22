@@ -1,8 +1,0 @@
-**/.terraform/*
-*.tfstate
-*.tfstate.*
-.idea
-/.project
-crash.log
-ssh_keys/
-modules/*

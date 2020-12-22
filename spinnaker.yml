@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Launch Spinnaker infrastructure
+Parameters:
+
+  proj:
+    Description: project name
+    Type: String
+  key:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  Responsible:
+    Description: responsible person
+    Type: String
+  SgId:
+    Description: ip range to whitelist in SG
+    Type: "AWS::EC2::SecurityGroup::Id"
+
+  VpcId:
+    Description: ip range to whitelist in SG
+    Type: "AWS::EC2::VPC::Id"
+  HalyardSize:
+    Description: instance type
+    Type: String
+  HalyardAmi:
+    Description: AMI id
+    Type: String
+
+# ===
+Resources:
+  Halyard:
+    Type: 'AWS::EC2::Instance'
+
+    Properties:
+      SecurityGroups:
+        - !Ref SgId
+      ImageId: !Ref HalyardAmi
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      UserData: !Base64
+        'Fn::Sub': |
+          #!/bin/bash -xe
+          sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
+      KeyName: !Ref key
+      InstanceType: !Ref HalyardSize
+      Tags:
+        - Key: "Responsible"
+          Value: !Ref Responsible
+
+# ===
+Outputs:
+  halyardIp:
+    Value: !GetAtt Halyard.PublicIp
+    Description: Halyard.PublicIp
