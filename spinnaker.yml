@@ -47,7 +47,9 @@ Resources:
       KeyName: !Ref key
       InstanceType: !Ref HalyardSize
       Tags:
-        - Key: "Responsible"
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-Halyard'
+        - Key: Responsible
           Value: !Ref Responsible
 
 # ===

@@ -14,9 +14,9 @@ if [ $? -ne 0 ]; then
         exit -1
 fi
 
-name="hw2"
-tags="--tags Key=Name,Value=$name"
-stackname="--profile hw --stack-name $name"
+name="spinnaker"
+tags="--tags Key=Name,Value=$name Key=Responsible,Value=Alex"
+stackname="--profile sandbox --stack-name $name"
 capab="--capabilities CAPABILITY_IAM"
 templatebody="--template-body file://spinnaker.yml"
 params="--parameters file://spinnaker.params"
