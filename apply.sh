@@ -1,15 +1,16 @@
 #!/bin/bash
 #-vx
 
+profile="--profile sandbox"
 
 BRANCH=$(git status | grep "On branch" | sed "s/On branch //")
 git reset --hard "origin/$BRANCH"
 git pull --no-edit
-aws sts get-caller-identity &
+aws sts $profile get-caller-identity
 
 echo -n testing prep
 templatebody="--template-body file://spinnaker.yml"
-aws cloudformation validate-template --template-body $templatebody >/dev/null
+aws cloudformation validate-template $templatebody >/dev/null
 if [ $? -ne 0 ]; then
         echo " syntax error"
         exit -1
@@ -17,7 +18,7 @@ fi
 
 name="spinnaker"
 tags="--tags Key=Name,Value=$name Key=Responsible,Value=Alex"
-stackname="--profile sandbox --stack-name $name"
+stackname="$profile --stack-name $name"
 capab="--capabilities CAPABILITY_IAM"
 params="--parameters file://spinnaker.params"
 
