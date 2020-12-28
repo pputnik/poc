@@ -15,7 +15,7 @@ Parameters:
     Type: String
   SgNames:
     Description: List of security group names
-    Type: List<AWS::EC2::SecurityGroup::GroupName>
+    Type: "List<AWS::EC2::SecurityGroup::GroupName>"
 
   VpcId:
     Description: _DEFAULT_ VPC Id
