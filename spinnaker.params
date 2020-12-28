@@ -2,7 +2,7 @@
   {"ParameterKey":"proj", "ParameterValue": "spinnaker"},
   {"ParameterKey":"key", "ParameterValue": "alex"},
   {"ParameterKey":"Responsible", "ParameterValue": "Alex"},
-  {"ParameterKey":"SgId", "ParameterValue": "sg-04286ee7d4c807eab"},
+  {"ParameterKey":"SgNames", "ParameterValue": ["sg-04286ee7d4c807eab"]},
 
   {"ParameterKey":"VpcId", "ParameterValue": "vpc-b222fbcf"},
   {"ParameterKey":"HalyardAmi", "ParameterValue": "ami-0739f8cdb239fe9ae"},

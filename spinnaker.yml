@@ -13,12 +13,12 @@ Parameters:
   Responsible:
     Description: responsible person
     Type: String
-  SgId:
-    Description: ip range to whitelist in SG
-    Type: "AWS::EC2::SecurityGroup::Id"
+  SgNames:
+    Description: Security group names
+    Type: String
 
   VpcId:
-    Description: ip range to whitelist in SG
+    Description: _DEFAULT_ VPC Id
     Type: "AWS::EC2::VPC::Id"
   HalyardAmi:
     Description: AMI id
@@ -33,8 +33,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
 
     Properties:
-      SecurityGroupIds:
-        - !Ref SgId
+      SecurityGroups: !Ref SgNames
       ImageId: !Ref HalyardAmi
       AvailabilityZone: !Select
         - '0'
