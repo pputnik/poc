@@ -14,8 +14,8 @@ Parameters:
     Description: responsible person
     Type: String
   SgNames:
-    Description: List of security group names
-    Type: "List<AWS::EC2::SecurityGroup::GroupName>"
+    Description: CommaDelimitedList of security group names
+    Type: CommaDelimitedList
 
   VpcId:
     Description: _DEFAULT_ VPC Id

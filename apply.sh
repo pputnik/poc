@@ -20,6 +20,7 @@ name="spinnaker"
 tags="--tags Key=Name,Value=$name Key=Responsible,Value=Alex"
 stackname="$profile --stack-name $name"
 capab="--capabilities CAPABILITY_IAM"
+# --parameters ParameterKey=VPCID,ParameterValue=SampleVPCID ParameterKey=SubnetIDs,ParameterValue=SampleSubnetID1\\,SampleSubnetID2
 params="--parameters file://spinnaker.params"
 
 #===============================
