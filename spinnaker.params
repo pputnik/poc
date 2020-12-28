@@ -6,6 +6,6 @@
 
   {"ParameterKey":"VpcId", "ParameterValue": "vpc-b222fbcf"},
   {"ParameterKey":"HalyardAmi", "ParameterValue": "ami-0739f8cdb239fe9ae"},
-  {"ParameterKey":"HalyardSize", "ParameterValue": "r6g.large"}
+  {"ParameterKey":"HalyardSize", "ParameterValue": "r5a.large"}
 
 ]
