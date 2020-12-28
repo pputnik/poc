@@ -15,7 +15,7 @@ Parameters:
     Type: String
   SgNames:
     Description: List of security group names
-    Type: list
+    Type: List<String>
 
   VpcId:
     Description: _DEFAULT_ VPC Id
