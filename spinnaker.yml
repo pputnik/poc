@@ -14,8 +14,8 @@ Parameters:
     Description: responsible person
     Type: String
   SgNames:
-    Description: Security group names
-    Type: String
+    Description: List of security group names
+    Type: list
 
   VpcId:
     Description: _DEFAULT_ VPC Id
