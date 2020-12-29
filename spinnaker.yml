@@ -103,7 +103,8 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Properties:
       Path: "/"
-      Roles: !Ref BaseIAMRole
+      Roles:
+        - !Ref BaseIAMRole
 
 # ===
 Outputs:
