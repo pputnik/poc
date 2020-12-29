@@ -45,11 +45,41 @@ Resources:
           sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
       KeyName: !Ref key
       InstanceType: !Ref HalyardSize
+      IamInstanceProfile: !Ref HalyardRoleProf
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-Halyard'
         - Key: Responsible
           Value: !Ref Responsible
+
+  BaseIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: BaseIAMRole
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: [ "sts:AssumeRole" ]
+        Effect: Allow
+        Principal:
+        Service: [ "ec2.amazonaws.com" ]
+        Version: "2012-10-17"
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                 - 'ec2:*'
+                 - 'ecr:*'
+                 - 'cloudformation:*'
+                Resource: '*'
+  HalyardRoleProf:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles: !Ref BaseIAMRole
 
 # ===
 Outputs:
