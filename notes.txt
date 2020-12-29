@@ -1,0 +1,17 @@
+mkdir -p /var/cache/oracle-jdk11-installer-local
+
+https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html
+
+mv jdk-11.0.4_linux-x64_bin.tar.gz /var/cache/oracle-jdk11-installer-local/
+
+add-apt-repository ppa:linuxuprising/java
+apt update
+apt-get upgrade -y
+apt install oracle-java11-set-default-local
+
+java -version
+
+curl -O https://raw.githubusercontent.com/spinnaker/halyard/master/install/debian/InstallHalyard.sh
+
+useradd halyard -s /usr/sbin/nologin
+bash ./InstallHalyard.sh --user halyard
