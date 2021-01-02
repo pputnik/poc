@@ -1,3 +1,6 @@
+ubuntu: ami-0739f8cdb239fe9ae
+v1: ami-0bebc4be776505dc9
+
 
 
 # https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html
