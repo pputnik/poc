@@ -1,24 +1,50 @@
+
+
+# https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html
+# https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
+
 mkdir -p /var/cache/oracle-jdk11-installer-local
-
-https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html
-https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
-
+wget https://360-sandbox.s3.amazonaws.com/jdk-11.0.9_linux-x64_bin.tar.gz
 mv jdk-11.0.9_linux-x64_bin.tar.gz /var/cache/oracle-jdk11-installer-local/
 
-add-apt-repository ppa:linuxuprising/java
+apt-add-repository ppa:linuxuprising/java
 apt update
 apt-get upgrade -y
-apt install oracle-java11-set-default-local
+apt install oracle-java11-set-default-local unzip
 
 java -version
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+rm -rf ./aws
+aws --version
 
 curl -O https://raw.githubusercontent.com/spinnaker/halyard/master/install/debian/InstallHalyard.sh
 
 useradd halyard -s /usr/sbin/nologin
 bash ./InstallHalyard.sh --user halyard
 
+cat /home/halyard/.bashrc >> ./.bashrc
 . .bashrc
 
 hal -v
 # update-halyard
+
+export AWS_ACCOUNT_NAME="sandbox"
+export ACCOUNT_ID="011874698875"
+export REGION_PRI="eu-central-1"
+export REGION_SEC="us-west-2"
+export BUCKET_NAME="360-sb-spin"    # will be created!
+
+# https://spinnaker.io/setup/install/providers/aws/aws-ec2/
+hal config provider aws account add $AWS_ACCOUNT_NAME \
+    --account-id ${ACCOUNT_ID} \
+    --assume-role role/BaseIAMRole \
+    --regions $REGION_PRI, $REGION_SEC
+
+hal config provider aws enable
+hal config deploy edit --type localdebian
+
+hal config storage s3 edit --region $REGION_PRI --bucket $BUCKET_NAME --color true
 

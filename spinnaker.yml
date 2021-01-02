@@ -74,30 +74,8 @@ Resources:
                  - 'ec2:*'
                  - 'ecr:*'
                  - 'cloudformation:*'
+                 - 's3:*'
                 Resource: '*'
-
-  HalyardRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service: [ "ec2.amazonaws.com" ]
-            Action: [ "sts:AssumeRole" ]
-      Path: "/"
-      Policies:
-        - PolicyName: root
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                 - 'states:SendTaskSuccess'
-                 - 'states:SendTaskFailure'
-                Resource: '*'
-
 
   HalyardRoleProf:
     Type: AWS::IAM::InstanceProfile

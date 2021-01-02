@@ -5,7 +5,7 @@
   {"ParameterKey":"SgNames", "ParameterValue": "spinnaker"},
 
   {"ParameterKey":"VpcId", "ParameterValue": "vpc-b222fbcf"},
-  {"ParameterKey":"HalyardAmi", "ParameterValue": "ami-0739f8cdb239fe9ae"},
+  {"ParameterKey":"HalyardAmi", "ParameterValue": "ami-0b5b13e0c597aba33"},
   {"ParameterKey":"HalyardSize", "ParameterValue": "r5a.large"}
 
 ]
