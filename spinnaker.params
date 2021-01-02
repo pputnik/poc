@@ -1,11 +1,11 @@
 [
   {"ParameterKey":"proj", "ParameterValue": "spinnaker"},
-  {"ParameterKey":"key", "ParameterValue": "alex"},
+  {"ParameterKey":"key", "ParameterValue": "Alex"},
   {"ParameterKey":"Responsible", "ParameterValue": "Alex"},
   {"ParameterKey":"SgNames", "ParameterValue": "spinnaker"},
 
-  {"ParameterKey":"VpcId", "ParameterValue": "vpc-b222fbcf"},
-  {"ParameterKey":"HalyardAmi", "ParameterValue": "ami-0b5b13e0c597aba33"},
+  {"ParameterKey":"VpcId", "ParameterValue": "vpc-3b68d351"},
+  {"ParameterKey":"HalyardAmi", "ParameterValue": "ami-0bebc4be776505dc9"},
   {"ParameterKey":"HalyardSize", "ParameterValue": "r5a.large"}
 
 ]
