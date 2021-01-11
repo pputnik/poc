@@ -76,6 +76,10 @@ Resources:
                  - 'cloudformation:*'
                  - 's3:*'
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                 - 'ssm:GetParameters'
+                Resource: 'arn:aws:ssm:eu-central-1:011874698875:parameter/Spin/*'
 
   HalyardRoleProf:
     Type: AWS::IAM::InstanceProfile

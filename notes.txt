@@ -39,6 +39,17 @@ export ACCOUNT_ID="011874698875"
 export REGION_PRI="eu-central-1"
 export REGION_SEC="us-west-2"
 export BUCKET_NAME="360-sb-spin"    # will be created!
+export FQDN="spin.olowek.eu"
+
+pass=$(openssl rand -base64 17 | sed "s/[^a-zA-Z0-9]//g")
+echo $pass
+
+# https://spinnaker.io/setup/security/ssl/
+export CA_KEY_PASSWORD="CA_KEY_$pass"
+export DECK_KEY_PASSWORD="DECK_KEY_$pass"
+export GATE_KEY_PASSWORD="GATE_KEY_$pass"
+export JKS_PASSWORD="JKS_$pass"
+export GATE_EXPORT_PASSWORD="GATE_P12_$pass"
 
 # https://spinnaker.io/setup/install/providers/aws/aws-ec2/
 hal config provider aws account add $AWS_ACCOUNT_NAME \
@@ -50,4 +61,71 @@ hal config provider aws enable
 hal config deploy edit --type localdebian
 
 hal config storage s3 edit --region $REGION_PRI --bucket $BUCKET_NAME --color true
+hal config storage edit --type s3
+
+hal version list
+spin_ver=$(hal version list | grep " - " | tail -n 1 | awk '{print $2}')
+echo latest spinnaker is $spin_ver
+hal config version edit --version $spin_ver
+hal config security authn oauth2 edit \
+    --pre-established-redirect-uri https://$FQDN:9000/login
+echo "host: 0.0.0.0" | tee \
+    /home/halyard/.hal/default/service-settings/gate.yml \
+    /home/halyard/.hal/default/service-settings/deck.yml
+
+a2enmod ssl
+
+# Create the server certificate(s)
+openssl genrsa -des3 -out ca.key -passout pass:${CA_KEY_PASSWORD} 4096
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt -passin pass:${CA_KEY_PASSWORD}
+openssl genrsa -des3 -out deck.key -passout pass:${DECK_KEY_PASSWORD} 4096
+openssl req -new -key deck.key -out deck.csr -passin pass:${DECK_KEY_PASSWORD}
+openssl x509 -req -days 3650 -in deck.csr -CA ca.crt -CAkey ca.key \
+   -CAcreateserial -out deck.crt -passin pass:${CA_KEY_PASSWORD}
+openssl genrsa -des3 -out gate.key -passout pass:${GATE_KEY_PASSWORD} 4096
+openssl req -new -key gate.key -out gate.csr -passin pass:${GATE_KEY_PASSWORD}
+openssl x509 -sha256 -req -days 365 -in gate.csr -CA ca.crt -CAkey ca.key \
+   -CAcreateserial -out gate.crt -passin pass:${CA_KEY_PASSWORD}
+openssl pkcs12 -export -clcerts -in gate.crt -inkey gate.key -out gate.p12 \
+   -name gate -passin pass:${GATE_KEY_PASSWORD} -password pass:${GATE_EXPORT_PASSWORD}
+keytool -importkeystore -srckeystore gate.p12 -srcstoretype pkcs12 -srcalias gate \
+   -destkeystore gate.jks -destalias gate -deststoretype pkcs12 \
+   -deststorepass ${JKS_PASSWORD} -destkeypass ${JKS_PASSWORD} \
+   -srcstorepass ${GATE_EXPORT_PASSWORD}
+keytool -importcert -keystore gate.jks -alias ca \
+   -file ca.crt -storepass ${JKS_PASSWORD} -noprompt
+
+# now test: It should contain two entries
+#    gate as a PrivateKeyEntry
+#    ca as a trustedCertEntry
+keytool -list -keystore gate.jks -storepass ${JKS_PASSWORD}
+
+#  Configure SSL for Gate and Deck
+mv deck.crt deck.key gate.jks /opt/halyard/
+export KEYSTORE_PATH=/opt/halyard/gate.jks
+export SERVER_CERT=/opt/halyard/deck.crt
+export SERVER_KEY=/opt/halyard/deck.key
+echo $JKS_PASSWORD  # use this pass as BOTH passwords below:
+hal config security api ssl edit --key-alias gate --keystore ${KEYSTORE_PATH} \
+  --keystore-password --keystore-type jks --truststore ${KEYSTORE_PATH} \
+  --truststore-password --truststore-type jks
+hal config security api ssl enable
+
+echo $DECK_KEY_PASSWORD # use this pass below:
+hal config security ui ssl edit --ssl-certificate-file ${SERVER_CERT} \
+  --ssl-certificate-key-file ${SERVER_KEY} --ssl-certificate-passphrase
+hal config security ui ssl enable
+hal deploy apply
+systemctl daemon-reload
+
+
+# ------------- OAuth
+# https://spinnaker.io/setup/security/authentication/oauth/
+https://github.com/settings/applications/new
+spinnaker
+https://spin.olowek.eu:9000/
+https://spin.olowek.eu:9000/login
+
+export GITHUB_CLIENT_ID=$(aws ssm get-parameters --names /Spin/GithubClientId --with-decryption --query Parameters[0].Value --output text)
+export GITHUB_CLIENT_SECRET=$(aws ssm get-parameters --names /Spin/GithubClientSecret --with-decryption --query Parameters[0].Value --output text)
 
