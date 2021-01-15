@@ -1,0 +1,7 @@
+# https://github.com/armory/minnaker/
+
+export FQDN="spin.olowek.eu"
+curl -LO https://github.com/armory/minnaker/releases/latest/download/minnaker.tgz
+tar -xzvf minnaker.tgz
+cd minnaker
+./scripts/install.sh -o -P $FQDN

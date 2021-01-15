@@ -43,9 +43,17 @@ Resources:
         'Fn::Sub': |
           #!/bin/bash -xe
           sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
+          apt-get update
+          apt-get upgrade -y
       KeyName: !Ref key
       InstanceType: !Ref HalyardSize
       IamInstanceProfile: !Ref HalyardRoleProf
+      BlockDeviceMappings:
+        DeviceName: /dev/sda1
+        Ebs:
+          VolumeSize: 35
+          VolumeType: gp3
+
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-Halyard'
