@@ -11,8 +11,7 @@ wget https://360-sandbox.s3.amazonaws.com/jdk-11.0.9_linux-x64_bin.tar.gz
 mv jdk-11.0.9_linux-x64_bin.tar.gz /var/cache/oracle-jdk11-installer-local/
 
 apt-add-repository ppa:linuxuprising/java
-apt update
-apt-get upgrade -y
+apt update && apt-get upgrade -y
 apt install oracle-java11-set-default-local unzip
 
 java -version
@@ -62,13 +61,12 @@ hal config deploy edit --type localdebian
 
 hal config storage s3 edit --region $REGION_PRI --bucket $BUCKET_NAME --color true
 hal config storage edit --type s3
+hal config stats disable
 
 hal version list
 spin_ver=$(hal version list | grep " - " | tail -n 1 | awk '{print $2}')
 echo latest spinnaker is $spin_ver
 hal config version edit --version $spin_ver
-hal config security authn oauth2 edit \
-    --pre-established-redirect-uri https://$FQDN:9000/login
 echo "host: 0.0.0.0" | tee \
     /home/halyard/.hal/default/service-settings/gate.yml \
     /home/halyard/.hal/default/service-settings/deck.yml
@@ -115,8 +113,6 @@ echo $DECK_KEY_PASSWORD # use this pass below:
 hal config security ui ssl edit --ssl-certificate-file ${SERVER_CERT} \
   --ssl-certificate-key-file ${SERVER_KEY} --ssl-certificate-passphrase
 hal config security ui ssl enable
-hal deploy apply
-systemctl daemon-reload
 
 
 # ------------- OAuth
@@ -124,8 +120,26 @@ systemctl daemon-reload
 https://github.com/settings/applications/new
 spinnaker
 https://spin.olowek.eu:9000/
-https://spin.olowek.eu:9000/login
+https://spin.olowek.eu:8084/login
+
+hal config security authn oauth2 edit \
+    --pre-established-redirect-uri https://$FQDN:8084/login
+hal config security api edit --override-base-url https://$FQDN:8084
+hal config security ui edit --override-base-url  https://$FQDN:9000
 
 export GITHUB_CLIENT_ID=$(aws ssm get-parameters --names /Spin/GithubClientId --with-decryption --query Parameters[0].Value --output text)
 export GITHUB_CLIENT_SECRET=$(aws ssm get-parameters --names /Spin/GithubClientSecret --with-decryption --query Parameters[0].Value --output text)
+hal config security authn oauth2 edit --provider github \
+  --client-id $GITHUB_CLIENT_ID --client-secret $GITHUB_CLIENT_SECRET
 
+hal config security authn oauth2 enable
+
+
+hal deploy apply --flush-infrastructure-caches
+systemctl daemon-reload
+
+hal backup create
+# hal backup restore --backup-path
+# hal config
+
+systemctl enable spinnaker
