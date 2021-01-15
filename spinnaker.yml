@@ -49,10 +49,10 @@ Resources:
       InstanceType: !Ref HalyardSize
       IamInstanceProfile: !Ref HalyardRoleProf
       BlockDeviceMappings:
-        DeviceName: /dev/sda1
-        Ebs:
-          VolumeSize: 35
-          VolumeType: gp3
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 35
+            VolumeType: gp3
 
       Tags:
         - Key: Name
