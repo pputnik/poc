@@ -172,7 +172,6 @@ Resources:
       MultiAZ: false
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
       DBClusterIdentifier: !Ref DbCluster
-      StorageType: gp2
       CopyTagsToSnapshot: true
       AutoMinorVersionUpgrade: true
       PubliclyAccessible: false
