@@ -136,6 +136,7 @@ Resources:
       DBSubnetGroupName: !Ref proj
       SubnetIds:
         - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       Tags:
         - Key: Responsible
           Value: !Ref Responsible

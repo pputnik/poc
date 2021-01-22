@@ -1,5 +1,4 @@
-#!/bin/bash
-#-vx
+#!/bin/bash -vx
 
 profile="--profile sandbox"
 
