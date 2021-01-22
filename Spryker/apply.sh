@@ -28,7 +28,7 @@ params="--parameters file://spryker.params"
 echo
 echo -n "checking if exists "
 status=$(aws cloudformation describe-stacks $stackname 2>&1| grep 'StackStatus"' | awk -F'"' '{print $4}')
-if [ "$status" == "ROLLBACK_FAILED" ] || [ "$status" == "ROLLBACK_COMPLETE" ] || [ "$status" == "CREATE_FAILED" ] || [ "$status" == "DELETE_FAILED" ] || [ "$status" == "ROLLBACK_IN_PROGRESS" ] || [ "$status" == "DELETE_IN_PROGRESS" ] || [ "$status" == "UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS" ] ; then
+if [ "$status" == "ROLLBACK_FAILED" ]  || [ "$status" == "CREATE_FAILED" ] || [ "$status" == "DELETE_FAILED" ] || [ "$status" == "ROLLBACK_IN_PROGRESS" ] || [ "$status" == "DELETE_IN_PROGRESS" ] || [ "$status" == "UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS" ] ; then
         echo " $status, try to delete"
         aws cloudformation delete-stack $stackname
         x=20
@@ -44,7 +44,7 @@ if [ "$status" == "ROLLBACK_FAILED" ] || [ "$status" == "ROLLBACK_COMPLETE" ] ||
                 x=$(($x-1))
                 sleep 2
         done
-elif [ "$status" == "CREATE_COMPLETE" ] || [ "$status" == "UPDATE_ROLLBACK_COMPLETE" ] || [ "$status" == "UPDATE_COMPLETE" ] || [ "$status" == "UPDATE_ROLLBACK_FAILED" ] ; then
+elif [ "$status" == "CREATE_COMPLETE" ] || [ "$status" == "UPDATE_ROLLBACK_COMPLETE" ] || [ "$status" == "UPDATE_COMPLETE" ] || [ "$status" == "UPDATE_ROLLBACK_FAILED" ] || [ "$status" == "ROLLBACK_COMPLETE" ]; then
         echo "exist, ($status). Starting update: "
         aws cloudformation update-stack $stackname $templatebody $tags $capab $params
         aws cloudformation wait stack-update-complete $stackname
