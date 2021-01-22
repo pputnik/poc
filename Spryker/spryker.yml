@@ -34,9 +34,6 @@ Parameters:
     Description: CIDR to create 2nd private subnet
     Type: String
 
-  DBPassword:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: "/Spryker/Rds/pass"
 # ===
 Conditions:
   HaveOfficeCidr:
@@ -153,7 +150,7 @@ Resources:
       Engine: aurora-postgresql
       MultiAZ: false
       MasterUsername: proj
-      MasterUserPassword: !Ref DBPassword
+      MasterUserPassword: "{{resolve:ssm-secure:/Spryker/Rds/pass:1}}"
       StorageType: gp2
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
       CopyTagsToSnapshot: true
