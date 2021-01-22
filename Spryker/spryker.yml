@@ -170,7 +170,6 @@ Resources:
       DBInstanceClass: db.t3.medium
       Engine: aurora-postgresql
       MultiAZ: false
-      AllocatedStorage: 20
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
       DBClusterIdentifier: !Ref DbCluster
       StorageType: gp2
