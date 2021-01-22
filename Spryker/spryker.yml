@@ -145,7 +145,7 @@ Resources:
   DBInstance:
     Type: 'AWS::RDS::DBInstance'
     Properties:
-      DBInstanceClass: db.t3.micro
+      DBInstanceClass: db.t3.medium
       DBName: !Ref proj
       DBSubnetGroupName: !Ref DBSubnetGrp
       Engine: aurora-postgresql
