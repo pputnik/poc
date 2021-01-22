@@ -13,7 +13,7 @@ templatebody="--template-body file://eks.yml"
 aws cloudformation $profile validate-template $templatebody >/dev/null
 if [ $? -ne 0 ]; then
         echo " syntax error"
-        exit -1
+        exit 1
 fi
 
 name="eks"

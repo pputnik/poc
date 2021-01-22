@@ -36,7 +36,7 @@ Parameters:
 
   DBPassword:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: /Spryker/Rds/pass
+    Default: "/Spryker/Rds/pass"
 # ===
 Conditions:
   HaveOfficeCidr:
