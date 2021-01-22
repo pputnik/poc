@@ -1,0 +1,180 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Spryker sandbox demo
+Parameters:
+  proj:
+    Description: project name
+    Type: String
+  key:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  Responsible:
+    Description: responsible person
+    Type: String
+
+  VpcId:
+    Description: _DEFAULT_ VPC Id
+    Type: "AWS::EC2::VPC::Id"
+  OfficeCidr:
+    Description: Our office IP range
+    Type: String
+    Default: ""
+  AlexCidr:
+    Description: Yet another  IP range
+    Type: String
+    Default: ""
+  VpcCidr:
+    Description: CIDR of existing default VPC
+    Type: String
+  PrivCidr1:
+    Description: CIDR to create 1st private subnet
+    Type: String
+  PrivCidr2:
+    Description: CIDR to create 2nd private subnet
+    Type: String
+
+  DBPassword:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /Spryker/Rds/pass
+# ===
+Conditions:
+  HaveOfficeCidr:
+    !Not [!Equals [!Ref OfficeCidr, ""]]
+  HaveAlexCidr:
+    !Not [!Equals [!Ref AlexCidr, ""]]
+# ===
+Resources:
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PrivCidr1
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${proj}-priv1
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref PrivCidr2
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${proj}-priv2
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+
+  # --
+  SprykerSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: spryker-shop
+      GroupDescription: Main SG for Spryker
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  SprykerSgInOffice:
+    Condition: HaveOfficeCidr
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref OfficeCidr
+      #SourceSecurityGroupId: !GetAtt SGBase.GroupId
+  SprykerSgInAlex:
+    Condition: HaveAlexCidr
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref AlexCidr
+  SprykerSgInPostgres:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      CidrIp: !Ref VpcCidr
+  SprykerSgInRedis:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 6379
+      ToPort: 6379
+      CidrIp: !Ref VpcCidr
+
+  # --
+  DBSubnetGrp:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: !Sub ${proj}-rds
+      DBSubnetGroupName: !Ref proj
+      SubnetIds:
+        - !Ref PrivateSubnet1
+      Tags:
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  DBInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      DBInstanceClass: db.t3.micro
+      DBName: !Ref proj
+      DBSubnetGroupName: !Ref DBSubnetGrp
+      Engine: aurora-postgresql
+      MultiAZ: false
+      MasterUsername: proj
+      MasterUserPassword: !Ref DBPassword
+      StorageType: gp2
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CopyTagsToSnapshot: true
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: 0
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - !GetAtt SprykerSg.GroupId
+      Tags:
+        - Key: Name
+          Value: !Ref proj
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+# ===
+Outputs:
+  PrivateSubnet1:
+    Description: A reference to the private subnet in the 1st Availability Zone
+    Value: !Ref PrivateSubnet1
+
+  PrivateSubnet2:
+    Description: A reference to the private subnet in the 2nd Availability Zone
+    Value: !Ref PrivateSubnet2

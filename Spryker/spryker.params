@@ -1,0 +1,13 @@
+[
+  {"ParameterKey":"proj", "ParameterValue": "spryker"},
+  {"ParameterKey":"key", "ParameterValue": "Alex"},
+  {"ParameterKey":"Responsible", "ParameterValue": "Alex"},
+
+  {"ParameterKey":"VpcId", "ParameterValue": "vpc-3b68d351"}
+  {"ParameterKey":"OfficeCidr", "ParameterValue": "85.128.77.0/24"}
+  {"ParameterKey":"AlexCidr", "ParameterValue": "86.128.77.0/24"}
+  {"ParameterKey":"VpcCidr", "ParameterValue": "172.31.0.0/16"}
+  {"ParameterKey":"PrivCidr1", "ParameterValue": "172.31.64.0/24"}
+  {"ParameterKey":"PrivCidr2", "ParameterValue": "172.31.65.0/24"}
+
+]

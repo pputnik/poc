@@ -59,6 +59,8 @@ Resources:
           Value: !Sub '${AWS::StackName}-Halyard'
         - Key: Responsible
           Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
 
   BaseIAMRole:
     Type: AWS::IAM::Role
@@ -83,6 +85,8 @@ Resources:
                  - 'ecr:*'
                  - 'cloudformation:*'
                  - 's3:*'
+                 - 'iam:ListServerCertificates'
+                 - 'iam:PassRole'
                 Resource: '*'
               - Effect: Allow
                 Action:

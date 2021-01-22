@@ -9,20 +9,20 @@ git pull --no-edit
 aws sts $profile get-caller-identity
 
 echo -n testing prep
-templatebody="--template-body file://spinnaker.yml"
+templatebody="--template-body file://spryker.yml"
 aws cloudformation $profile validate-template $templatebody >/dev/null
 if [ $? -ne 0 ]; then
         echo " syntax error"
         exit -1
 fi
 
-name="spinnaker"
+name="spryker"
 tags="--tags Key=Name,Value=$name Key=Responsible,Value=Alex"
 stackname="$profile --stack-name $name"
 # capab="--capabilities CAPABILITY_IAM"
 capab="--capabilities CAPABILITY_NAMED_IAM"
 # --parameters ParameterKey=VPCID,ParameterValue=SampleVPCID ParameterKey=SubnetIDs,ParameterValue=SampleSubnetID1\\,SampleSubnetID2
-params="--parameters file://spinnaker.params"
+params="--parameters file://spryker.params"
 
 #===============================
 echo

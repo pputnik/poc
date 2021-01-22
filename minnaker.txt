@@ -5,3 +5,33 @@ curl -LO https://github.com/armory/minnaker/releases/latest/download/minnaker.tg
 tar -xzvf minnaker.tgz
 cd minnaker
 ./scripts/install.sh -o -P $FQDN
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+rm -rf ./aws
+aws --version
+
+
+# just in case:
+cat /etc/spinnaker/.hal/.secret/spinnaker_password
+
+export AWS_ACC_NAME=sandbox
+export ACC_ID=011874698875
+export ROLE_NAME=role/BaseIAMRole
+cat << EOF > .aws/config
+[default]
+region = eu-central-1
+output = json
+EOF
+
+hal config provider aws account add ${AWS_ACC_NAME} \
+  --account-id ${ACCOUNT_ID} --assume-role ${ROLE_NAME} \
+  --regions eu-central-1
+
+hal config provider aws enable
+
+hal config provider ecs account add ecs-account-name --aws-account ${AWS_ACC_NAME}
+
+#modify subnets:
+immutable_metadata  {"purpose":"spinnaker-purpose"}

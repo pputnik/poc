@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create lambda to stop EC2s and RDSes at scheduled time to save money on dev and POC accounts
+Resources:
+  IAMPolicyForLambda:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties: 
+      Description: "Policy for lambda function, created by CF"
+      ManagedPolicyName: !Join [ '', [ 'IAM-Pol-Lambda-', !Ref "AWS::StackName" ] ]
+      PolicyDocument: 
+        Version: 2012-10-17
+        Statement: 
+          -
+            Effect: Allow
+            Action: "logs:CreateLogGroup"
+            # "arn:aws:logs:us-east-1:123456789012:*"
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+          -
+            Effect: Allow
+            Action:
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource: 
+              # better to specify LF name and path-just to organize-things:
+              # arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/lambda-function-name:*
+              # or without path:
+              # arn:aws:logs:us-east-1:123456789012:log-group:CF-Deployment-assistance:*
+              # otherwise (if you don't know the function name) allow access to all LF names:
+              !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+
+  IAMRoleforLambda:
+    Type: "AWS::IAM::Role"
+    DependsOn: IAMPolicyForLambda
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: "Allow"
+            Principal: 
+              Service: 
+                # for lambda
+                - lambda.amazonaws.com
+                # for ec2 role
+                # - "ec2.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns: 
+        - !Ref IAMPolicyForLambda
+      RoleName: !Sub "IAM-Role-Lambda-${AWS::StackName}"
+
+  IAMRoleforLambdaInstanceProfile:
+    DependsOn: IAMRoleforLambda
+    Type: "AWS::IAM::InstanceProfile"
+    Properties: 
+      Path: "/"
+      Roles: 
+        - Ref: IAMRoleforLambda    
+
+  LambdaNamePass:
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
+    Type: "AWS::Lambda::Function"
+    DependsOn: IAMRoleforLambda
+    Properties:
+      FunctionName: !Sub "LF-NamePass-${AWS::StackName}"
+      Description: |
+        This func will return sanitized name generated from AWS::StackName to use as WP and DB name
+        and two random passwords for db and wp
+      Handler: CF-Deployment-assistance.lambda_handler
+      Code: 
+        S3Bucket: "cf-templates-1lersvsz3pdsh-us-east-1"
+        # must be zip-ed!
+        S3Key: "CF-Deployment-assistance.zip"
+      # MemorySize in MB
+      MemorySize: 128
+      Role: !GetAtt [ IAMRoleforLambda, Arn ]
+      # arn:aws:iam::123456789012:role/service-role/Lambda-CF-Deployment-assistance
+      # As of 07/2017: nodejs | nodejs4.3 | nodejs6.10 | java8 | python2.7 | python3.6 | dotnetcore1.0 | nodejs4.3-edge
+      Runtime: python2.7
+      # timeout in seconds
+      Timeout: 1
+      TracingConfig:
+        Mode: PassThrough
+      Tags: 
+        - Key: Name
+          Value: !Join [ '', [ 'LF-', !Ref "AWS::StackName" ] ]    
