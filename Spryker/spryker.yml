@@ -168,7 +168,6 @@ Resources:
     Type: 'AWS::RDS::DBInstance'
     Properties:
       DBInstanceClass: db.t3.medium
-      DBName: !Ref proj
       Engine: aurora-postgresql
       MultiAZ: false
       AllocatedStorage: 20
