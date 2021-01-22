@@ -153,6 +153,7 @@ Resources:
       MasterUsername: proj
       MasterUserPassword: "{{resolve:ssm-secure:/Spryker/Rds/pass:1}}"
       StorageType: gp2
+      AllocatedStorage: 20
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
       CopyTagsToSnapshot: true
       AutoMinorVersionUpgrade: true
