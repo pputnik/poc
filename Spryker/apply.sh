@@ -1,4 +1,5 @@
-#!/bin/bash -vx
+#!/bin/bash
+# -vx
 
 profile="--profile sandbox"
 
@@ -38,7 +39,7 @@ if [ "$status" == "ROLLBACK_FAILED" ] || [ "$status" == "ROLLBACK_COMPLETE" ] ||
                         x=0
                         echo creating....
                         aws cloudformation create-stack $stackname --timeout-in-minutes 210 $templatebody $tags $capab $params
-                        aws cloudformation wait $stackname
+                        aws cloudformation wait stack-create-complete $stackname
                 fi
                 x=$(($x-1))
                 sleep 2
@@ -46,14 +47,14 @@ if [ "$status" == "ROLLBACK_FAILED" ] || [ "$status" == "ROLLBACK_COMPLETE" ] ||
 elif [ "$status" == "CREATE_COMPLETE" ] || [ "$status" == "UPDATE_ROLLBACK_COMPLETE" ] || [ "$status" == "UPDATE_COMPLETE" ] || [ "$status" == "UPDATE_ROLLBACK_FAILED" ] ; then
         echo "exist, ($status). Starting update: "
         aws cloudformation update-stack $stackname $templatebody $tags $capab $params
-        aws cloudformation wait $stackname
+        aws cloudformation wait stack-update-complete $stackname
 
 else
         echo " not exist: $status"
 
         echo creating ....
         aws cloudformation create-stack $stackname --timeout-in-minutes 210 $templatebody $tags $capab $params
-        aws cloudformation wait $stackname
+        aws cloudformation wait stack-create-complete $stackname
 fi
 
 echo end
