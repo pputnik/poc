@@ -147,8 +147,6 @@ Resources:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbcluster.html
     DeletionPolicy: Delete
     Properties:
-      AvailabilityZones:
-        - !Sub '${Region}a'
       BackupRetentionPeriod: 0
       DatabaseName: !Ref proj
       DBSubnetGroupName: !Ref DBSubnetGrp
