@@ -224,10 +224,10 @@ Resources:
         INDEX_SLOW_LOGS:
           CloudWatchLogsLogGroupArn: !GetAtt LogIndexSlow.Arn
           Enabled: 'true'
-         ES_APPLICATION_LOGS:
+        ES_APPLICATION_LOGS:
           CloudWatchLogsLogGroupArn: !GetAtt LogApp.Arn
           Enabled: 'true'
-         AUDIT_LOGS:
+        AUDIT_LOGS:
           CloudWatchLogsLogGroupArn: !GetAtt LogAudit.Arn
           Enabled: 'true'
       AccessPolicies:
