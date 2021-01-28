@@ -217,19 +217,19 @@ Resources:
         InstanceCount: 1
         InstanceType: t3.small.elasticsearch
       ElasticsearchVersion: 5.6
-      LogPublishingOptions:
-        SEARCH_SLOW_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogSearchSlow.Arn
-          Enabled: 'true'
-        INDEX_SLOW_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogIndexSlow.Arn
-          Enabled: 'true'
-        ES_APPLICATION_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogApp.Arn
-          Enabled: 'true'
-        AUDIT_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogAudit.Arn
-          Enabled: 'true'
+#      LogPublishingOptions:
+#        SEARCH_SLOW_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogSearchSlow.Arn
+#          Enabled: 'true'
+#        INDEX_SLOW_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogIndexSlow.Arn
+#          Enabled: 'true'
+#        ES_APPLICATION_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogApp.Arn
+#          Enabled: 'true'
+#        AUDIT_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogAudit.Arn
+#          Enabled: 'true'
       AccessPolicies:
         Version: "2012-10-17"
         Statement:
@@ -250,6 +250,44 @@ Resources:
           Value: !Ref Responsible
         - Key: proj
           Value: !Ref proj
+  # --
+  ECSubnetGrp:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      CacheSubnetGroupName: !Ref proj
+      Description: for Spryker's redis
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+  ECCluster:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      AutoMinorVersionUpgrade: true
+      AZMode: single-az
+      CacheNodeType:  cache.t3.micro
+      CacheSubnetGroupName: !Ref ECSubnetGrp
+      ClusterName: !Ref proj
+      Engine: redis
+      EngineVersion: 6.x
+      #NotificationTopicArn: String
+      NumCacheNodes: 1
+      PreferredAvailabilityZone: !Select [ 0, !GetAZs '' ]
+      PreferredAvailabilityZones:
+        - String
+      PreferredMaintenanceWindow: "sun:23:00-mon:01:30"
+      SnapshotRetentionLimit: 0
+      SnapshotWindow: "05:00-09:00"
+      VpcSecurityGroupIds:
+        - !Ref SprykerSg
+      Tags:
+        - Key: Name
+          Value: !Ref proj
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+
+
 
 # ===
 Outputs:
