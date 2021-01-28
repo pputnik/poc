@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: |
-  Spryker sandbox demo
+  Spryker sandbox test
 Parameters:
   proj:
     Description: project name
@@ -182,6 +182,75 @@ Resources:
           Value: !Ref Responsible
         - Key: proj
           Value: !Ref proj
+
+  # --
+  LogSearchSlow:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: Es_SearchSlow
+      RetentionInDays: 1
+  LogIndexSlow:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: Es_IndexSlow
+      RetentionInDays: 1
+  LogApp:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: Es_App
+      RetentionInDays: 1
+  LogAudit:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: Es_Audit
+      RetentionInDays: 1
+  ES:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: !Sub ${proj}-shop
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 10
+        VolumeType: gp2
+      ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: false
+        InstanceCount: 1
+        InstanceType: t3.small.elasticsearch
+      ElasticsearchVersion: 5.6
+      LogPublishingOptions:
+        SEARCH_SLOW_LOGS:
+          CloudWatchLogsLogGroupArn: !GetAtt LogSearchSlow.Arn
+          Enabled: 'true'
+        INDEX_SLOW_LOGS:
+          CloudWatchLogsLogGroupArn: !GetAtt LogIndexSlow.Arn
+          Enabled: 'true'
+         ES_APPLICATION_LOGS:
+          CloudWatchLogsLogGroupArn: !GetAtt LogApp.Arn
+          Enabled: 'true'
+         AUDIT_LOGS:
+          CloudWatchLogsLogGroupArn: !GetAtt LogAudit.Arn
+          Enabled: 'true'
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: *
+            Action: "es:*"
+            Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/${proj}-shop/*"
+      VPCOptions:
+        SubnetIds:
+          - Ref: PrivateSubnet1
+        SecurityGroupIds:
+          - Ref: SprykerSg
+      Tags:
+        - Key: Name
+          Value: !Ref proj
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+
 # ===
 Outputs:
   PrivateSubnet1:
