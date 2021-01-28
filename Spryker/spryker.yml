@@ -217,19 +217,19 @@ Resources:
         InstanceCount: 1
         InstanceType: t3.small.elasticsearch
       ElasticsearchVersion: 5.6
-      LogPublishingOptions:
-        SEARCH_SLOW_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogSearchSlow.Arn
-          Enabled: 'true'
-        INDEX_SLOW_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogIndexSlow.Arn
-          Enabled: 'true'
-        ES_APPLICATION_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogApp.Arn
-          Enabled: 'true'
-        AUDIT_LOGS:
-          CloudWatchLogsLogGroupArn: !GetAtt LogAudit.Arn
-          Enabled: 'true'
+#      LogPublishingOptions:
+#        SEARCH_SLOW_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogSearchSlow.Arn
+#          Enabled: 'true'
+#        INDEX_SLOW_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogIndexSlow.Arn
+#          Enabled: 'true'
+#        ES_APPLICATION_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogApp.Arn
+#          Enabled: 'true'
+#        AUDIT_LOGS:
+#          CloudWatchLogsLogGroupArn: !GetAtt LogAudit.Arn
+#          Enabled: 'true'
       AccessPolicies:
         Version: "2012-10-17"
         Statement:
