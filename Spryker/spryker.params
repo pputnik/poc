@@ -10,7 +10,7 @@
   {"ParameterKey":"PrivCidr1", "ParameterValue": "172.31.64.0/24"},
   {"ParameterKey":"PrivCidr2", "ParameterValue": "172.31.65.0/24"},
 
-  {"ParameterKey":"Ec2Type", "ParameterValue": "t4.medium"},
+  {"ParameterKey":"Ec2Type", "ParameterValue": "t3.medium"},
   {"ParameterKey":"Ec2Ami", "ParameterValue": "ami-0e1ce3e0deb8896d2"}
 
 ]
