@@ -518,6 +518,13 @@ Resources:
             update-alternatives --set phpize /usr/bin/phpize7.2
             update-alternatives --set php-config /usr/bin/php-config7.2
 
+            srcdir=https://github.com/ALutchko/poc/raw/spinnaker/Spryker/
+            wget $srcdir/yves.conf -O /etc/php/7.2/fpm/pool.d/yves.conf
+            wget $srcdir/zed.conf -O /etc/php/7.2/fpm/pool.d/zed.conf
+            wget $srcdir/glue.conf -O /etc/php/7.2/fpm/pool.d/glue.conf
+            wget $srcdir/10-opcache.ini -O /etc/php/7.2/fpm/conf.d/10-opcache.ini
+
+
             rm /etc/nginx/sites-enabled/default
 
             # If all went well, signal success
