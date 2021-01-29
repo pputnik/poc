@@ -4,7 +4,7 @@
 profile="--profile sandbox"
 
 BRANCH=$(git status | grep "On branch" | sed "s/On branch //")
-git reset --hard "origin/$BRANCH"
+git reset --hard "origin/$BRANCH" > /dev/null
 git pull --no-edit
 aws sts $profile get-caller-identity
 
