@@ -481,7 +481,8 @@ Resources:
             echo instid $instid
             echo -n $instid > /var/local/instid
 
-            apt-get install -y --no-install-recommends python-pip unzip wget gnupg apt-transport-https
+            apt-get install -y --no-install-recommends python-pip unzip \
+              wget gnupg apt-transport-https python-setuptools
 
             pip install urllib3[secure]
             curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
@@ -489,17 +490,14 @@ Resources:
             ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
             ln /usr/local/bin/aws /usr/bin/aws
 
-            # maybe /usr/local/aws/bin/easy_install
+            ln -s /usr/local/aws/bin/easy_install /usr/local/bin/
             easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
             ls -l /usr/local/lib/python2.7/dist-packages/
             python --version
-            eggpath=/usr/local/lib/python2.7/dist-packages/aws_cfn_bootstrap-1.4-py2.7.egg
-            chmod 700 $eggpath/init/ubuntu/cfn-hup
-            ln -s $eggpath/init/ubuntu/cfn-hup  /etc/init.d/cfn-hup
 
-            eggawspath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
-            chmod 700 $eggawspath/init/ubuntu/cfn-hup
-            ln -s  $eggawspath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+            eggpath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
+            chmod 700 $eggpath/init/ubuntu/cfn-hup
+            ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
 
             # If all went well, signal success
             cfn-signal -e $? -r 'Initial configuration completed successfully' \
