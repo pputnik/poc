@@ -467,38 +467,38 @@ Resources:
 #            - !Ref 'AWS::Region'
 #            - |+
 
-  SprykerASG:
-    Type: 'AWS::AutoScaling::AutoScalingGroup'
-    Properties:
-      AutoScalingGroupName: !Ref proj
-      VPCZoneIdentifier:
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
-      LaunchConfigurationName: !Ref LaunchConfig
-      MinSize: 1
-      MaxSize: 1
-      DesiredCapacity: 1
-      #HealthCheckType: ELB
-      HealthCheckType: EC2
-      HealthCheckGracePeriod: 300
-      TargetGroupARNs:
-        - !Ref ALBTargetGroup
-      Tags:
-        - Key: Responsible
-          Value: !Ref Responsible
-          PropagateAtLaunch: true
-        - Key: proj
-          Value: !Ref proj
-          PropagateAtLaunch: true
-    CreationPolicy:
-      ResourceSignal:
-        Timeout: PT15M
-    UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MinInstancesInService: '1'
-        MaxBatchSize: '1'
-        PauseTime: PT5M
-        WaitOnResourceSignals: false
+#  SprykerASG:
+#    Type: 'AWS::AutoScaling::AutoScalingGroup'
+#    Properties:
+#      AutoScalingGroupName: !Ref proj
+#      VPCZoneIdentifier:
+#        - !Ref PrivateSubnet1
+#        - !Ref PrivateSubnet2
+#      LaunchConfigurationName: !Ref LaunchConfig
+#      MinSize: 1
+#      MaxSize: 1
+#      DesiredCapacity: 1
+#      #HealthCheckType: ELB
+#      HealthCheckType: EC2
+#      HealthCheckGracePeriod: 300
+#      TargetGroupARNs:
+#        - !Ref ALBTargetGroup
+#      Tags:
+#        - Key: Responsible
+#          Value: !Ref Responsible
+#          PropagateAtLaunch: true
+#        - Key: proj
+#          Value: !Ref proj
+#          PropagateAtLaunch: true
+#    CreationPolicy:
+#      ResourceSignal:
+#        Timeout: PT15M
+#    UpdatePolicy:
+#      AutoScalingRollingUpdate:
+#        MinInstancesInService: '1'
+#        MaxBatchSize: '1'
+#        PauseTime: PT5M
+#        WaitOnResourceSignals: false
 
 # ===
 Outputs:
