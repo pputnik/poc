@@ -437,8 +437,9 @@ Resources:
             chmod 700 $eggpath/init/ubuntu/cfn-hup
             ln -s $eggpath/init/ubuntu/cfn-hup  /etc/init.d/cfn-hup
 
-            chmod 700 $eggpath/init/ubuntu/cfn-hup
-            ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+            eggawspath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
+            chmod 700 $eggawspath/init/ubuntu/cfn-hup
+            ln -s  $eggawspath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
 
             # If all went well, signal success
             cfn-signal -e $? -r 'Initial configuration completed successfully' \
