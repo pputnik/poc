@@ -475,7 +475,7 @@ Resources:
             sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
             echo "tail -f /var/log/cloud-init-output.log" >> /root/.bash_history
 
-            apt-get update
+            apt-get update -q
             apt-mark hold grub-legacy-ec2 grub-pc grub2-common grub-pc-bin grub-common #grub
             apt-get upgrade -y --no-install-recommends -q
             instid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
@@ -483,7 +483,10 @@ Resources:
             echo -n $instid > /var/local/instid
 
             apt-get install -y --no-install-recommends python-pip unzip \
-              wget gnupg apt-transport-https python-setuptools
+              wget gnupg apt-transport-https python-setuptools ca-certificates \
+              git graphviz libedit2 libpq5 libsqlite3-0 postgresql-client psmisc \
+              python-dev python-setuptools redis-tools vim zip composer \
+              gcc g++ make apache2-utils
 
             pip install urllib3[secure]
             curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
@@ -498,6 +501,23 @@ Resources:
             eggpath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
             chmod 700 $eggpath/init/ubuntu/cfn-hup
             ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+
+            add-apt-repository ppa:ondrej/php -y
+            curl -sL https://deb.nodesource.com/setup_10.x | /bin/bash -
+
+            apt-get install -q -y php7.2-fpm php7.2-curl php7.2-gd php7.2-gmp \
+              php7.2-intl php7.2-bcmath php7.2-pgsql php-redis php7.2-xml \
+              php7.2-mbstring php7.2-bz2 php-ssh2 php-msgpack php-memcached \
+              php-imagick php-igbinary php7.2-opcache php7.2-zip php7.2-sqlite3 \
+              php7.2-mysql php7.2-intl php7.2-fpm php7.2-cli php7.2-dev \
+              postfix nginx nginx-extras
+            update-alternatives --set php /usr/bin/php7.2
+            update-alternatives --set phar /usr/bin/phar7.2
+            update-alternatives --set phar.phar /usr/bin/phar.phar7.2
+            update-alternatives --set phpize /usr/bin/phpize7.2
+            update-alternatives --set php-config /usr/bin/php-config7.2
+
+            rm /etc/nginx/sites-enabled/default
 
             # If all went well, signal success
             cfn-signal -e $? -r 'Initial configuration completed successfully' \
