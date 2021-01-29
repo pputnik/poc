@@ -483,6 +483,12 @@ Resources:
 
             apt-get install -y --no-install-recommends python-pip unzip wget gnupg apt-transport-https
 
+            pip install urllib3[secure]
+            curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+            ln /usr/local/bin/aws /usr/bin/aws
+
             # maybe /usr/local/aws/bin/easy_install
             easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
             ls -l /usr/local/lib/python2.7/dist-packages/
