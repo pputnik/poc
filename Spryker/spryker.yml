@@ -523,29 +523,6 @@ Resources:
             cfn-signal -e $? -r 'Initial configuration completed successfully' \
               --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
             date
-#      UserData: !Base64
-#        'Fn::Join':
-#        - ''
-#          - - |
-#              #!/bin/bash -xe
-#            - |
-#              yum update -y aws-cfn-bootstrap
-#            - '/opt/aws/bin/cfn-init -v '
-#            - '         --stack '
-#            - !Ref 'AWS::StackName'
-#            - '         --resource LaunchConfig '
-#            - '         --configsets wordpress_install '
-#            - '         --region '
-#            - !Ref 'AWS::Region'
-#            - |+
-#
-#            - '/opt/aws/bin/cfn-signal -e $? '
-#            - '         --stack '
-#            - !Ref 'AWS::StackName'
-#            - '         --resource WebServerGroup '
-#            - '         --region '
-#            - !Ref 'AWS::Region'
-#            - |+
 
   SprykerASG:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
@@ -555,7 +532,7 @@ Resources:
         - !Ref PubSubnet1
       LaunchConfigurationName: !Ref LaunchConfig
       MinSize: 1
-      MaxSize: 1
+      MaxSize: 2
       DesiredCapacity: 1
       #HealthCheckType: ELB
       HealthCheckType: EC2
