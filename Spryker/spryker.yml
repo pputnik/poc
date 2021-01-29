@@ -471,6 +471,7 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
             #!/bin/bash -xe
+            date
             sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
             echo "tail -f /var/log/cloud-init-output.log" >> /root/.bash_history
 
@@ -491,9 +492,8 @@ Resources:
             ln /usr/local/bin/aws /usr/bin/aws
 
             ln -s /usr/local/aws/bin/easy_install /usr/local/bin/
+            ln -s /usr/local/aws/bin/cfn-signal /usr/local/bin/
             easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
-            ls -l /usr/local/lib/python2.7/dist-packages/
-            python --version
 
             eggpath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
             chmod 700 $eggpath/init/ubuntu/cfn-hup
@@ -502,6 +502,7 @@ Resources:
             # If all went well, signal success
             cfn-signal -e $? -r 'Initial configuration completed successfully' \
               --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
+            date
 #      UserData: !Base64
 #        'Fn::Join':
 #        - ''
@@ -526,38 +527,37 @@ Resources:
 #            - !Ref 'AWS::Region'
 #            - |+
 
-#  SprykerASG:
-#    Type: 'AWS::AutoScaling::AutoScalingGroup'
-#    Properties:
-#      AutoScalingGroupName: !Ref proj
-#      VPCZoneIdentifier:
-#        - !Ref PubSubnet1
-#        #- !Ref PrivateSubnet2
-#      LaunchConfigurationName: !Ref LaunchConfig
-#      MinSize: 1
-#      MaxSize: 1
-#      DesiredCapacity: 1
-#      #HealthCheckType: ELB
-#      HealthCheckType: EC2
-#      HealthCheckGracePeriod: 300
-#      TargetGroupARNs:
-#        - !Ref ALBTargetGroup
-#      Tags:
-#        - Key: Responsible
-#          Value: !Ref Responsible
-#          PropagateAtLaunch: true
-#        - Key: proj
-#          Value: !Ref proj
-#          PropagateAtLaunch: true
-#    CreationPolicy:
-#      ResourceSignal:
-#        Timeout: PT15M
-#    UpdatePolicy:
-#      AutoScalingRollingUpdate:
-#        MinInstancesInService: '1'
-#        MaxBatchSize: '1'
-#        PauseTime: PT5M
-#        WaitOnResourceSignals: false
+  SprykerASG:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: !Ref proj
+      VPCZoneIdentifier:
+        - !Ref PubSubnet1
+      LaunchConfigurationName: !Ref LaunchConfig
+      MinSize: 1
+      MaxSize: 1
+      DesiredCapacity: 1
+      #HealthCheckType: ELB
+      HealthCheckType: EC2
+      HealthCheckGracePeriod: 300
+      TargetGroupARNs:
+        - !Ref ALBTargetGroup
+      Tags:
+        - Key: Responsible
+          Value: !Ref Responsible
+          PropagateAtLaunch: true
+        - Key: proj
+          Value: !Ref proj
+          PropagateAtLaunch: true
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT15M
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: '1'
+        MaxBatchSize: '1'
+        PauseTime: PT5M
+        WaitOnResourceSignals: false
 
 # ===
 Outputs:
