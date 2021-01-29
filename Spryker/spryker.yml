@@ -73,11 +73,11 @@ Conditions:
   HaveAlexCidr:
     !Not [!Equals [!Ref AlexCidr, ""]]
   CreateRds:
-    !Equals [ !Ref CreateRds, '' ]
+    !Not [!Equals [!Ref CreateRds, ""]]
   CreateEs:
-    !Equals [ !Ref CreateEs, '' ]
+    !Not [!Equals [!Ref CreateEs, ""]]
   CreateEc:
-    !Equals [ !Ref CreateEc, '' ]
+    !Not [!Equals [!Ref CreateEc, ""]]
 # ===
 Resources:
   PrivateSubnet1:
