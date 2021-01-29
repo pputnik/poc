@@ -13,6 +13,19 @@ Parameters:
     Description: responsible person
     Type: String
 
+  CreateRds:
+    Description: Should we create RDS? Any value=yes, empty=no
+    Type: String
+    Default: ""
+  CreateEs:
+    Description: Should we create ElasticSearch? Any value=yes, empty=no
+    Type: String
+    Default: ""
+  CreateEc:
+    Description: Should we create ElaskiCache? Any value=yes, empty=no
+    Type: String
+    Default: ""
+
   VpcId:
     Description: _DEFAULT_ VPC Id
     Type: "AWS::EC2::VPC::Id"
@@ -33,6 +46,13 @@ Parameters:
   PrivCidr2:
     Description: CIDR to create 2nd private subnet
     Type: String
+  PubCidr1:
+    Description: CIDR to create 1st private subnet
+    Type: String
+  DefRouteId:
+    Description: Id of default route table for pub subnets
+    Type: String
+
   Ec2Type:
     Description: Instance type for Spryker
     Type: String
@@ -52,6 +72,12 @@ Conditions:
     !Not [!Equals [!Ref OfficeCidr, ""]]
   HaveAlexCidr:
     !Not [!Equals [!Ref AlexCidr, ""]]
+  CreateRds:
+    !Equals [ !Ref CreateRds, '' ]
+  CreateEs:
+    !Equals [ !Ref CreateEs, '' ]
+  CreateEc:
+    !Equals [ !Ref CreateEc, '' ]
 # ===
 Resources:
   PrivateSubnet1:
@@ -82,7 +108,25 @@ Resources:
           Value: !Ref Responsible
         - Key: proj
           Value: !Ref proj
-
+  PubSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PubCidr1
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${proj}-pub1
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  PubSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PubSubnet1
+      RouteTableId: !Ref DefRouteId
   # --
   SprykerSg:
     Type: AWS::EC2::SecurityGroup
@@ -143,6 +187,7 @@ Resources:
   # --
   DBSubnetGrp:
     Type: AWS::RDS::DBSubnetGroup
+    Condition: CreateRds
     Properties:
       DBSubnetGroupDescription: !Sub ${proj}-rds
       DBSubnetGroupName: !Ref proj
@@ -157,6 +202,7 @@ Resources:
   DbCluster:
     Type: "AWS::RDS::DBCluster"
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbcluster.html
+    Condition: CreateRds
     DeletionPolicy: Delete
     Properties:
       BackupRetentionPeriod: 1
@@ -178,6 +224,7 @@ Resources:
 
   DBInstance:
     Type: 'AWS::RDS::DBInstance'
+    Condition: CreateRds
     Properties:
       DBInstanceClass: db.t3.medium
       Engine: aurora-postgresql
@@ -198,26 +245,31 @@ Resources:
   # --
   LogSearchSlow:
     Type: AWS::Logs::LogGroup
+    Condition: CreateEs
     Properties:
       LogGroupName: Es_SearchSlow
       RetentionInDays: 1
   LogIndexSlow:
     Type: AWS::Logs::LogGroup
+    Condition: CreateEs
     Properties:
       LogGroupName: Es_IndexSlow
       RetentionInDays: 1
   LogApp:
     Type: AWS::Logs::LogGroup
+    Condition: CreateEs
     Properties:
       LogGroupName: Es_App
       RetentionInDays: 1
   LogAudit:
     Type: AWS::Logs::LogGroup
+    Condition: CreateEs
     Properties:
       LogGroupName: Es_Audit
       RetentionInDays: 1
   ES:
     Type: AWS::Elasticsearch::Domain
+    Condition: CreateEs
     Properties:
       DomainName: !Sub ${proj}-shop
       EBSOptions:
@@ -265,6 +317,7 @@ Resources:
   # --
   ECSubnetGrp:
     Type: AWS::ElastiCache::SubnetGroup
+    Condition: CreateEc
     Properties:
       CacheSubnetGroupName: !Ref proj
       Description: for Spryker's redis
@@ -273,6 +326,7 @@ Resources:
         - !Ref PrivateSubnet2
   ECCluster:
     Type: AWS::ElastiCache::CacheCluster
+    Condition: CreateEc
     Properties:
       AutoMinorVersionUpgrade: true
       AZMode: single-az
@@ -421,7 +475,7 @@ Resources:
             echo "tail -f /var/log/cloud-init-output.log" >> /root/.bash_history
 
             apt-get update
-            apt-mark hold grub grub-legacy-ec2 grub-pc grub2-common grub-pc-bin grub-common
+            apt-mark hold grub-legacy-ec2 grub-pc grub2-common grub-pc-bin grub-common #grub
             apt-get upgrade -y --no-install-recommends -q
             instid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
             echo instid $instid
@@ -473,8 +527,8 @@ Resources:
 #    Properties:
 #      AutoScalingGroupName: !Ref proj
 #      VPCZoneIdentifier:
-#        - !Ref PrivateSubnet1
-#        - !Ref PrivateSubnet2
+#        - !Ref PubSubnet1
+#        #- !Ref PrivateSubnet2
 #      LaunchConfigurationName: !Ref LaunchConfig
 #      MinSize: 1
 #      MaxSize: 1
