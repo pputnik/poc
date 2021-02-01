@@ -527,8 +527,8 @@ Resources:
           wget -nv $srcdir/vhost-yves-EU.conf -O /etc/nginx/conf.d/vhost-yves-EU.conf
           wget -nv $srcdir/vhost-zed-EU.conf -O /etc/nginx/conf.d/vhost-zed-EU.conf
           wget -nv $srcdir/vhost-glue-EU.conf -O /etc/nginx/conf.d/vhost-glue-EU.conf
-          user="{{resolve:ssm:/Spryker/htpasswd/EU/user:1}}"
-          pass="{{resolve:ssm-secure:/Spryker/htpasswd/EU/pass:1}}"
+          user={{resolve:ssm:/Spryker/htpasswd/EU/user:1}}
+          pass={{resolve:ssm-secure:/Spryker/htpasswd/EU/pass:1}}
           htpasswd -c /etc/nginx/.htpasswd $user $pass
 
           update-alternatives --set php /usr/bin/php7.2
