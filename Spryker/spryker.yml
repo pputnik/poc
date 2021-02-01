@@ -408,6 +408,44 @@ Resources:
       Port: '80'
       Protocol: HTTP
   # --
+  SprykerPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      Description: "Policy for Spryker server, in the future will allows access to RDS. Created by CF stack ${AWS::StackName}"
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowToSeeBucketListInConsole
+            Effect: Allow
+            Action:
+              - "rds-db:connect"
+            Resource: "*"
+          - Sid: GepPasswords
+            Effect: Allow
+            Action:
+              - "ssm:GetParameters"
+            Resource: "arn:aws:ssm:eu-central-1:011874698875:parameter/Spryker/*"
+  SprykerRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref SprykerPolicy
+  SprykerRoleIP:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        - Ref: SprykerRole
+  # --
   LaunchConfig:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Metadata:
@@ -468,6 +506,7 @@ Resources:
             DeleteOnTermination: true
             VolumeSize: !Ref EbsSize
       KeyName: !Ref key
+      IamInstanceProfile: !Ref SprykerRoleIP
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
@@ -502,8 +541,16 @@ Resources:
           chmod 700 $eggpath/init/ubuntu/cfn-hup
           ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
 
-          # php and nginx
+          # all necessary repos
           add-apt-repository ppa:ondrej/php -y
+          wget -nv https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
+          wget -nv -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+          dpkg -i erlang-solutions_1.0_all.deb
+          wget -nv -O- https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add -
+          wget -nv -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+          echo "deb https://dl.bintray.com/rabbitmq/debian $(lsb_release -sc) main" > /etc/apt/sources.list.d/rabbitmq.list
+
+          # php and nginx
           apt-get update
           curl -sL https://deb.nodesource.com/setup_10.x | /bin/bash -
 
@@ -512,11 +559,7 @@ Resources:
             php7.2-mbstring php7.2-bz2 php-ssh2 php-msgpack php-memcached \
             php-imagick php-igbinary php7.2-opcache php7.2-zip php7.2-sqlite3 \
             php7.2-mysql php7.2-intl php7.2-cli php7.2-dev  php7.2-gmp \
-            nginx nginx-extras ca-certificates nodejs
-
-          debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
-          debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-          apt-get install --no-install-recommends -y postfix
+            nginx nginx-extras ca-certificates nodejs rabbitmq-server
 
           srcdir=https://github.com/ALutchko/poc/raw/spinnaker/Spryker/
           wget -nv $srcdir/yves.conf -O /etc/php/7.2/fpm/pool.d/yves.conf
@@ -527,8 +570,8 @@ Resources:
           wget -nv $srcdir/vhost-yves-EU.conf -O /etc/nginx/conf.d/vhost-yves-EU.conf
           wget -nv $srcdir/vhost-zed-EU.conf -O /etc/nginx/conf.d/vhost-zed-EU.conf
           wget -nv $srcdir/vhost-glue-EU.conf -O /etc/nginx/conf.d/vhost-glue-EU.conf
-          user={{resolve:ssm:/Spryker/htpasswd/EU/user:1}}
-          pass={{resolve:ssm-secure:/Spryker/htpasswd/EU/pass:1}}
+          user=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/user --query Parameters[0].Value | sed -e 's/"//g')
+          pass=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/pass --with-decryption --query Parameters[0].Value | sed -e 's/"//g')
           htpasswd -c /etc/nginx/.htpasswd $user $pass
 
           update-alternatives --set php /usr/bin/php7.2
@@ -544,33 +587,30 @@ Resources:
           service nginx restart
 
           # RabbitMQ
-          wget -nv https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
-          wget -nv -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
-          dpkg -i erlang-solutions_1.0_all.deb
-          wget -nv -O- https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add -
-          wget -nv -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
-          echo "deb https://dl.bintray.com/rabbitmq/debian $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/rabbitmq.list
-          apt-get update
-          apt-get install --no-install-recommends -y rabbitmq-server
           chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/
           service rabbitmq-server start
           rabbitmq-plugins enable rabbitmq_management
-          rabbitmqctl add_user admin "{{resolve:ssm-secure:/Spryker/rabbit/adm_pass:1}}"
+          admpass=$(aws ssm get-parameters --names /Spryker/rabbit/adm_pass --with-decryption --query Parameters[0].Value | sed -e 's/"//g')
+          rabbitmqctl add_user admin $admpass
           rabbitmqctl add_vhost /EU_spryker_zed
           rabbitmqctl set_user_tags admin administrator
           rabbitmqctl set_permissions -p /EU_spryker_zed admin ".*" ".*" ".*"
-          rabbitmqctl add_user spryker "{{resolve:ssm-secure:/Spryker/rabbit/spryker_pass:1}}"
+          sprykerpass=$(aws ssm get-parameters --names /Spryker/rabbit/spryker_pass --with-decryption --query Parameters[0].Value | sed -e 's/"//g')
+          rabbitmqctl add_user spryker $sprykerpass
           rabbitmqctl set_user_tags spryker administrator
           rabbitmqctl set_permissions -p /EU_spryker_zed spryker ".*" ".*" ".*"
 
           # Jenkins
           wget -nv -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -
-          echo deb http://pkg.jenkins.io/debian-stable binary/>/etc/apt/sources.list.d/jenkins.list
+          echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list
           #apt-get update
           #apt-get install --no-install-recommends -y jenkins=2.164.3 openjdk-8-jdk
           #update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
           #service jenkins stop
 
+          debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
+          debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+          apt-get install --no-install-recommends -y postfix
 
           # If all went well, signal success
           cfn-signal -e $? -r 'Initial configuration completed successfully' \
