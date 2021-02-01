@@ -470,68 +470,113 @@ Resources:
       KeyName: !Ref key
       UserData:
         Fn::Base64: !Sub |
-            #!/bin/bash -xe
-            start=$(date)
-            sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
-            echo "tail -f /var/log/cloud-init-output.log" >> /root/.bash_history
+          #!/bin/bash -xe
+          start=$(date)
+          sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
+          echo "tail -f /var/log/cloud-init-output.log" >> /root/.bash_history
 
-            apt-get update -q
-            apt-mark hold grub-legacy-ec2 grub-pc grub2-common grub-pc-bin grub-common #grub
-            apt-get upgrade -y --no-install-recommends -q
-            instid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-            echo instid $instid
-            echo -n $instid > /var/local/instid
+          apt-get update -q
+          apt-mark hold grub-legacy-ec2 grub-pc grub2-common grub-pc-bin grub-common #grub
+          apt-get upgrade -y --no-install-recommends -q
+          instid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+          echo instid $instid
+          echo -n $instid > /var/local/instid
 
-            apt-get install -y --no-install-recommends python-pip unzip \
-              wget gnupg apt-transport-https python-setuptools \
-              git graphviz libedit2 libpq5 libsqlite3-0 postgresql-client psmisc \
-              python-dev python-setuptools redis-tools vim zip composer \
-              gcc g++ make apache2-utils debconf-utils
+          apt-get install -y --no-install-recommends python-pip unzip \
+            wget gnupg apt-transport-https python-setuptools \
+            git graphviz libedit2 libpq5 libsqlite3-0 postgresql-client psmisc \
+            python-dev python-setuptools redis-tools vim zip composer \
+            gcc g++ make apache2-utils debconf-utils
 
-            pip install urllib3[secure]
-            curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-            unzip awscli-bundle.zip
-            ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-            ln /usr/local/bin/aws /usr/bin/aws
+          pip install urllib3[secure]
+          curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+          unzip awscli-bundle.zip
+          ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+          ln /usr/local/bin/aws /usr/bin/aws
 
-            ln -s /usr/local/aws/bin/easy_install /usr/local/bin/
-            ln -s /usr/local/aws/bin/cfn-signal /usr/local/bin/
-            easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+          ln -s /usr/local/aws/bin/easy_install /usr/local/bin/
+          ln -s /usr/local/aws/bin/cfn-signal /usr/local/bin/
+          easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
 
-            eggpath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
-            chmod 700 $eggpath/init/ubuntu/cfn-hup
-            ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+          eggpath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
+          chmod 700 $eggpath/init/ubuntu/cfn-hup
+          ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
 
-            add-apt-repository ppa:ondrej/php -y
-            apt-get update
-            curl -sL https://deb.nodesource.com/setup_10.x | /bin/bash -
+          # php and nginx
+          add-apt-repository ppa:ondrej/php -y
+          apt-get update
+          curl -sL https://deb.nodesource.com/setup_10.x | /bin/bash -
 
-            apt-get install -q -y php7.2-fpm php7.2-curl php7.2-gd php7.2-gmp \
-              php7.2-intl php7.2-bcmath php7.2-pgsql php-redis php7.2-xml \
-              php7.2-mbstring php7.2-bz2 php-ssh2 php-msgpack php-memcached \
-              php-imagick php-igbinary php7.2-opcache php7.2-zip php7.2-sqlite3 \
-              php7.2-mysql php7.2-intl php7.2-fpm php7.2-cli php7.2-dev \
-              nginx nginx-extras ca-certificates
-            update-alternatives --set php /usr/bin/php7.2
-            update-alternatives --set phar /usr/bin/phar7.2
-            update-alternatives --set phar.phar /usr/bin/phar.phar7.2
-            update-alternatives --set phpize /usr/bin/phpize7.2
-            update-alternatives --set php-config /usr/bin/php-config7.2
+          apt-get install -q -y php7.2-fpm php7.2-curl php7.2-gd php7.2-gmp \
+            php7.2-intl php7.2-bcmath php7.2-pgsql php-redis php7.2-xml \
+            php7.2-mbstring php7.2-bz2 php-ssh2 php-msgpack php-memcached \
+            php-imagick php-igbinary php7.2-opcache php7.2-zip php7.2-sqlite3 \
+            php7.2-mysql php7.2-intl php7.2-cli php7.2-dev \
+            nginx nginx-extras ca-certificates nodejs
 
-            srcdir=https://github.com/ALutchko/poc/raw/spinnaker/Spryker/
-            wget $srcdir/yves.conf -O /etc/php/7.2/fpm/pool.d/yves.conf
-            wget $srcdir/zed.conf -O /etc/php/7.2/fpm/pool.d/zed.conf
-            wget $srcdir/glue.conf -O /etc/php/7.2/fpm/pool.d/glue.conf
-            wget $srcdir/10-opcache.ini -O /etc/php/7.2/fpm/conf.d/10-opcache.ini
+          debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
+          debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+          apt-get install -y postfix &
+
+          srcdir=https://github.com/ALutchko/poc/raw/spinnaker/Spryker/
+          wget $srcdir/yves.conf -O /etc/php/7.2/fpm/pool.d/yves.conf &
+          wget $srcdir/zed.conf -O /etc/php/7.2/fpm/pool.d/zed.conf &
+          wget $srcdir/glue.conf -O /etc/php/7.2/fpm/pool.d/glue.conf &
+          wget $srcdir/10-opcache.ini -O /etc/php/7.2/fpm/conf.d/10-opcache.ini &
+          # country-specific
+          wget $srcdir/vhost-yves-EU.conf /etc/nginx/conf.d/vhost-yves-EU.conf &
+          wget $srcdir/vhost-zed-EU.conf /etc/nginx/conf.d/vhost-zed-EU.conf &
+          wget $srcdir/vhost-glue-EU.conf /etc/nginx/conf.d/vhost-glue-EU.conf
+          user="{{resolve:ssm:/Spryker/htpasswd/EU/user:1}}"
+          pass="{{resolve:ssm-secure:/Spryker/htpasswd/EU/pass:1}}"
+          htpasswd -c /etc/nginx/.htpasswd $user $pass
+
+          update-alternatives --set php /usr/bin/php7.2
+          update-alternatives --set phar /usr/bin/phar7.2
+          update-alternatives --set phar.phar /usr/bin/phar.phar7.2
+          update-alternatives --set phpize /usr/bin/phpize7.2
+          update-alternatives --set php-config /usr/bin/php-config7.2
+          rm /etc/nginx/sites-enabled/default
+          wget $srcdir/jenkins.conf /etc/nginx/conf.d/jenkins.conf
+          wget $srcdir/fastcgi_params /etc/nginx/fastcgi_params
+
+          service php7.2-fpm restart &
+          service nginx restart
+
+          # RabbitMQ
+          wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
+          wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+          dpkg -i erlang-solutions_1.0_all.deb
+          wget -O- https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add -
+          wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+          echo "deb https://dl.bintray.com/rabbitmq/debian $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/rabbitmq.list
+          apt-get update
+          apt-get install -y rabbitmq-server
+          chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/
+          service rabbitmq-server start
+          rabbitmq-plugins enable rabbitmq_management
+          rabbitmqctl add_user admin "{{resolve:ssm-secure:/Spryker/rabbit/adm_pass:1}}"
+          rabbitmqctl add_vhost /EU_spryker_zed
+          rabbitmqctl set_user_tags admin administrator
+          rabbitmqctl set_permissions -p /EU_spryker_zed admin ".*" ".*" ".*"
+          rabbitmqctl add_user spryker "{{resolve:ssm-secure:/Spryker/rabbit/spryker_pass:1}}"
+          rabbitmqctl set_user_tags spryker administrator
+          rabbitmqctl set_permissions -p /EU_spryker_zed spryker ".*" ".*" ".*"
+
+          # Jenkins
+          wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -
+          echo deb http://pkg.jenkins.io/debian-stable binary/>/etc/apt/sources.list.d/jenkins.list
+          #apt-get update
+          #apt-get install -y jenkins=2.164.3 openjdk-8-jdk
+          #update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+          #service jenkins stop
 
 
-            rm /etc/nginx/sites-enabled/default
-
-            # If all went well, signal success
-            cfn-signal -e $? -r 'Initial configuration completed successfully' \
-              --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
-            echo start: $start
-            echo end: $(date)
+          # If all went well, signal success
+          cfn-signal -e $? -r 'Initial configuration completed successfully' \
+            --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
+          echo start: $start
+          echo end: $(date)
 
   SprykerASG:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
