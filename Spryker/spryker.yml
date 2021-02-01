@@ -532,6 +532,9 @@ Resources:
           unzip awscli-bundle.zip
           ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
           ln /usr/local/bin/aws /usr/bin/aws
+          echo "[default]" > .aws/config
+          echo "output = json" >> .aws/config
+          echo "region = ${AWS::Region}" >> .aws/config
 
           ln -s /usr/local/aws/bin/easy_install /usr/local/bin/
           ln -s /usr/local/aws/bin/cfn-signal /usr/local/bin/
