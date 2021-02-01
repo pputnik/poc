@@ -516,17 +516,17 @@ Resources:
 
           debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
           debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-          apt-get install -y postfix &
+          apt-get install -y postfix
 
           srcdir=https://github.com/ALutchko/poc/raw/spinnaker/Spryker/
-          wget $srcdir/yves.conf -O /etc/php/7.2/fpm/pool.d/yves.conf &
-          wget $srcdir/zed.conf -O /etc/php/7.2/fpm/pool.d/zed.conf &
-          wget $srcdir/glue.conf -O /etc/php/7.2/fpm/pool.d/glue.conf &
-          wget $srcdir/10-opcache.ini -O /etc/php/7.2/fpm/conf.d/10-opcache.ini &
+          wget -nv $srcdir/yves.conf -O /etc/php/7.2/fpm/pool.d/yves.conf
+          wget -nv $srcdir/zed.conf -O /etc/php/7.2/fpm/pool.d/zed.conf
+          wget -nv $srcdir/glue.conf -O /etc/php/7.2/fpm/pool.d/glue.conf
+          wget -nv $srcdir/10-opcache.ini -O /etc/php/7.2/fpm/conf.d/10-opcache.ini
           # country-specific
-          wget $srcdir/vhost-yves-EU.conf /etc/nginx/conf.d/vhost-yves-EU.conf &
-          wget $srcdir/vhost-zed-EU.conf /etc/nginx/conf.d/vhost-zed-EU.conf &
-          wget $srcdir/vhost-glue-EU.conf /etc/nginx/conf.d/vhost-glue-EU.conf
+          wget -nv $srcdir/vhost-yves-EU.conf /etc/nginx/conf.d/vhost-yves-EU.conf
+          wget -nv $srcdir/vhost-zed-EU.conf /etc/nginx/conf.d/vhost-zed-EU.conf
+          wget -nv $srcdir/vhost-glue-EU.conf /etc/nginx/conf.d/vhost-glue-EU.conf
           user="{{resolve:ssm:/Spryker/htpasswd/EU/user:1}}"
           pass="{{resolve:ssm-secure:/Spryker/htpasswd/EU/pass:1}}"
           htpasswd -c /etc/nginx/.htpasswd $user $pass
@@ -537,18 +537,18 @@ Resources:
           update-alternatives --set phpize /usr/bin/phpize7.2
           update-alternatives --set php-config /usr/bin/php-config7.2
           rm /etc/nginx/sites-enabled/default
-          wget $srcdir/jenkins.conf /etc/nginx/conf.d/jenkins.conf
-          wget $srcdir/fastcgi_params /etc/nginx/fastcgi_params
+          wget -nv $srcdir/jenkins.conf /etc/nginx/conf.d/jenkins.conf
+          wget -nv $srcdir/fastcgi_params /etc/nginx/fastcgi_params
 
-          service php7.2-fpm restart &
+          service php7.2-fpm restart
           service nginx restart
 
           # RabbitMQ
-          wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
-          wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+          wget -nv https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
+          wget -nv -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
           dpkg -i erlang-solutions_1.0_all.deb
-          wget -O- https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add -
-          wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+          wget -nv -O- https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add -
+          wget -nv -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
           echo "deb https://dl.bintray.com/rabbitmq/debian $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/rabbitmq.list
           apt-get update
           apt-get install -y rabbitmq-server
@@ -564,7 +564,7 @@ Resources:
           rabbitmqctl set_permissions -p /EU_spryker_zed spryker ".*" ".*" ".*"
 
           # Jenkins
-          wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -
+          wget -nv -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -
           echo deb http://pkg.jenkins.io/debian-stable binary/>/etc/apt/sources.list.d/jenkins.list
           #apt-get update
           #apt-get install -y jenkins=2.164.3 openjdk-8-jdk
