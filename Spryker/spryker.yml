@@ -576,7 +576,7 @@ Resources:
           wget -nv $srcdir/vhost-glue-EU.conf -O /etc/nginx/conf.d/vhost-glue-EU.conf
           user=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/user --query Parameters[0].Value | sed -e 's/"//g')
           pass=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/pass --with-decryption --query Parameters[0].Value | sed -e 's/"//g')
-          htpasswd -c /etc/nginx/.htpasswd $user $pass
+          htpasswd -bc /etc/nginx/.htpasswd $user $pass
 
           update-alternatives --set php /usr/bin/php7.2
           update-alternatives --set phar /usr/bin/phar7.2
