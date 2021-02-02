@@ -53,6 +53,12 @@ Parameters:
     Description: Id of default route table for pub subnets
     Type: String
 
+  DBInstanceClass:
+    Description: Instance type for RDS (Aurora PgSQL)
+    Type: String
+  ElasticSearchType:
+    Description: Instance type for ElasticSearch
+    Type: String
   Ec2Type:
     Description: Instance type for Spryker
     Type: String
@@ -226,7 +232,7 @@ Resources:
     Type: 'AWS::RDS::DBInstance'
     Condition: CreateRds
     Properties:
-      DBInstanceClass: db.t3.medium
+      DBInstanceClass: !Ref DBInstanceClass
       Engine: aurora-postgresql
       MultiAZ: false
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
@@ -279,7 +285,7 @@ Resources:
       ElasticsearchClusterConfig:
         DedicatedMasterEnabled: false
         InstanceCount: 1
-        InstanceType: t3.small.elasticsearch
+        InstanceType: !Ref ElasticSearchType
       ElasticsearchVersion: 5.6
 #      LogPublishingOptions:
 #        SEARCH_SLOW_LOGS:
@@ -552,18 +558,18 @@ Resources:
           dpkg -i erlang-solutions_1.0_all.deb
           wget -nv -O- https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc | apt-key add -
           wget -nv -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
-          echo "deb https://dl.bintray.com/rabbitmq/debian $(lsb_release -sc) main" > /etc/apt/sources.list.d/rabbitmq.list
+          echo "deb https://dl.bintray.com/rabbitmq/debian $(lsb_release -sc) main" >> /etc/apt/sources.list.d/rabbitmq.list
 
           # php and nginx
           apt-get update
           curl -sL https://deb.nodesource.com/setup_10.x | /bin/bash -
 
           apt-get install --no-install-recommends -q -y php7.2-fpm php7.2-curl \
-            php7.2-gd php7.2-intl php7.2-bcmath php7.2-pgsql php-redis php7.2-xml \
-            php7.2-mbstring php7.2-bz2 php-ssh2 php-msgpack php-memcached \
-            php-imagick php-igbinary php7.2-opcache php7.2-zip php7.2-sqlite3 \
+            php7.2-gd php7.2-intl php7.2-bcmath php7.2-pgsql php7.2-redis php7.2-xml \
+            php7.2-mbstring php7.2-bz2 php7.2-ssh2 php7.2-msgpack php7.2-memcached \
+            php7.2-imagick php7.2-igbinary php7.2-opcache php7.2-zip php7.2-sqlite3 \
             php7.2-mysql php7.2-intl php7.2-cli php7.2-dev  php7.2-gmp \
-            nginx nginx-extras ca-certificates nodejs rabbitmq-server
+            nginx nginx-extras ca-certificates nodejs rabbitmq-server openjdk-8-jdk
 
           srcdir=https://github.com/ALutchko/poc/raw/spinnaker/Spryker/
           wget -nv $srcdir/yves.conf -O /etc/php/7.2/fpm/pool.d/yves.conf
@@ -605,12 +611,44 @@ Resources:
           rabbitmqctl set_permissions -p /EU_spryker_zed spryker ".*" ".*" ".*"
 
           # Jenkins
-          wget -nv -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -
+          #wget -nv -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -
+          wget -nv -O - https://pkg.jenkins.io/debian/jenkins.io.key | apt-key add -
           echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list
-          #apt-get update
+          apt-get update
           #apt-get install --no-install-recommends -y jenkins=2.164.3 openjdk-8-jdk
-          #update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-          #service jenkins stop
+          apt-get install --no-install-recommends -y jenkins
+          service jenkins stop &
+          update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+          update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+          mkdir -p /var/lib/jenkins/init.groovy.d/
+          wget -nv $srcdir/init.groovy -O /var/lib/jenkins/init.groovy.d/init.groovy
+          wget -nv $srcdir/config.xml -O /var/lib/jenkins/config.xml
+          chown -R www-data:www-data /var/lib/jenkins
+          chown -R www-data:www-data /var/cache/jenkins
+          chown -R www-data:www-data /var/log/jenkins
+          systemctl daemon-reload
+          service jenkins restart
+
+          echo "vm.swappiness=5" >> /etc/sysctl.conf
+          sysctl -p
+          ulimit -n 65535
+          wget -nv $srcdir/spryker.logrotate -O /etc/logrotate.d/spryker
+
+          # Spryker
+          mkdir /data
+          chown ubuntu /data
+          cd /data
+          git clone https://github.com/spryker-shop/b2c-demo-shop.git ./
+          git checkout tags/202001.0
+          wget -nv $srcdir/config_local.php -O /data/config/Shared/config_local.php
+          #{{ REDIS_ENDPOINT }}
+          #{{RDS_USERNAME}}
+          #{{RDS_PASSWORD}}
+          #{{RDS_ENDPOINT}}
+          #{{ELASTICSEARCH_ENDPOINT}} # WITHOUT HTTPS:// and trailing /
+          #{{RABBITMQ_HOST}}
+          #{{RABBITMQ_USERNAME}}
+          #{{RABBITMQ_PASSWORD}}
 
           debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
           debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
