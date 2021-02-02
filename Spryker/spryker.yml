@@ -582,11 +582,11 @@ Resources:
           wget -nv $srcdir/10-opcache.ini -O /etc/php/7.2/fpm/conf.d/10-opcache.ini
           # country-specific
           wget -nv $srcdir/vhost-yves-EU.conf -O /etc/nginx/conf.d/vhost-yves-EU.conf
-          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/php/7.2/fpm/pool.d/vhost-yves-EU.conf &
+          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/nginx/conf.d/vhost-yves-EU.conf &
           wget -nv $srcdir/vhost-zed-EU.conf -O /etc/nginx/conf.d/vhost-zed-EU.conf
-          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/php/7.2/fpm/pool.d/vhost-zed-EU.conf &
+          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/nginx/conf.d/vhost-zed-EU.conf &
           wget -nv $srcdir/vhost-glue-EU.conf -O /etc/nginx/conf.d/vhost-glue-EU.conf
-          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/php/7.2/fpm/pool.d/vhost-glue-EU.conf &
+          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/nginx/conf.d/vhost-glue-EU.conf &
           user=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/user --query Parameters[0].Value | sed -e 's/"//g')
           pass=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/pass --with-decryption --query Parameters[0].Value | sed -e 's/"//g')
           htpasswd -bc /etc/nginx/.htpasswd $user $pass
@@ -636,7 +636,7 @@ Resources:
           systemctl daemon-reload
           wget -nv $srcdir/config.xml -O /var/lib/jenkins/config.xml
           service jenkins restart
-          cat /var/lib/jenkins/secrets/initialAdminPassword
+          ls -l /var/lib/jenkins/secrets/
 
           echo "vm.swappiness=5" >> /etc/sysctl.conf
           sysctl -p
