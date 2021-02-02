@@ -668,6 +668,7 @@ Resources:
             --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
           echo start: $start
           echo end: $(date)
+          # /var/lib/cloud/instances/i-xxx/scripts/part-001
 
   SprykerASG:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
