@@ -650,14 +650,14 @@ Resources:
           git clone https://github.com/spryker-shop/b2c-demo-shop.git ./
           git checkout tags/202001.0
           wget -nv $srcdir/config_local.php -O /data/config/Shared/config_local.php
-          sed -i 's/{{REDIS_ENDPOINT}}/localhost/g' /etc/nginx/conf.d/jenkins.conf
+          sed -i 's/{{REDIS_ENDPOINT}}/localhost/g' /data/config/Shared/config_local.php
           #{{RDS_USERNAME}}
           #{{RDS_PASSWORD}}
           #{{RDS_ENDPOINT}}
           #{{ELASTICSEARCH_ENDPOINT}} # WITHOUT HTTPS:// and trailing /
-          sed -i 's/{{RABBITMQ_HOST}}/localhost/g' /etc/nginx/conf.d/jenkins.conf
-          sed -i 's/{{RABBITMQ_USERNAME}}/spryker/g' /etc/nginx/conf.d/jenkins.conf
-          sed -i 's/{{RABBITMQ_PASSWORD}}/$sprykerpass/g' /etc/nginx/conf.d/jenkins.conf
+          sed -i 's/{{RABBITMQ_HOST}}/localhost/g' /data/config/Shared/config_local.php
+          sed -i 's/{{RABBITMQ_USERNAME}}/spryker/g' /data/config/Shared/config_local.php
+          sed -i 's/{{RABBITMQ_PASSWORD}}/$sprykerpass/g' /data/config/Shared/config_local.php
 
           debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
           debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
