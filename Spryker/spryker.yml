@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: |
   Spryker sandbox test
+  https://documentation.spryker.com/docs/ht-install-spryker-in-aws-environment
 Parameters:
   proj:
     Description: project name
@@ -11,6 +12,9 @@ Parameters:
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
   Responsible:
     Description: responsible person
+    Type: String
+  BaseDomain:
+    Description: Base domain for your system, e.g. `shop.com`. You need access to its DNS.
     Type: String
 
   CreateRds:
@@ -578,8 +582,11 @@ Resources:
           wget -nv $srcdir/10-opcache.ini -O /etc/php/7.2/fpm/conf.d/10-opcache.ini
           # country-specific
           wget -nv $srcdir/vhost-yves-EU.conf -O /etc/nginx/conf.d/vhost-yves-EU.conf
+          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/php/7.2/fpm/pool.d/vhost-yves-EU.conf &
           wget -nv $srcdir/vhost-zed-EU.conf -O /etc/nginx/conf.d/vhost-zed-EU.conf
+          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/php/7.2/fpm/pool.d/vhost-zed-EU.conf &
           wget -nv $srcdir/vhost-glue-EU.conf -O /etc/nginx/conf.d/vhost-glue-EU.conf
+          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/php/7.2/fpm/pool.d/vhost-glue-EU.conf &
           user=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/user --query Parameters[0].Value | sed -e 's/"//g')
           pass=$(aws ssm get-parameters --names /Spryker/htpasswd/EU/pass --with-decryption --query Parameters[0].Value | sed -e 's/"//g')
           htpasswd -bc /etc/nginx/.htpasswd $user $pass
@@ -591,6 +598,7 @@ Resources:
           update-alternatives --set php-config /usr/bin/php-config7.2
           rm /etc/nginx/sites-enabled/default
           wget -nv $srcdir/jenkins.conf -O /etc/nginx/conf.d/jenkins.conf
+          sed -i 's/BaseDomain/${BaseDomain}/g' /etc/nginx/conf.d/jenkins.conf &
           wget -nv $srcdir/fastcgi_params -O /etc/nginx/fastcgi_params
 
           service php7.2-fpm restart
@@ -622,12 +630,13 @@ Resources:
           update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
           mkdir -p /var/lib/jenkins/init.groovy.d/
           wget -nv $srcdir/init.groovy -O /var/lib/jenkins/init.groovy.d/init.groovy
-          wget -nv $srcdir/config.xml -O /var/lib/jenkins/config.xml
-          chown -R www-data:www-data /var/lib/jenkins
-          chown -R www-data:www-data /var/cache/jenkins
-          chown -R www-data:www-data /var/log/jenkins
+          chown -R jenkins:www-data /var/lib/jenkins
+          chown -R jenkins:www-data /var/cache/jenkins
+          chown -R jenkins:www-data /var/log/jenkins
           systemctl daemon-reload
+          wget -nv $srcdir/config.xml -O /var/lib/jenkins/config.xml
           service jenkins restart
+          cat /var/lib/jenkins/secrets/initialAdminPassword
 
           echo "vm.swappiness=5" >> /etc/sysctl.conf
           sysctl -p
@@ -641,14 +650,14 @@ Resources:
           git clone https://github.com/spryker-shop/b2c-demo-shop.git ./
           git checkout tags/202001.0
           wget -nv $srcdir/config_local.php -O /data/config/Shared/config_local.php
-          #{{ REDIS_ENDPOINT }}
+          sed -i 's/{{REDIS_ENDPOINT}}/localhost/g' /etc/nginx/conf.d/jenkins.conf
           #{{RDS_USERNAME}}
           #{{RDS_PASSWORD}}
           #{{RDS_ENDPOINT}}
           #{{ELASTICSEARCH_ENDPOINT}} # WITHOUT HTTPS:// and trailing /
-          #{{RABBITMQ_HOST}}
-          #{{RABBITMQ_USERNAME}}
-          #{{RABBITMQ_PASSWORD}}
+          sed -i 's/{{RABBITMQ_HOST}}/localhost/g' /etc/nginx/conf.d/jenkins.conf
+          sed -i 's/{{RABBITMQ_USERNAME}}/spryker/g' /etc/nginx/conf.d/jenkins.conf
+          sed -i 's/{{RABBITMQ_PASSWORD}}/$sprykerpass/g' /etc/nginx/conf.d/jenkins.conf
 
           debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
           debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
