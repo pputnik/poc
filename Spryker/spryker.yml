@@ -636,7 +636,7 @@ Resources:
           systemctl daemon-reload
           wget -nv $srcdir/config.xml -O /var/lib/jenkins/config.xml
           service jenkins restart
-          ls -l /var/lib/jenkins/secrets/
+          # ls -l /var/lib/jenkins/secrets/
 
           echo "vm.swappiness=5" >> /etc/sysctl.conf
           sysctl -p
