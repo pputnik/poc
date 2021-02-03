@@ -1,0 +1,386 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Spryker sandbox test
+  https://documentation.spryker.com/docs/ht-install-spryker-in-aws-environment
+Parameters:
+  proj:
+    Description: project name
+    Type: String
+  key:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  Responsible:
+    Description: responsible person
+    Type: String
+  BaseDomain:
+    Description: Base domain for your system, e.g. `shop.com`. You need access to its DNS.
+    Type: String
+
+  CreateRds:
+    Description: Should we create RDS? Any value=yes, empty=no
+    Type: String
+    Default: ""
+  CreateEs:
+    Description: Should we create ElasticSearch? Any value=yes, empty=no
+    Type: String
+    Default: ""
+  CreateEc:
+    Description: Should we create ElaskiCache? Any value=yes, empty=no
+    Type: String
+    Default: ""
+
+  VpcId:
+    Description: _DEFAULT_ VPC Id
+    Type: "AWS::EC2::VPC::Id"
+  OfficeCidr:
+    Description: Our office IP range
+    Type: String
+    Default: ""
+  AlexCidr:
+    Description: Yet another  IP range
+    Type: String
+    Default: ""
+  VpcCidr:
+    Description: CIDR of existing default VPC
+    Type: String
+  PrivCidr1:
+    Description: CIDR to create 1st private subnet
+    Type: String
+  PrivCidr2:
+    Description: CIDR to create 2nd private subnet
+    Type: String
+  PubCidr1:
+    Description: CIDR to create 1st private subnet
+    Type: String
+  DefRouteId:
+    Description: Id of default route table for pub subnets
+    Type: String
+
+  DBInstanceClass:
+    Description: Instance type for RDS (Aurora PgSQL)
+    Type: String
+  ElasticSearchType:
+    Description: Instance type for ElasticSearch
+    Type: String
+  Ec2Type:
+    Description: Instance type for Spryker
+    Type: String
+  Ec2Ami:
+    Description: Ubuntu 18 LTS for Spryker
+    Type: String
+  EbsSize:
+    Description: Disk size for Spryker, GB
+    ConstraintDescription: 8 <= size <= 1000
+    Type: Number
+    MinValue: 8
+    MaxValue: 1000
+
+# ===
+Conditions:
+  HaveOfficeCidr:
+    !Not [!Equals [!Ref OfficeCidr, ""]]
+  HaveAlexCidr:
+    !Not [!Equals [!Ref AlexCidr, ""]]
+  CreateRds:
+    !Not [!Equals [!Ref CreateRds, ""]]
+  CreateEs:
+    !Not [!Equals [!Ref CreateEs, ""]]
+  CreateEc:
+    !Not [!Equals [!Ref CreateEc, ""]]
+# ===
+Resources:
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PrivCidr1
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${proj}-priv1
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref PrivCidr2
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${proj}-priv2
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  PubSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PubCidr1
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${proj}-pub1
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  PubSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PubSubnet1
+      RouteTableId: !Ref DefRouteId
+  # --
+  SprykerSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: spryker-shop
+      GroupDescription: Main SG for Spryker
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Responsible
+          Value: !Ref Responsible
+        - Key: proj
+          Value: !Ref proj
+  SprykerSgInOffice:
+    Condition: HaveOfficeCidr
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref OfficeCidr
+      #SourceSecurityGroupId: !GetAtt SGBase.GroupId
+  SprykerSgInAlex:
+    Condition: HaveAlexCidr
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref AlexCidr
+  SprykerSgInPostgres:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      CidrIp: !Ref VpcCidr
+  SprykerSgInRedis:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 6379
+      ToPort: 6379
+      CidrIp: !Ref VpcCidr
+
+  # --
+  SprykerPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      Description: "Policy for Spryker server, in the future will allows access to RDS. Created by CF stack ${AWS::StackName}"
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowToSeeBucketListInConsole
+            Effect: Allow
+            Action:
+              - "rds-db:connect"
+            Resource: "*"
+          - Sid: GetPasswords
+            Effect: Allow
+            Action:
+              - "ssm:GetParameters"
+            Resource: "arn:aws:ssm:eu-central-1:011874698875:parameter/Spryker/*"
+  SprykerRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref SprykerPolicy
+  SprykerRoleIP:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        - Ref: SprykerRole
+  # --
+  LaunchConfig:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Metadata:
+      # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/deploying.applications.html?tag=duckduckgo-ffab-20
+      # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-init.html
+      'AWS::CloudFormation::Init':
+        configSets:
+          wordpress_install:
+            - install_cfn
+        install_cfn:
+          files:
+            /etc/cfn/cfn-hup.conf:
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content: !Join
+                - ''
+                - - |
+                    [cfn-auto-reloader-hook]
+                  - |
+                    triggers=post.update
+                  - >
+                    path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init
+                  - 'action=/opt/aws/bin/cfn-init -v '
+                  - '         --stack '
+                  - !Ref 'AWS::StackName'
+                  - '         --resource LaunchConfig '
+                  - '         --configsets wordpress_install '
+                  - '         --region '
+                  - !Ref 'AWS::Region'
+                  - |+
+
+              mode: '000400'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              cfn-hup:
+                enabled: 'true'
+                ensureRunning: 'true'
+                files:
+                  - /etc/cfn/cfn-hup.conf
+                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
+    Properties:
+      ImageId: !Ref Ec2Ami
+      InstanceType: !Ref Ec2Type
+      SecurityGroups:
+        - !Ref SprykerSg
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeType: "gp2"
+            DeleteOnTermination: true
+            VolumeSize: !Ref EbsSize
+      KeyName: !Ref key
+      IamInstanceProfile: !Ref SprykerRoleIP
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          start=$(date)
+          sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
+          echo "tail -f /var/log/cloud-init-output.log" >> /root/.bash_history
+
+          apt-get update -q
+          apt-mark hold grub-legacy-ec2 grub-pc grub2-common grub-pc-bin grub-common #grub
+          apt-get upgrade -y --no-install-recommends -q
+          instid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+          echo instid $instid
+          echo -n $instid > /var/local/instid
+
+          apt-get install -y --no-install-recommends python-pip unzip \
+            wget gnupg apt-transport-https python-setuptools \
+            git graphviz libedit2 libpq5 libsqlite3-0 postgresql-client psmisc \
+            python-dev python-setuptools redis-tools vim zip composer \
+            gcc g++ make apache2-utils debconf-utils ca-certificates openjdk-8-jdk
+
+          pip install urllib3[secure]
+          curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+          unzip awscli-bundle.zip
+          ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+          ln /usr/local/bin/aws /usr/bin/aws
+          mkdir /root/.aws/
+          echo "[default]" > /root/.aws/config
+          echo "output = json" >> /root/.aws/config
+          echo "region = ${AWS::Region}" >> /root/.aws/config
+
+          ln -s /usr/local/aws/bin/easy_install /usr/local/bin/
+          ln -s /usr/local/aws/bin/cfn-signal /usr/local/bin/
+          easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+
+          eggpath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
+          chmod 700 $eggpath/init/ubuntu/cfn-hup
+          ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+
+          #debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
+          #debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+          #apt-get install --no-install-recommends -y postfix
+
+          # If all went well, signal success
+          cfn-signal -e $? -r 'Initial configuration completed successfully' \
+            --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
+          echo start: $start
+          echo end: $(date)
+          # /var/lib/cloud/instances/i-xxx/scripts/part-001
+
+  SprykerASG:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: !Ref proj
+      VPCZoneIdentifier:
+        - !Ref PubSubnet1
+      LaunchConfigurationName: !Ref LaunchConfig
+      MinSize: 1
+      MaxSize: 2
+      DesiredCapacity: 1
+      #HealthCheckType: ELB
+      HealthCheckType: EC2
+      HealthCheckGracePeriod: 300
+      #TargetGroupARNs:
+      #  - !Ref ALBTargetGroup
+      Tags:
+        - Key: Responsible
+          Value: !Ref Responsible
+          PropagateAtLaunch: true
+        - Key: proj
+          Value: !Ref proj
+          PropagateAtLaunch: true
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT15M
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: '1'
+        MaxBatchSize: '1'
+        PauseTime: PT5M
+        WaitOnResourceSignals: false
+
+# ===
+Outputs:
+  PrivateSubnet1:
+    Description: A reference to the private subnet in the 1st Availability Zone
+    Value: !Ref PrivateSubnet1
+
+  PrivateSubnet2:
+    Description: A reference to the private subnet in the 2nd Availability Zone
+    Value: !Ref PrivateSubnet2

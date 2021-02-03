@@ -1,0 +1,26 @@
+[
+  {"ParameterKey":"proj", "ParameterValue": "spryker-d"},
+  {"ParameterKey":"key", "ParameterValue": "Alex"},
+  {"ParameterKey":"Responsible", "ParameterValue": "Alex"},
+  {"ParameterKey":"BaseDomain", "ParameterValue": "olowek.eu"},
+
+  {"ParameterKey":"CreateRds", "ParameterValue": ""},
+  {"ParameterKey":"CreateEs", "ParameterValue": ""},
+  {"ParameterKey":"CreateEc", "ParameterValue": ""},
+
+  {"ParameterKey":"VpcId", "ParameterValue": "vpc-3b68d351"},
+  {"ParameterKey":"OfficeCidr", "ParameterValue": "85.128.77.0/24"},
+  {"ParameterKey":"AlexCidr", "ParameterValue": "89.64.0.0/16"},
+  {"ParameterKey":"VpcCidr", "ParameterValue": "172.31.0.0/16"},
+  {"ParameterKey":"PrivCidr1", "ParameterValue": "172.31.64.0/24"},
+  {"ParameterKey":"PrivCidr2", "ParameterValue": "172.31.65.0/24"},
+  {"ParameterKey":"PubCidr1", "ParameterValue": "172.31.66.0/24"},
+  {"ParameterKey":"DefRouteId", "ParameterValue": "rtb-23536f49"},
+
+  {"ParameterKey":"DBInstanceClass", "ParameterValue": "db.t3.medium"},
+  {"ParameterKey":"ElasticSearchType", "ParameterValue": "t3.small.elasticsearch"},
+  {"ParameterKey":"Ec2Type", "ParameterValue": "t3.small"},
+  {"ParameterKey":"Ec2Ami", "ParameterValue": "ami-0e1ce3e0deb8896d2"},
+  {"ParameterKey":"EbsSize", "ParameterValue": "10"}
+
+]
