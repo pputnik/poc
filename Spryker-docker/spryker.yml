@@ -309,10 +309,11 @@ Resources:
           echo -n $instid > /var/local/instid
 
           apt-get install -y --no-install-recommends python-pip unzip \
-            wget gnupg apt-transport-https python-setuptools \
+            wget gnupg apt-transport-https python-setuptools  gnupg-agent \
             git graphviz libedit2 libpq5 libsqlite3-0 postgresql-client psmisc \
             python-dev python-setuptools redis-tools vim zip composer \
-            gcc g++ make apache2-utils debconf-utils ca-certificates openjdk-8-jdk
+            gcc g++ make apache2-utils debconf-utils ca-certificates openjdk-8-jdk \
+            software-properties-common
 
           pip install urllib3[secure]
           curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
@@ -331,6 +332,14 @@ Resources:
           eggpath=/usr/local/aws/lib/python2.7/site-packages/aws_cfn_bootstrap-1.4-py2.7.egg
           chmod 700 $eggpath/init/ubuntu/cfn-hup
           ln -s  $eggpath/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+
+          srcdir=https://github.com/ALutchko/poc/raw/spinnaker/Spryker-docker/
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+          add-apt-repository "deb [arch=amd64] \
+            https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+          apt-get install -y --no-install-recommends docker-ce \
+            docker-ce-cli containerd.io
+          wget -nv $srcdir/daemon.json -O /etc/docker/daemon.json
 
           #debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
           #debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
