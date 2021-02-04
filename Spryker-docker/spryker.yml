@@ -355,12 +355,8 @@ Resources:
           git clone https://github.com/spryker/docker-sdk.git --single-branch docker
           docker version  # must be >18.09.1
           docker-compose --version # must be >1.23+
-          echo "127.0.0.1 glue.at.spryker.local glue.de.spryker.local \
-            glue.us.spryker.local mail.spryker.local queue.spryker.local \
-            redis-commander.spryker.local scheduler.spryker.local spryker.local \
-            swagger.spryker.local yves.at.spryker.local yves.de.spryker.local \
-            yves.us.spryker.local zed.at.spryker.local zed.de.spryker.local \
-            zed.us.spryker.local" >> /etc/hosts
+          echo "127.0.0.1 glue.at.spryker.local glue.de.spryker.local glue.us.spryker.local mail.spryker.local queue.spryker.local redis-commander.spryker.local scheduler.spryker.local spryker.local swagger.spryker.local yves.at.spryker.local yves.de.spryker.local yves.us.spryker.local zed.at.spryker.local zed.de.spryker.local zed.us.spryker.local" >> /etc/hosts
+          HOME=/root
           docker/sdk bootstrap # deploy.dev.yml
           #docker/sdk up
 
