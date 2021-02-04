@@ -19,7 +19,7 @@
 
   {"ParameterKey":"DBInstanceClass", "ParameterValue": "db.t3.medium"},
   {"ParameterKey":"ElasticSearchType", "ParameterValue": "t3.small.elasticsearch"},
-  {"ParameterKey":"Ec2Type", "ParameterValue": "t3.small"},
+  {"ParameterKey":"Ec2Type", "ParameterValue": "t3.medium"},
   {"ParameterKey":"Ec2Ami", "ParameterValue": "ami-0e1ce3e0deb8896d2"},
   {"ParameterKey":"EbsSize", "ParameterValue": "10"}
 
