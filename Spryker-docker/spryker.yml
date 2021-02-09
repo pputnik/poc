@@ -365,10 +365,10 @@ Resources:
           #apt-get install --no-install-recommends -y postfix
 
           # If all went well, signal success
-          cfn-signal -e $? -r 'Initial configuration completed successfully' \
-            --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
           echo start: $start
           echo end: $(date)
+          cfn-signal -e $? -r 'Initial configuration completed successfully' \
+            --stack ${AWS::StackName} --resource SprykerASG --region ${AWS::Region}
           # /var/lib/cloud/instances/i-xxx/scripts/part-001
 
   SprykerASG:
