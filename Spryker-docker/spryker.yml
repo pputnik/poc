@@ -346,7 +346,7 @@ Resources:
             -o /usr/local/bin/docker-compose
           chmod +x /usr/local/bin/docker-compose
 
-          # development mode
+          # demo and development mode
           mkdir /data
           cd /root
           git clone https://github.com/spryker-shop/b2c-demo-shop.git -b 202009.0-p1 \
@@ -395,7 +395,7 @@ Resources:
           PropagateAtLaunch: true
     CreationPolicy:
       ResourceSignal:
-        Timeout: PT15M
+        Timeout: PT25M
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MinInstancesInService: '1'
