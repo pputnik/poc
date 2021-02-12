@@ -357,6 +357,11 @@ Resources:
           docker-compose --version # must be >1.23+
           echo "127.0.0.1 glue.at.spryker.local glue.de.spryker.local glue.us.spryker.local mail.spryker.local queue.spryker.local redis-commander.spryker.local scheduler.spryker.local spryker.local swagger.spryker.local yves.at.spryker.local yves.de.spryker.local yves.us.spryker.local zed.at.spryker.local zed.de.spryker.local zed.us.spryker.local" >> /etc/hosts
           export HOME=/root
+          for i in ./deploy.ci.api.yml ./deploy.ci.functional.mariadb.yml ./deploy.ci.functional.yml ./deploy.dev.yml ./deploy.yml ./docker/ci/deploy.dev.yml ./docker/ci/deploy.yml; do
+            echo "replacing domain in $i"
+            sed -i "s/\.spryker\.local/.spryker.360codelab.pl/g" $i
+          done
+
           docker/sdk bootstrap # deploy.dev.yml
           docker/sdk up
 
