@@ -447,8 +447,8 @@ Resources:
       #HealthCheckType: ELB
       HealthCheckType: EC2
       HealthCheckGracePeriod: 300
-      TargetGroupARNs:
-        - !Ref ALBTargetGroup
+#      TargetGroupARNs:
+#        - !Ref ALBTargetGroup
       Tags:
         - Key: Responsible
           Value: !Ref Responsible
