@@ -450,7 +450,7 @@ Resources:
 
           # demo and development mode
           mkdir /data
-          git clone https://github.com/360codelab/spryker-test.git -b master \
+          git clone git@github.com:360codelab/spryker-test.git -b master \
             --single-branch ./b2c-demo-shop
           cd b2c-demo-shop
           git clone https://github.com/spryker/docker-sdk.git --single-branch docker
