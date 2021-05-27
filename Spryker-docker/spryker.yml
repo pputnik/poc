@@ -206,7 +206,7 @@ Resources:
   SprykerSgInLM1:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-      Description: Łukasz Mularczyk
+      Description: Lukasz_Mularczyk
       GroupId: !Ref SprykerSg
       IpProtocol: tcp
       FromPort: 22
@@ -215,7 +215,7 @@ Resources:
   SprykerSgInLM2:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-      Description: Łukasz Mularczyk
+      Description: Lukasz_Mularczyk
       GroupId: !Ref SprykerSg
       IpProtocol: tcp
       FromPort: 22
