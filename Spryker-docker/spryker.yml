@@ -163,6 +163,7 @@ Resources:
     Condition: HaveOfficeCidr
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
+      Description: Office
       GroupId: !Ref SprykerSg
       IpProtocol: tcp
       FromPort: 22
@@ -173,6 +174,7 @@ Resources:
     Condition: HaveAlexCidr
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
+      Description: Alex
       GroupId: !Ref SprykerSg
       IpProtocol: tcp
       FromPort: 22
@@ -194,15 +196,15 @@ Resources:
       FromPort: 6379
       ToPort: 6379
       CidrIp: !Ref VpcCidr
-  SprykerSgInAlex:
-    Condition: HaveAlexCidr
+  SprykerSgInGW:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
+      Description: GrzegorzWygladala
       GroupId: !Ref SprykerSg
       IpProtocol: tcp
       FromPort: 22
       ToPort: 22
-      CidrIp: !Ref AlexCidr
+      CidrIp: 85.222.118.0/24
   SprykerSgInLM1:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
