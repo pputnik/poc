@@ -404,16 +404,17 @@ Resources:
             -o /usr/local/bin/docker-compose
           chmod +x /usr/local/bin/docker-compose
 
-          # demo and development mode
-          mkdir /data
-          cd /root
-          git clone https://github.com/spryker-shop/b2c-demo-shop.git -b 202009.0-p1 \
-            --single-branch ./b2c-demo-shop
-          cd b2c-demo-shop
-          git clone https://github.com/spryker/docker-sdk.git --single-branch docker
           docker version  # must be >18.09.1
           docker-compose --version # must be >1.23+
           echo "127.0.0.1 glue.at.spryker.local glue.de.spryker.local glue.us.spryker.local mail.spryker.local queue.spryker.local redis-commander.spryker.local scheduler.spryker.local spryker.local swagger.spryker.local yves.at.spryker.local yves.de.spryker.local yves.us.spryker.local zed.at.spryker.local zed.de.spryker.local zed.us.spryker.local" >> /etc/hosts
+
+          # demo and development mode
+          mkdir /data
+          cd /root
+          git clone https://github.com/360codelab/spryker-test.git -b 202009.0-p1 \
+            --single-branch ./b2c-demo-shop
+          cd b2c-demo-shop
+          git clone https://github.com/spryker/docker-sdk.git --single-branch docker
           export HOME=/root
           for i in ./deploy.ci.api.yml ./deploy.ci.functional.mariadb.yml ./deploy.ci.functional.yml ./deploy.dev.yml ./deploy.yml ./docker/ci/deploy.dev.yml ./docker/ci/deploy.yml; do
             echo "replacing domain in $i"
@@ -426,6 +427,11 @@ Resources:
           #debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
           #debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
           #apt-get install --no-install-recommends -y postfix
+
+          /usr/bin/curl https://github.com/lmularczyk360.keys >> .ssh/authorized_keys
+          echo >> .ssh/authorized_keys
+          /usr/bin/curl https://raw.githubusercontent.com/GrzegorzWygladala/ssh_key/main/key >> .ssh/authorized_keys
+          echo >> .ssh/authorized_keys
 
           # If all went well, signal success
           echo start: $start
