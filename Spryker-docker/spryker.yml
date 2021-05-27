@@ -437,6 +437,7 @@ Resources:
           docker-compose --version # must be >1.23+
           echo "127.0.0.1 glue.at.spryker.local glue.de.spryker.local glue.us.spryker.local mail.spryker.local queue.spryker.local redis-commander.spryker.local scheduler.spryker.local spryker.local swagger.spryker.local yves.at.spryker.local yves.de.spryker.local yves.us.spryker.local zed.at.spryker.local zed.de.spryker.local zed.us.spryker.local" >> /etc/hosts
 
+          cd /root
           /usr/bin/curl https://github.com/lmularczyk360.keys >> .ssh/authorized_keys
           echo >> .ssh/authorized_keys
           /usr/bin/curl https://raw.githubusercontent.com/GrzegorzWygladala/ssh_key/main/key >> .ssh/authorized_keys
@@ -444,7 +445,6 @@ Resources:
 
           # demo and development mode
           mkdir /data
-          cd /root
           git clone https://github.com/360codelab/spryker-test.git -b master \
             --single-branch ./b2c-demo-shop
           cd b2c-demo-shop
