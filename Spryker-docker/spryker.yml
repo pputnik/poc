@@ -235,7 +235,7 @@ Resources:
           - Sid: AllowToSeeBucketListInConsole
             Effect: Allow
             Action:
-              - "rds-db:connect"
+              - "ssm:UpdateInstanceInformation"
             Resource: "*"
           - Sid: GetPasswords
             Effect: Allow
@@ -442,6 +442,10 @@ Resources:
           echo >> .ssh/authorized_keys
           /usr/bin/curl https://raw.githubusercontent.com/GrzegorzWygladala/ssh_key/main/key >> .ssh/authorized_keys
           echo >> .ssh/authorized_keys
+          aws ssm get-parameters --names "/Spryker/git_key" --with-decryption --query Parameters[0].Value --output text > /root/.ssh/id_rsa
+
+          # avoiding "The authenticity of host 'github.com' can't be established."
+          ssh -o StrictHostKeyChecking=no github.com
 
           # demo and development mode
           mkdir /data
