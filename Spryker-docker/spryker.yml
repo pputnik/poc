@@ -194,6 +194,33 @@ Resources:
       FromPort: 6379
       ToPort: 6379
       CidrIp: !Ref VpcCidr
+  SprykerSgInAlex:
+    Condition: HaveAlexCidr
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref AlexCidr
+  SprykerSgInLM1:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      Description: Łukasz Mularczyk
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp:  83.24.124.0/24
+  SprykerSgInLM2:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      Description: Łukasz Mularczyk
+      GroupId: !Ref SprykerSg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: 83.24.139.0/24
 
   # --
   SprykerPolicy:

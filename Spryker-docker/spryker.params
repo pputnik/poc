@@ -1,6 +1,6 @@
 [
   {"ParameterKey":"proj", "ParameterValue": "spryker-d"},
-  {"ParameterKey":"key", "ParameterValue": "Alex"},
+  {"ParameterKey":"key", "ParameterValue": "Alex2"},
   {"ParameterKey":"Responsible", "ParameterValue": "Alex"},
   {"ParameterKey":"BaseDomain", "ParameterValue": "olowek.eu"},
 
