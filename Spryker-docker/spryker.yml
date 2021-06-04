@@ -463,6 +463,8 @@ Resources:
           docker/sdk bootstrap # deploy.dev.yml
           docker/sdk up
 
+          docker system prune -a -f
+
           #debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
           #debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
           #apt-get install --no-install-recommends -y postfix
