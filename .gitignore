@@ -1,9 +1,17 @@
+__pycache__
+# docker-compose.yml is generated every time run-installer-docker.sh is launched
+.docker-compose.yml
+
+# Idea IDE
+/.idea
+
+.DS_Store
+/.DS_Store
+
 **/.terraform/*
 *.tfstate
 *.tfstate.*
 *.tfvars
-.idea
 /.project
 crash.log
-ssh_keys/
 modules/*
