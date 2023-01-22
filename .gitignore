@@ -11,7 +11,7 @@ __pycache__
 **/.terraform/*
 *.tfstate
 *.tfstate.*
-*.tfvars
+#*.tfvars
 /.project
 crash.log
 modules/*
