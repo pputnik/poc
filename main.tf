@@ -16,7 +16,6 @@ provider "aws" {
   default_tags {
     tags = {
       tf = true
-      myregion = data.aws_region.current.name
     }
   }
 }
@@ -28,6 +27,7 @@ resource "aws_vpc" "example" {
   tags = {
     port22 = var.mylist[0]
     projtag = var.tags["project"]
+    myregion = data.aws_region.current.name
 
   }
 }
