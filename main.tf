@@ -28,6 +28,7 @@ resource "aws_vpc" "example" {
     port22 = var.mylist[0]
     projtag = var.tags["project"]
     myregion = data.aws_region.current.name
+    from_input = var.from_input
 
   }
 }
@@ -36,3 +37,6 @@ output "vpc_id" {
   value = aws_vpc.example.id
 }
 
+output "from_input_to_out" {
+  value = var.from_input
+}
