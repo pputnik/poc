@@ -17,5 +17,9 @@ provider "aws" {
 resource "aws_vpc" "example" {
   cidr_block = var.cidr
 
+  tags = {
+    port22 = var.mylist[0]
+    projtag = var.tags["project"]
+  }
 }
 

@@ -2,6 +2,16 @@ variable "cidr" {
   default = "10.1.0.0/16"
 }
 
+variable "enabled" {
+  type = bool
+  default = true
+}
+
+variable "mylist" {
+  type = list(number)
+  default = [22, 23, 34]
+}
+
 
 variable "region" {
   default = "eu-central-1"
