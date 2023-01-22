@@ -1,1 +1,1 @@
-from_input = "16"
+from_input = 16
