@@ -9,8 +9,16 @@ terraform {
   }
 }
 
+data "aws_region" "current" {}
+
 provider "aws" {
   region  = var.region
+  tags = {
+    default_tags {
+      tf = true
+      myregion = data.aws_region.current.name
+    }
+  }
 }
 
 # Create a VPC
@@ -20,6 +28,7 @@ resource "aws_vpc" "example" {
   tags = {
     port22 = var.mylist[0]
     projtag = var.tags["project"]
+
   }
 }
 
