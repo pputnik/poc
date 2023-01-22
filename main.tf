@@ -32,3 +32,7 @@ resource "aws_vpc" "example" {
   }
 }
 
+output "vpc_id" {
+  value = aws_vpc.example.id
+}
+
