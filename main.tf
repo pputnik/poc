@@ -13,8 +13,8 @@ data "aws_region" "current" {}
 
 provider "aws" {
   region  = var.region
-  tags = {
-    default_tags {
+  default_tags {
+    tags = {
       tf = true
       myregion = data.aws_region.current.name
     }
