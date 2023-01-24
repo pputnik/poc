@@ -33,6 +33,21 @@ resource "aws_vpc" "example" {
   }
 }
 
+resource "aws_security_group" "web" {
+  vpc_id = aws_vpc.example.id
+  name = "webSG"
+  dynamic "ingress" {
+    iterator = port
+    for_each = var.ports
+    content {
+      from_port = port.value
+      to_port = port.value
+      protocol = tcp
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+}
+
 output "vpc_id" {
   value = aws_vpc.example.id
 }

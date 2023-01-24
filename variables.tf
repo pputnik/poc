@@ -7,7 +7,7 @@ variable "enabled" {
   default = true
 }
 
-variable "mylist" {
+variable "ports" {
   type = list(number)
   default = [22, 23, 34]
 }
