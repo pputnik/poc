@@ -54,6 +54,7 @@ data "aws_vpc" "date_name" {
     name   = "tag:projtag"
     values = [var.tags["project"]]
   }
+  depends_on = [aws_vpc.example]
 }
 
 
