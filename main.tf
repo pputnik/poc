@@ -45,11 +45,24 @@ resource "aws_security_group" "web" {
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
-  depends_on = ["aws_vpc.example"]
+  depends_on = [aws_vpc.example]
 }
+
+
+data "aws_vpc" "date_name" {
+  filter {
+    name   = "tag:projtag"
+    values = [var.tags["project"]]
+  }
+}
+
+
 
 output "vpc_id" {
   value = aws_vpc.example.id
+}
+output "vpc_id_data" {
+  value = data.aws_vpc.date_name.id
 }
 
 output "from_input_to_out" {
