@@ -45,6 +45,7 @@ resource "aws_security_group" "web" {
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
+  depends_on = ["aws_vpc.example"]
 }
 
 output "vpc_id" {

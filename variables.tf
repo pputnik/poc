@@ -2,6 +2,21 @@ variable "cidr" {
   default = "10.1.0.0/16"
 }
 
+variable "myTuple" {
+  type = tuple([string, number, string])
+  default = ["qqq", 2, "ddd"]
+}
+
+variable "myObj" {
+  type = object({
+    name = string,
+    port = number
+  })
+  default = {
+    name = "http",
+    port = 80
+  }
+}
 variable "enabled" {
   type = bool
   default = true
