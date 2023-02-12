@@ -1,0 +1,3 @@
+module "myvpc" {
+  source = "./db"
+}
