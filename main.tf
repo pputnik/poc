@@ -48,7 +48,6 @@ resource "aws_security_group" "web" {
   depends_on = [aws_vpc.example]
 }
 
-
 data "aws_vpc" "date_name" {
   filter {
     name   = "tag:projtag"
@@ -56,7 +55,6 @@ data "aws_vpc" "date_name" {
   }
   depends_on = [aws_vpc.example]
 }
-
 
 
 output "vpc_id" {
