@@ -1,4 +1,12 @@
 terraform {
+  backend "remote" {
+    organization = "partner-nordcloud-nfr"
+
+    workspaces {
+      name = "al-test"
+    }
+  }
+
   required_version = "~> 1.3"
   #experiments      = [variable_validation]
   required_providers {
