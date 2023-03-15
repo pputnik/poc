@@ -33,7 +33,7 @@ variable "from_input" {
 }
 
 variable "region" {
-  default = "eu-central-1"
+  default = "eu-west-1"
 }
 
 variable "project" {
@@ -57,7 +57,4 @@ variable "workspace_to_environment" {
   }
 }
 
-variable "assume_role_arn" { # infra-test
-  default = "arn:aws:iam::313829517975:role/jenkins_executor"
-}
 
