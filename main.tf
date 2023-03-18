@@ -1,7 +1,6 @@
 terraform {
   backend "remote" {
     organization = "partner-nordcloud-nfr"
-
     workspaces {
       name = "al-test"
     }
@@ -64,6 +63,14 @@ data "aws_vpc" "date_name" {
   depends_on = [aws_vpc.example]
 }
 
+resource "aws_instance" "web" {
+  ami           = "ami-065793e81b1869261"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "itFr4omTF"
+  }
+}
 
 output "vpc_id" {
   value = aws_vpc.example.id
