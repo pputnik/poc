@@ -75,6 +75,7 @@ resource "aws_instance" "web2" {
   lifecycle {
     create_before_destroy = true
   }
+  user_data_replace_on_change = true
 
 #  user_data = <<EOF
 ##!/bin/bash
