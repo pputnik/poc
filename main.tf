@@ -89,6 +89,6 @@ output "vpc_id_data" {
   value = data.aws_vpc.date_name.id
 }
 
-output "from_input_to_out" {
-  value = var.from_input
-}
+#output "from_input_to_out" {
+#  value = var.from_input
+#}
