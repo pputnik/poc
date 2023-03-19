@@ -7,7 +7,7 @@ terraform {
 #  }
   backend "s3" {
     #role_arn             = "arn:aws:iam::576614186076:role/backend"
-    region               = "eu-west-1"
+    region               = "eu-west-1"  # required for automation, or tf will ask
     session_name         = "tf-test-alex"
     bucket               = "tf-remote-state-636834150364"
     workspace_key_prefix = "poc"
@@ -44,7 +44,7 @@ resource "aws_vpc" "example" {
   tags = {
     projtag = var.tags["project"]
     myregion = data.aws_region.current.name
-    from_input = var.from_input
+    #from_input = var.from_input
 
   }
 }
