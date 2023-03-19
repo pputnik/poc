@@ -11,6 +11,7 @@ echo -n $inst_id > /var/local/inst_id
 yum install -y httpd
 
 cat <<EOF > /var/www/html/index.html
+<html>
 $inst_id from tpl</br>
 str_name: ${str_name}</br>
 the list:</br><ul>
@@ -18,7 +19,7 @@ the list:</br><ul>
 </li>elem: ${x}</li>
 %{ endfor ~}
 </ul>
-
+</html>
 EOF
 
 systemctl start httpd.service
