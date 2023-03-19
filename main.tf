@@ -63,7 +63,7 @@ data "template_file" "user_data" {
   template = file("${path.module}/userdata_example.sh")
 }
 
-resource "aws_instance" "web2" {
+resource "aws_instance" "web" {
   ami           = "ami-065793e81b1869261"
   instance_type = "t2.micro"
   #user_data = data.template_file.user_data.rendered
