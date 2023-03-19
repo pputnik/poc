@@ -81,7 +81,7 @@ resource "aws_instance" "web" {
   ami           = "ami-065793e81b1869261"
   instance_type = "t2.micro"
   user_data = data.template_file.user_data.rendered
-  vpc_security_group_ids = aws_security_group.web.id
+  vpc_security_group_ids = [aws_security_group.web.id]
 
   tags = {
     Name = "itFr4omTF"
