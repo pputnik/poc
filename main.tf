@@ -37,18 +37,6 @@ provider "aws" {
   }
 }
 
-# Create a VPC
-resource "aws_vpc" "example" {
-  cidr_block = var.cidr
-
-  tags = {
-    projtag = var.tags["project"]
-    myregion = data.aws_region.current.name
-    #from_input = var.from_input
-
-  }
-}
-
 resource "aws_security_group" "web" {
   #vpc_id = aws_vpc.example.id
   name = "webSG"
@@ -62,15 +50,6 @@ resource "aws_security_group" "web" {
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
-  depends_on = [aws_vpc.example]
-}
-
-data "aws_vpc" "date_name" {
-  filter {
-    name   = "tag:projtag"
-    values = [var.tags["project"]]
-  }
-  depends_on = [aws_vpc.example]
 }
 
 data "template_file" "user_data" {
@@ -89,12 +68,12 @@ resource "aws_instance" "web" {
   }
 }
 
-output "vpc_id" {
-  value = aws_vpc.example.id
-}
-output "vpc_id_data" {
-  value = data.aws_vpc.date_name.id
-}
+#output "vpc_id" {
+#  value = aws_vpc.example.id
+#}
+#output "vpc_id_data" {
+#  value = data.aws_vpc.date_name.id
+#}
 
 #output "from_input_to_out" {
 #  value = var.from_input
