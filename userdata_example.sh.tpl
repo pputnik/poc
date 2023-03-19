@@ -15,7 +15,7 @@ $inst_id from tpl</br>
 str_name: ${str_name}</br>
 the list:</br><ul>
 %{ for x in list_names~}
-</li>elem: ${x}
+</li>elem: ${x}</li>
 %{ endfor ~}
 </ul>
 
