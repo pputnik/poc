@@ -24,7 +24,7 @@ variable "enabled" {
 
 variable "ports" {
   type = list(number)
-  default = [80, 443]
+  default = [22, 80, 443]
 }
 
 #variable "from_input" {
