@@ -11,3 +11,4 @@ echo -n $inst_id > /var/local/inst_id
 yum install -y httpd
 echo $inst_id > /var/www/html/index.html
 
+systemctl start httpd.service
