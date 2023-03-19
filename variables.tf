@@ -27,10 +27,10 @@ variable "ports" {
   default = [22, 23, 34]
 }
 
-variable "from_input" {
-  type = number
-  description = "input number here"
-}
+#variable "from_input" {
+#  type = number
+#  description = "input number here"
+#}
 
 variable "region" {
   default = "eu-west-1"
