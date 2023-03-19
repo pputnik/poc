@@ -11,15 +11,13 @@ echo -n $inst_id > /var/local/inst_id
 yum install -y httpd
 
 cat <<EOF > /var/www/html/index.html
-<html><body>
 $inst_id from tpl</br>
 str_name: ${str_name}</br>
 the list:</br><ul>
 %{ for x in list_names~}
-</li>elem: ${x}</li>
+<li>elem: ${x}</li>
 %{ endfor ~}
 </ul>
-</body></html>
 EOF
 
 systemctl start httpd.service
