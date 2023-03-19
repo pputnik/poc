@@ -63,17 +63,17 @@ data "template_file" "user_data" {
   template = file("${path.module}/userdata_example.sh")
 }
 
-#resource "aws_instance" "web" {
-#  ami           = "ami-065793e81b1869261"
-#  instance_type = "t2.micro"
-#  user_data = data.template_file.user_data.rendered
-#  vpc_security_group_ids = [aws_security_group.web.id]
-#  key_name = "Alex-irl"
-#
-#  tags = {
-#    Name = "itFr4omTF"
-#  }
-#}
+resource "aws_instance" "web" {
+  ami           = "ami-065793e81b1869261"
+  instance_type = "t2.micro"
+  user_data = data.template_file.user_data.rendered
+  vpc_security_group_ids = [aws_security_group.web.id]
+  key_name = "Alex-irl"
+
+  tags = {
+    Name = "itFr4omTF"
+  }
+}
 
 #output "vpc_id" {
 #  value = aws_vpc.example.id
