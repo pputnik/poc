@@ -72,7 +72,9 @@ resource "aws_instance" "web2" {
     str_name = "myName"
     list_names = ["ln1", "ln2"]
   })
-
+  lifecycle {
+    create_before_destroy = true
+  }
 
 #  user_data = <<EOF
 ##!/bin/bash

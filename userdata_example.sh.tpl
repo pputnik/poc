@@ -13,7 +13,7 @@ yum install -y httpd
 cat <<EOF > /var/www/html/index.html
 $inst_id from tpl</br>
 str_name: ${str_name}</br>
-the list:</br><ul>
+the list:<ul>
 %{ for x in list_names~}
 <li>elem: ${x}</li>
 %{ endfor ~}
