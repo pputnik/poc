@@ -63,27 +63,34 @@ data "template_file" "user_data" {
   template = file("${path.module}/userdata_example.sh")
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "web2" {
   ami           = "ami-065793e81b1869261"
   instance_type = "t2.micro"
   #user_data = data.template_file.user_data.rendered
-  user_data = <<EOF
-#!/bin/bash
+  #user_data = file("${path.module}/userdata_example.sh") #static template
+  user_data = templatefile("${path.module}/userdata_example.sh.tpl", {
+    str_name = "myName"
+    list_names = ["ln1", "ln2"]
+  })
 
-sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
-sed -i 's/PermitRootLogin forced-commands-only/PermitRootLogin yes/' /etc/ssh/sshd_config
-service ssh restartq
 
-inst_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-echo inst_id $inst_id
-echo -n $inst_id > /var/local/inst_id
-
-yum install -y httpd
-echo "$inst_id inline userdata" > /var/www/html/index.html
-
-systemctl start httpd.service
-
-EOF
+#  user_data = <<EOF
+##!/bin/bash
+#
+#sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
+#sed -i 's/PermitRootLogin forced-commands-only/PermitRootLogin yes/' /etc/ssh/sshd_config
+#service ssh restartq
+#
+#inst_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+#echo inst_id $inst_id
+#echo -n $inst_id > /var/local/inst_id
+#
+#yum install -y httpd
+#echo "$inst_id inline userdata" > /var/www/html/index.html
+#
+#systemctl start httpd.service
+#
+#EOF
   vpc_security_group_ids = [aws_security_group.web.id]
   key_name = "Alex-irl"
 
