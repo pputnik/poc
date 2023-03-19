@@ -1,9 +1,18 @@
 terraform {
-  backend "remote" {
-    organization = "partner-nordcloud-nfr"
-    workspaces {
-      name = "al-test"
-    }
+#  backend "remote" {
+#    organization = "partner-nordcloud-nfr"
+#    workspaces {
+#      name = "al-test"
+#    }
+#  }
+  backend "s3" {
+    #role_arn             = "arn:aws:iam::576614186076:role/backend"
+    session_name         = "tf-test-alex"
+    bucket               = "tf-remote-state-636834150364"
+    workspace_key_prefix = "poc"
+    key                  = "terraform.tfstate"
+    dynamodb_table       = "tf-remote-state-lock"
+    # aws dynamodb create-table --table-name tf-remote-state-lock --key-schema  AttributeName=LockID,KeyType=HASH --attribute-definitions AttributeName=LockID,AttributeType=S --billing-mode PAY_PER_REQUEST
   }
 
   required_version = "~> 1.3"
