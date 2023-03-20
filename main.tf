@@ -115,7 +115,8 @@ data "aws_ssm_parameter" "test-secret" {
 }
 
 output "vpc_id" {
-  value = data.aws_ssm_parameter.test-secret.value
+  value     = data.aws_ssm_parameter.test-secret.value
+  sensitive = true
 }
 #output "vpc_id_data" {
 #  value = data.aws_vpc.date_name.id
