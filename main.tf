@@ -109,9 +109,14 @@ resource "aws_ssm_parameter" "foo" {
   value = "bar"
 }
 
-#output "vpc_id" {
-#  value = aws_vpc.example.id
-#}
+data "aws_ssm_parameter" "test-secret" {
+  name            = "test-secret"
+  with_decryption = true
+}
+
+output "vpc_id" {
+  value = data.aws_ssm_parameter.test-secret.value
+}
 #output "vpc_id_data" {
 #  value = data.aws_vpc.date_name.id
 #}
