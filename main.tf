@@ -109,13 +109,12 @@ resource "aws_ssm_parameter" "foo" {
   value = "bar"
 }
 
-data "aws_ssm_parameter" "test-secret" {
-  name            = "test-secret"
-  with_decryption = true
+data "aws_ssm_parameter" "test-string" {
+  name = "test-string"
 }
 
 output "vpc_id" {
-  value     = data.aws_ssm_parameter.test-secret.value
+  value     = data.aws_ssm_parameter.test-string.value
   sensitive = true
 }
 #output "vpc_id_data" {
