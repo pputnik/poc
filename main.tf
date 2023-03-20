@@ -56,7 +56,7 @@ resource "aws_security_group" "web" {
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
   }
-
+  tags = local.tags
 }
 
 data "template_file" "user_data" {
@@ -64,11 +64,12 @@ data "template_file" "user_data" {
 }
 
 resource "aws_instance" "web2" {
+  count         = var.create_ec2
   ami           = "ami-065793e81b1869261"
   instance_type = "t2.micro"
   #user_data = data.template_file.user_data.rendered
   #user_data = file("${path.module}/userdata_example.sh") #static template
-  user_data = templatefile("${path.module}/userdata_example.sh.tpl", {
+  user_data     = templatefile("${path.module}/userdata_example.sh.tpl", {
     str_name = "myName"
     list_names = ["ln1", "ln2"]
   })
@@ -92,14 +93,20 @@ resource "aws_instance" "web2" {
 #echo "$inst_id inline userdata" > /var/www/html/index.html
 #
 #systemctl start httpd.service
-#
-#EOF
+  #
+  #EOF
   vpc_security_group_ids = [aws_security_group.web.id]
-  key_name = "Alex-irl"
+  key_name               = "Alex-irl"
 
-  tags = {
+  tags = merge(local.tags, {
     Name = "itFr4omTF"
-  }
+  })
+}
+
+resource "aws_ssm_parameter" "foo" {
+  name  = "foo"
+  type  = "SecureString"
+  value = "bar"
 }
 
 #output "vpc_id" {

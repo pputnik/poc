@@ -1,9 +1,11 @@
+variable "create_ec2" { default = 0 }
+
 variable "cidr" {
   default = "10.1.0.0/16"
 }
 
 variable "myTuple" {
-  type = tuple([string, number, string])
+  type    = tuple([string, number, string])
   default = ["qqq", 2, "ddd"]
 }
 
@@ -18,12 +20,12 @@ variable "myObj" {
   }
 }
 variable "enabled" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "ports" {
-  type = list(number)
+  type    = list(number)
   default = [22, 80, 443]
 }
 
@@ -41,7 +43,7 @@ variable "project" {
 }
 
 variable "tags" {
-  type = map(string)
+  type    = map(string)
   default = {
     project   = "eks_poc"
     Terraform = "true"
@@ -51,10 +53,15 @@ variable "tags" {
 variable "workspace_to_environment" {
   description = "Map linking a given workspace to an environment"
   type        = map(string)
-  default = {
+  default     = {
     test = "testing"
     prod = "production"
   }
 }
 
 
+locals {
+  tags = {
+    owner = "me"
+  }
+}
