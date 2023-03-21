@@ -97,25 +97,23 @@ resource "aws_instance" "web2" {
 #echo inst_id $inst_id
 #echo -n $inst_id > /var/local/inst_id
 #
-#yum install -y httpd
-#echo "$inst_id inline userdata" > /var/www/html/index.html
-#
-#systemctl start httpd.service
+  #yum install -y httpd
+  #echo "$inst_id inline userdata" > /var/www/html/index.html
+  #
+  #systemctl start httpd.service
   #
   #EOF
   vpc_security_group_ids = [aws_security_group.web.id]
   key_name               = "Alex-irl"
 
+  provisioner "local-exec" {
+    command = "echo private_ip=${aws_instance.web2.private_ip}"
+  }
   tags = merge(local.tags, {
     Name = "itFr4omTF"
   })
 }
 
-resource "null_resource" "cmd1" {
-  provisioner "local-exec" {
-    command = "ls -l"
-  }
-}
 
 #resource "aws_secretsmanager_secret" "supersecret" {
 #  name        = "example"
