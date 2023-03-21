@@ -39,7 +39,7 @@ variable "region" {
 }
 
 variable "project" {
-  default = "lir" #lambda-iam-rds
+  default = "poc"
 }
 
 variable "tags" {

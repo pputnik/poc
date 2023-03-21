@@ -39,7 +39,7 @@ provider "aws" {
 
 resource "aws_security_group" "web" {
   #vpc_id = aws_vpc.example.id
-  name = "webSG"
+  name = "webSG-${data.aws_ssm_parameter.test-string.value}"
   dynamic "ingress" {
     iterator = port
     for_each = var.ports
@@ -104,20 +104,16 @@ resource "aws_instance" "web2" {
 }
 
 resource "aws_ssm_parameter" "foo" {
-  name  = "foo"
+  name  = "${var.project}-logsender-${terraform.workspace}"
   type  = "SecureString"
   value = "bar"
 }
 
 data "aws_ssm_parameter" "test-string" {
   name = "test-string"
-  type = "String"
 }
 
-output "vpc_id" {
-  value     = data.aws_ssm_parameter.test-string.value
-  sensitive = false
-}
+
 #output "vpc_id_data" {
 #  value = data.aws_vpc.date_name.id
 #}
