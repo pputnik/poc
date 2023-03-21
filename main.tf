@@ -27,6 +27,7 @@ terraform {
 }
 
 data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
 
 provider "aws" {
   region = var.region
@@ -120,15 +121,16 @@ data "aws_ssm_parameter" "test-string" {
   name = "test-string"
 }
 
-resource "aws_secretsmanager_secret" "supersecret" {
-  name        = "example"
-  description = "${var.project}-supsec-${terraform.workspace}"
-}
-
-resource "aws_secretsmanager_secret_version" "supsecver" {
-  secret_id     = aws_secretsmanager_secret.supersecret.id
-  secret_string = jsonencode(aws_instance.web2)
-}
-#output "from_input_to_out" {
-#  value = var.from_input
+#resource "aws_secretsmanager_secret" "supersecret" {
+#  name        = "example"
+#  description = "${var.project}-supsec-${terraform.workspace}"
 #}
+#
+#resource "aws_secretsmanager_secret_version" "supsecver" {
+#  secret_id     = aws_secretsmanager_secret.supersecret.id
+#  secret_string = jsonencode(local.tags)
+#}
+
+output "def_out" {
+  value = data.aws_caller_identity.current.id
+}
