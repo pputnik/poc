@@ -47,7 +47,7 @@ resource "random_password" "random" {
 
 resource "aws_security_group" "web" {
   #vpc_id = aws_vpc.example.id
-  name = "webSG-${data.aws_ssm_parameter.test-string.value}"
+  name = "webSG"
   dynamic "ingress" {
     iterator = port
     for_each = var.ports
