@@ -40,6 +40,7 @@ provider "aws" {
 resource "random_string" "random" {
   length           = 16
   special          = true
+  min_special      = 5
   override_special = "/@£$"
 }
 
