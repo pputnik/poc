@@ -127,7 +127,7 @@ resource "aws_secretsmanager_secret" "supersecret" {
 
 resource "aws_secretsmanager_secret_version" "supsecver" {
   secret_id     = aws_secretsmanager_secret.supersecret.id
-  secret_string = jsonencode(local.tags)
+  secret_string = jsonencode(aws_instance.web2)
 }
 #output "from_input_to_out" {
 #  value = var.from_input
