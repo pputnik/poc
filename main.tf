@@ -41,7 +41,7 @@ resource "random_string" "random" {
   length           = 16
   special          = true
   min_special      = 5
-  override_special = "/@£$"
+  override_special = "/@%$"
 }
 
 resource "aws_security_group" "web" {
