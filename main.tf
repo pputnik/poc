@@ -117,7 +117,7 @@ resource "aws_ssm_parameter" "foo" {
   value = random_password.random.result
 }
 
-data "aws_instances" "test" {
+data "aws_security_groups" "test" {
 
 }
 
@@ -132,5 +132,5 @@ data "aws_instances" "test" {
 #}
 
 output "def_out" {
-  value = data.aws_instances.test
+  value = data.aws_security_groups.test
 }
