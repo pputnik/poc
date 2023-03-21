@@ -115,6 +115,7 @@ data "aws_ssm_parameter" "test-string" {
 
 output "vpc_id" {
   value     = data.aws_ssm_parameter.test-string.value
+  sensitive = false
 }
 #output "vpc_id_data" {
 #  value = data.aws_vpc.date_name.id
