@@ -120,8 +120,15 @@ data "aws_ssm_parameter" "test-string" {
   name = "test-string"
 }
 
+resource "aws_secretsmanager_secret" "supersecret" {
+  name        = "example"
+  description = "${var.project}-supsec-${terraform.workspace}"
+}
 
-
+resource "aws_secretsmanager_secret_version" "supsecver" {
+  secret_id     = aws_secretsmanager_secret.supersecret.id
+  secret_string = local.tags
+}
 #output "from_input_to_out" {
 #  value = var.from_input
 #}
