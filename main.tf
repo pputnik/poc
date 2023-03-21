@@ -107,7 +107,7 @@ resource "aws_instance" "web2" {
   key_name               = "Alex-irl"
 
   provisioner "local-exec" {
-    command = "echo private_ip=${aws_instance.web2.private_ip}"
+    command = "echo private_ip=${aws_instance.web2[*].private_ip}"
   }
   tags = merge(local.tags, {
     Name = "itFr4omTF"
