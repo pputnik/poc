@@ -130,5 +130,5 @@ resource "null_resource" "cmd1" {
 
 output "def_out" {
   #value = data.aws_security_groups.test
-  value = data.aws_security_groups.test
+  value = null_resource.cmd1.id
 }
