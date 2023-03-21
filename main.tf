@@ -37,7 +37,7 @@ provider "aws" {
   }
 }
 
-resource "random_string" "random" {
+resource "random_password" "random" {
   length           = 16
   special          = true
   min_special      = 5
@@ -113,7 +113,7 @@ resource "aws_instance" "web2" {
 resource "aws_ssm_parameter" "foo" {
   name  = "${var.project}-myparam-${terraform.workspace}"
   type  = "SecureString"
-  value = "bar"
+  value = random_password.random.result
 }
 
 data "aws_ssm_parameter" "test-string" {
@@ -121,9 +121,6 @@ data "aws_ssm_parameter" "test-string" {
 }
 
 
-output "vpc_id_data" {
-  value = random_string.random.result
-}
 
 #output "from_input_to_out" {
 #  value = var.from_input
