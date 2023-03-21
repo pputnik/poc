@@ -132,5 +132,6 @@ data "aws_security_groups" "test" {
 #}
 
 output "def_out" {
+  #value = data.aws_security_groups.test
   value = data.aws_security_groups.test
 }
