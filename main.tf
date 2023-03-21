@@ -111,7 +111,7 @@ resource "aws_ssm_parameter" "foo" {
 
 data "aws_ssm_parameter" "test-string" {
   name = "test-string"
-  type = String
+  type = "String"
 }
 
 output "vpc_id" {
