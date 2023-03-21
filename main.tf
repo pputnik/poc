@@ -111,14 +111,10 @@ resource "aws_instance" "web2" {
   })
 }
 
-resource "aws_ssm_parameter" "foo" {
-  name  = "${var.project}-myparam-${terraform.workspace}"
-  type  = "SecureString"
-  value = random_password.random.result
-}
-
-data "aws_security_groups" "test" {
-
+resource "null_resource" "cmd1" {
+  provisioner "local-exec" {
+    command = "ls -l"
+  }
 }
 
 #resource "aws_secretsmanager_secret" "supersecret" {
@@ -130,6 +126,7 @@ data "aws_security_groups" "test" {
 #  secret_id     = aws_secretsmanager_secret.supersecret.id
 #  secret_string = jsonencode(local.tags)
 #}
+
 
 output "def_out" {
   #value = data.aws_security_groups.test
