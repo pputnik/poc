@@ -29,12 +29,18 @@ terraform {
 data "aws_region" "current" {}
 
 provider "aws" {
-  region  = var.region
+  region = var.region
   default_tags {
     tags = {
       tf = true
     }
   }
+}
+
+resource "random_string" "random" {
+  length           = 16
+  special          = true
+  override_special = "/@£$"
 }
 
 resource "aws_security_group" "web" {
@@ -44,8 +50,8 @@ resource "aws_security_group" "web" {
     iterator = port
     for_each = var.ports
     content {
-      from_port = port.value
-      to_port = port.value
+      from_port   = port.value
+      to_port     = port.value
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
@@ -104,7 +110,7 @@ resource "aws_instance" "web2" {
 }
 
 resource "aws_ssm_parameter" "foo" {
-  name  = "${var.project}-logsender-${terraform.workspace}"
+  name  = "${var.project}-myparam-${terraform.workspace}"
   type  = "SecureString"
   value = "bar"
 }
@@ -114,9 +120,9 @@ data "aws_ssm_parameter" "test-string" {
 }
 
 
-#output "vpc_id_data" {
-#  value = data.aws_vpc.date_name.id
-#}
+output "vpc_id_data" {
+  value = random_string.random.result
+}
 
 #output "from_input_to_out" {
 #  value = var.from_input
