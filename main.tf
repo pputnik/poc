@@ -61,7 +61,6 @@ resource "aws_security_group" "web" {
 
 data "template_file" "user_data" {
   template = file("${path.module}/userdata_example.sh")
-  type     = String
 }
 
 resource "aws_instance" "web2" {
@@ -112,6 +111,7 @@ resource "aws_ssm_parameter" "foo" {
 
 data "aws_ssm_parameter" "test-string" {
   name = "test-string"
+  type = String
 }
 
 output "vpc_id" {
