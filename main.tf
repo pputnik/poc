@@ -117,8 +117,8 @@ resource "aws_ssm_parameter" "foo" {
   value = random_password.random.result
 }
 
-data "aws_ssm_parameter" "test-string" {
-  name = "test-string"
+data "aws_instances" "test" {
+
 }
 
 #resource "aws_secretsmanager_secret" "supersecret" {
@@ -132,5 +132,5 @@ data "aws_ssm_parameter" "test-string" {
 #}
 
 output "def_out" {
-  value = data.aws_caller_identity.current.id
+  value = data.aws_instances.test
 }
