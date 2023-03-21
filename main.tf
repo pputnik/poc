@@ -61,6 +61,7 @@ resource "aws_security_group" "web" {
 
 data "template_file" "user_data" {
   template = file("${path.module}/userdata_example.sh")
+  type     = String
 }
 
 resource "aws_instance" "web2" {
