@@ -109,6 +109,20 @@ resource "aws_instance" "web2" {
   provisioner "local-exec" {
     command = "echo private_ip=${join(", ", aws_instance.web2[*].private_ip)}"
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      "cat /etc/os-release",
+      "ls -l /home",
+      "hostname"
+    ]
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      host        = self.public_ip
+      private_key = file("../.ssh/Alex-irl")
+    }
+  }
   tags = merge(local.tags, {
     Name = "itFr4omTF"
   })

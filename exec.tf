@@ -13,3 +13,4 @@ resource "null_resource" "cmdP" {
     command = "print('hi from Py')"
   }
 }
+
