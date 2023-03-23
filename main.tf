@@ -78,22 +78,22 @@ resource "aws_instance" "web2" {
   #user_data = data.template_file.user_data.rendered
   #user_data = file("${path.module}/userdata_example.sh") #static template
   user_data     = templatefile("${path.module}/userdata_example.sh.tpl", {
-    str_name = "myName"
+    str_name   = "myName"
     list_names = ["ln1", "ln2"]
   })
   #lifecycle {
-    create_before_destroy = true
-  }
+  #  create_before_destroy = true
+  #}
   user_data_replace_on_change = true
 
-#  user_data = <<EOF
-##!/bin/bash
-#
-#sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
-#sed -i 's/PermitRootLogin forced-commands-only/PermitRootLogin yes/' /etc/ssh/sshd_config
-#service ssh restartq
-#
-#inst_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+  #  user_data = <<EOF
+  ##!/bin/bash
+  #
+  #sed -i 's/^.* ssh-rsa /ssh-rsa /' /root/.ssh/authorized_keys
+  #sed -i 's/PermitRootLogin forced-commands-only/PermitRootLogin yes/' /etc/ssh/sshd_config
+  #service ssh restartq
+  #
+  #inst_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 #echo inst_id $inst_id
 #echo -n $inst_id > /var/local/inst_id
 #
