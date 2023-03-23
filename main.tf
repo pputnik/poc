@@ -81,7 +81,7 @@ resource "aws_instance" "web2" {
     str_name = "myName"
     list_names = ["ln1", "ln2"]
   })
-  lifecycle {
+  #lifecycle {
     create_before_destroy = true
   }
   user_data_replace_on_change = true
@@ -107,7 +107,7 @@ resource "aws_instance" "web2" {
   key_name               = "Alex-irl"
 
   provisioner "local-exec" {
-    command = "echo private_ip=${aws_instance.web2[*].private_ip}"
+    command = "echo private_ip=${tostring(aws_instance.web2[*].private_ip)}"
   }
   tags = merge(local.tags, {
     Name = "itFr4omTF"
