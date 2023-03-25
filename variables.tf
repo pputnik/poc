@@ -7,10 +7,11 @@ variable "ami_ubuntu_trusty" {
   }
 }
 
-variable "ports" {
-  type    = list(number)
-  default = [22, 80, 443]
+variable "names" {
+  type    = list(string)
+  default = ["22", "80", "443"]
 }
+
 
 variable "region" {
   default = "eu-west-1"
