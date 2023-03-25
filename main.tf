@@ -45,7 +45,7 @@ resource "aws_instance" "web2" {
     Name = "itFr4omTF"
   })
   dynamic "ebs_block_device" {
-    for_each = local.tags["stage"] == "prod" ? [1] : []
+    for_each = var.project == "prod" ? [1] : []
     content {
       device_name = "/dev/bla"
       volume_size = 8
