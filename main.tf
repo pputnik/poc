@@ -40,7 +40,7 @@ provider "aws" {
 
 
 resource "aws_secretsmanager_secret" "supersecret" {
-  for_each    = toset(var.ports)
+  for_each    = toset(var.names)
   name        = each.value
   description = "${var.project}-supsec-${terraform.workspace}"
 }

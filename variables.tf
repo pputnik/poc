@@ -9,7 +9,7 @@ variable "ami_ubuntu_trusty" {
 
 variable "names" {
   type    = list(string)
-  default = ["22", "80", "443"]
+  default = ["x22", "c80", "v443"]
 }
 
 
