@@ -50,7 +50,7 @@ output "def_out" {
 }
 
 output "is_prod" {
-  value = aws_secretsmanager_secret.supersecret[*].id
+  value = aws_secretsmanager_secret.supersecret[*]
 }
 
 
