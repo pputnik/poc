@@ -38,29 +38,19 @@ provider "aws" {
   }
 }
 
-resource "aws_instance" "web2" {
-  ami           = "ami-065793e81b1869261"
-  instance_type = "t2.micro"
-  tags          = merge(local.tags, {
-    Name = "itFr4omTF"
-  })
-  dynamic "ebs_block_device" {
-    for_each = var.project == "prod" ? [1] : []
-    content {
-      device_name = "/dev/bla"
-      volume_size = 8
-    }
-  }
 
+resource "aws_secretsmanager_secret" "supersecret" {
+  for_each    = var.ports
+  name        = each.value
+  description = "${var.project}-supsec-${terraform.workspace}"
 }
-
 
 output "def_out" {
   value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
 }
 
 output "is_prod" {
-  value = local.tags["stage"] == "prod" ? "yep" : "nope"
+  value = aws_secretsmanager_secret.supersecret[*].id
 }
 
 
