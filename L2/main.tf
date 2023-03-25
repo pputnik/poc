@@ -175,3 +175,6 @@ resource "aws_secretsmanager_secret" "supersecret" {
 output "is_prod" {
   value = values(aws_secretsmanager_secret.supersecret)[*].id #["x22"]
 }
+output "is_prd" {
+  value = aws_secretsmanager_secret.supersecret["x22"].arn
+}
