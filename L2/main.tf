@@ -159,3 +159,19 @@ output "def_out" {
   #value = data.aws_security_groups.test
   value = null_resource.cmd1.id
 }
+
+#=======================
+variable "names" {
+  type    = list(string)
+  default = ["x22", "c80", "v443"]
+}
+
+resource "aws_secretsmanager_secret" "supersecret" {
+  for_each    = toset(var.names)
+  name        = each.value
+  description = "${var.project}-supsec-${terraform.workspace}"
+}
+
+output "is_prod" {
+  value = values(aws_secretsmanager_secret.supersecret)[*].id #["x22"]
+}
