@@ -19,5 +19,6 @@ variable "project" {
 locals {
   tags = {
     owner = "me"
+    stage = "prod"
   }
 }

@@ -40,8 +40,11 @@ provider "aws" {
 
 
 output "def_out" {
-  #value = data.aws_security_groups.test
   value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
+}
+
+output "is_prod" {
+  value = var.project == "prod" ? "yep" : "nope"
 }
 
 
