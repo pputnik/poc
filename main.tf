@@ -38,6 +38,22 @@ provider "aws" {
   }
 }
 
+resource "aws_instance" "web2" {
+  ami           = "ami-065793e81b1869261"
+  instance_type = "t2.micro"
+  tags          = merge(local.tags, {
+    Name = "itFr4omTF"
+  })
+  dynamic "ebs_block_device" {
+    for_each = local.tags["stage"] == "prod" ? 1 : 0
+    content {
+      device_name = "/dev/bla"
+      volume_size = 8
+    }
+  }
+
+}
+
 
 output "def_out" {
   value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
