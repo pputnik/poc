@@ -50,7 +50,7 @@ output "def_out" {
 }
 
 output "is_prod" {
-  value = keys(aws_secretsmanager_secret.supersecret)
+  value = keys(aws_secretsmanager_secret.supersecret)["x22"].id
 }
 
 
