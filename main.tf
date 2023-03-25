@@ -44,7 +44,7 @@ output "def_out" {
 }
 
 output "is_prod" {
-  value = var.project == "prod" ? "yep" : "nope"
+  value = local.tags["stage"] == "prod" ? "yep" : "nope"
 }
 
 
