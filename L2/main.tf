@@ -178,3 +178,31 @@ output "is_prod" {
 output "is_prd" {
   value = aws_secretsmanager_secret.supersecret["x22"].arn
 }
+#=======================
+variable "settings" {
+  default = {
+    prod = {
+      ami       = "ami-123"
+      inst_size = "large"
+    }
+    stage = {
+      ami       = "ami-stage"
+      inst_size = "small"
+
+    }
+  }
+}
+
+variable "stages" {
+  default = ["prod", "stage"]
+}
+resource "aws_instance" "web3" {
+  for_each      = toset(var.stages)
+  ami           = var.settings[each.value].ami
+  instance_type = var.settings[each.value].inst_size
+
+  tags = merge(local.tags, {
+    Name = "itFr4omTF"
+  })
+
+}
