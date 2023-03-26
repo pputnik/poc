@@ -211,8 +211,9 @@ resource "aws_instance" "web3" {
   instance_type = "t2.micro"
 }
 output "def_1ut" {
-  value = [
-    for x in aws_instance.web3 : "${x.id} => ${x.private_ip}"
-  ]
+  value = {
+    for x in aws_instance.web3 :
+    x.id => x.private_ip
+  }
 }
 #=======================
