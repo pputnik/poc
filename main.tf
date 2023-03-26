@@ -56,7 +56,7 @@ variable "stages" {
   default = ["prod", "stage"]
 }
 resource "aws_instance" "web3" {
-  for_each      = map(var.stages)
+  for_each      = var.stages
   ami           = each.value["ami"]
   instance_type = each.value["inst_size"]
 
