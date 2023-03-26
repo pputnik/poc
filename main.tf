@@ -27,7 +27,6 @@ terraform {
 }
 
 data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
 
 provider "aws" {
   region = var.region
@@ -42,7 +41,7 @@ variable "ec2_needed" {
   default = "no"
 }
 resource "aws_instance" "web3" {
-  for_each      = toset(var.ec2_needed == "yes" ? ["1"] : [])
+  count         = 4
   ami           = "ami-ami"
   instance_type = "my_type"
 
@@ -54,6 +53,8 @@ resource "aws_instance" "web3" {
 
 
 output "def_out" {
-  value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
+  value = [
+    for x in aws_instance.web3 : "${x.id} => ${x.private_ip}"
+  ]
 }
 
