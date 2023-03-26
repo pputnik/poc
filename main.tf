@@ -56,9 +56,9 @@ variable "stages" {
   default = ["prod", "stage"]
 }
 resource "aws_instance" "web3" {
-  for_each      = toset(var.stages)
-  ami           = var.settings[each.value].ami
-  instance_type = var.settings[each.value].inst_size
+  for_each      = map(var.stages)
+  ami           = each.value["ami"]
+  instance_type = each.value["inst_size"]
 
   tags = merge(local.tags, {
     Name = "itFr4omTF"
@@ -68,6 +68,6 @@ resource "aws_instance" "web3" {
 
 
 output "def_out" {
-value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
+  value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
 }
 
