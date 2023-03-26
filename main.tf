@@ -52,10 +52,10 @@ resource "aws_instance" "web3" {
 }
 
 
-output "def_out" {
-  value = [
+output "out_json" {
+  value = {
     for x in aws_instance.web3 :
-    "${x.id} => ${x.private_ip}"
-  ]
+    x.id => x.private_ip
+  }
 }
 
