@@ -41,9 +41,9 @@ variable "ec2_needed" {
   default = "no"
 }
 resource "aws_instance" "web3" {
-  count         = 4
-  ami           = "ami-ami"
-  instance_type = "my_type"
+  count         = 3
+  ami           = "ami-065793e81b1869261"
+  instance_type = "t2.micro"
 
   tags = merge(local.tags, {
     Name = "itFr4omTF"
