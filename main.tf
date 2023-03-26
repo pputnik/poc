@@ -66,7 +66,7 @@ resource "aws_instance" "web3" {
 
 }
 
-}
+
 output "def_out" {
 value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
 }
