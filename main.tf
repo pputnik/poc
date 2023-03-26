@@ -42,7 +42,7 @@ variable "ec2_needed" {
   default = "yes"
 }
 resource "aws_instance" "web3" {
-  for_each      = var.ec2_needed == "yes" ? [1] : []
+  for_each      = toset(var.ec2_needed == "yes" ? [1] : [])
   ami           = "ami-ami"
   instance_type = "my_type"
 
