@@ -200,9 +200,19 @@ resource "aws_instance" "web3" {
   for_each      = toset(var.stages)
   ami           = var.settings[each.value].ami
   instance_type = var.settings[each.value].inst_size
-
-  tags = merge(local.tags, {
+  tags          = merge(local.tags, {
     Name = "itFr4omTF"
   })
-
 }
+#=======================
+resource "aws_instance" "web3" {
+  count         = 3
+  ami           = "ami-065793e81b1869261"
+  instance_type = "t2.micro"
+}
+output "def_1ut" {
+  value = [
+    for x in aws_instance.web3 : "${x.id} => ${x.private_ip}"
+  ]
+}
+#=======================

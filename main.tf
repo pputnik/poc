@@ -54,7 +54,8 @@ resource "aws_instance" "web3" {
 
 output "def_out" {
   value = [
-    for x in aws_instance.web3 : "${x.id} => ${x.private_ip}"
+    for x in aws_instance.web3 :
+    "${x.id} => ${x.private_ip}"
   ]
 }
 
