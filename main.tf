@@ -41,7 +41,7 @@ variable "ec2_needed" {
   default = "no"
 }
 resource "aws_instance" "web3" {
-  count         = 3
+  count         = 2
   ami           = "ami-065793e81b1869261"
   instance_type = "t2.micro"
 
@@ -52,10 +52,16 @@ resource "aws_instance" "web3" {
 }
 
 
-output "out_json" {
+output "out_map" {
   value = {
     for x in aws_instance.web3 :
     x.id => x.private_ip
   }
 }
 
+output "out_array" {
+  value = [
+    for x in aws_instance.web3 :
+    x.id
+  ]
+}
