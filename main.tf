@@ -39,7 +39,7 @@ provider "aws" {
 }
 
 variable "ec2_needed" {
-  default = "yes"
+  default = "no"
 }
 resource "aws_instance" "web3" {
   for_each      = toset(var.ec2_needed == "yes" ? ["1"] : [])
