@@ -43,7 +43,7 @@ variable "settings" {
     prod = {
       ami       = "ami-123"
       inst_size = "large"
-    },
+    }
     stage = {
       ami       = "ami-stage"
       inst_size = "small"
@@ -56,9 +56,9 @@ variable "stages" {
   default = ["prod", "stage"]
 }
 resource "aws_instance" "web3" {
-  for_each      = tomap(var.stages)
-  ami           = each.value["ami"]
-  instance_type = each.value["inst_size"]
+  for_each      = toset(var.stages)
+  ami           = var.settings[each.value].ami
+  instance_type = var.settings[each.value].inst_size
 
   tags = merge(local.tags, {
     Name = "itFr4omTF"
