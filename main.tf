@@ -38,19 +38,36 @@ provider "aws" {
   }
 }
 
+variable "settings" {
+  default = {
+    prod = {
+      ami       = "ami-123"
+      inst_size = "large"
+    }
+    stage = {
+      ami       = "ami-stage"
+      inst_size = "small"
 
-resource "aws_secretsmanager_secret" "supersecret" {
-  for_each    = toset(var.names)
-  name        = each.value
-  description = "${var.project}-supsec-${terraform.workspace}"
+    }
+  }
 }
 
+variable "stages" {
+  default = ["prod", "stage"]
+}
+resource "aws_instance" "web3" {
+  for_each      = toset(var.stages)
+  ami           = var.settings[each.value].ami
+  instance_type = var.settings[each.value].inst_size
+
+  tags = merge(local.tags, {
+    Name = "itFr4omTF"
+  })
+
+}
+
+}
 output "def_out" {
-  value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
+value = lookup(var.ami_ubuntu_trusty, var.region, "ERR")
 }
-
-output "is_prod" {
-  value = values(aws_secretsmanager_secret.supersecret)[*].id
-}
-
 
