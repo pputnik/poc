@@ -210,10 +210,23 @@ resource "aws_instance" "web3" {
   ami           = "ami-065793e81b1869261"
   instance_type = "t2.micro"
 }
-output "def_1ut" {
+output "def_out11" {
   value = [
     for x in aws_instance.web3 :
     "${x.id} => ${x.private_ip}"
+  ]
+}
+output "out_map" {
+  value = {
+    for x in aws_instance.web3 :
+    x.id => x.private_ip
+  }
+}
+
+output "out_array" {
+  value = [
+    for x in aws_instance.web3 :
+    x.id
   ]
 }
 #=======================

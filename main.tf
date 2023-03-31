@@ -37,9 +37,6 @@ provider "aws" {
   }
 }
 
-variable "ec2_needed" {
-  default = "no"
-}
 resource "aws_instance" "web3" {
   count         = 2
   ami           = "ami-065793e81b1869261"
