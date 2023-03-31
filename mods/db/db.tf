@@ -2,14 +2,15 @@ variable "name" {
   type = string
 }
 
+variable "tags" {
+  type = map(string)
+}
+
 resource "aws_vpc" "example" {
   cidr_block = "10.1.0.0/16"
-  tags       = {
+  tags       = merge(var.tags, {
     Name = var.name
-  }
-  #  tags = merge(local.tags, {
-  #    Name = var.name
-  #  })
+  })
 }
 
 output "tags_all" {

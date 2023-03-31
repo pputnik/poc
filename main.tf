@@ -50,8 +50,16 @@ provider "aws" {
 module "mydb" {
   source = "./mods/db"
   name   = "mod_vpc"
+  tags   = {
+    department = "poc"
+    budget     = "some"
+  }
 }
 
 output "out_array" {
   value = module.mydb.tags_all
+}
+
+output "out_loc" {
+  value = local.tags
 }
