@@ -37,28 +37,21 @@ provider "aws" {
   }
 }
 
-resource "aws_instance" "web3" {
-  count         = 2
-  ami           = "ami-065793e81b1869261"
-  instance_type = "t2.micro"
+#resource "aws_instance" "web3" {
+#  ami           = "ami-065793e81b1869261"
+#  instance_type = "t2.micro"
+#
+#  tags = merge(local.tags, {
+#    Name = "itFr4omTF"
+#  })
+#
+#}
 
-  tags = merge(local.tags, {
-    Name = "itFr4omTF"
-  })
-
-}
-
-
-output "out_map" {
-  value = {
-    for x in aws_instance.web3 :
-    x.id => x.private_ip
-  }
+module "mydb" {
+  source = "./mods/db"
+  name   = "mod_vpc"
 }
 
 output "out_array" {
-  value = [
-    for x in aws_instance.web3 :
-    x.id
-  ]
+  value = module.mydb.tags_all
 }
