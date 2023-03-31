@@ -50,7 +50,7 @@ provider "aws" {
 module "mydb" {
   source = "./mods/db"
   name   = "mod_vpc"
-  tags   = local.tags
+  #tags   = local.tags
 }
 
 output "out_array" {
