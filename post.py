@@ -44,6 +44,8 @@ def main():
       print(e)
       continue
 
+    print(f"scheduled={scheduled}")
+
     if now_d > scheduled and not line['Posted']:  # date is in the past but not posted yet
       if line['To test']:
         chat = test_chat_id
@@ -71,9 +73,10 @@ def post(chat_id, message):
   # send msg
   print("posting")
   url = f"https://api.telegram.org/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={message}"
-  print(requests.get(url).json())
+  result = requests.get(url).json()
+  print(result)
 
-  return True
+  return result['ok']
 
 if __name__ == '__main__':
   main()
