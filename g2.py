@@ -4,7 +4,8 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 now_d = datetime.now()
-now_s = now_d.strftime("%Y-%m-%d %H:%M:%S")
+# now_s = now_d.strftime("%Y-%m-%d %H:%M:%S")
+now_s = now_d.strftime('%b/%d/%Y %H:%M')
 
 
 with open("../tlg.yml", 'r') as stream:
@@ -30,9 +31,8 @@ for line in mydata:
     print(e)
     continue
 
-  print(now_d > scheduled)
+  if now_d > scheduled and not line['Posted']: # date is in the past but not posted yet
 
-  # if not line['Posted']:
 
 
 
