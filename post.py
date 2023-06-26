@@ -17,5 +17,5 @@ tlg_token = data_loaded['tlg_token']
 chat_id = data_loaded['chat_id']
 
 # send msg
-url = f"https://api.telegram.org/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={now_s}"
-print(requests.get(url).json())
+# url = f"https://api.telegram.org/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={now_s}"
+# print(requests.get(url).json())
