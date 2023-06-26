@@ -1,13 +1,13 @@
 import requests
-import yaml
-import datetime
 
-now_d = datetime.datetime.now()
+# import yaml
+# import datetime
+
+# now_d = datetime.datetime.now()
 
 now_s = "q"  # now_d.strftime("%Y-%m-%d %H:%M:%S")
 
 print(f"translation={now_s}")
-
 
 # load config
 with open("../tlg.yml", 'r') as stream:
