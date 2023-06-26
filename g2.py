@@ -22,7 +22,7 @@ for line in mydata:
   print(line)
   if line['Scheduled']:
     try:
-      scheduled = datetime.strptime(line['Scheduled'], '%b/%d/%y %H:%M')
+      scheduled = datetime.strptime(line['Scheduled'], '%b/%d/%Y %H:%M')
     except Exception as e:
       print("ERR: this line does not contain valid Scheduled date, will be skipped:")
       print(line)
