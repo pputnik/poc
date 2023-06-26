@@ -42,6 +42,8 @@ def main():
     except Exception as e:
       print("ERR: this line does not contain valid Scheduled date, will be skipped")
       print(e)
+      print("--------------------------")
+      break
       continue
 
     print(f"scheduled={scheduled}")
