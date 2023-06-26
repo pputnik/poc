@@ -26,6 +26,7 @@ for line in mydata:
     except Exception as e:
       print("ERR: this line does not contain valid Scheduled date, will be skipped:")
       print(line)
+      print(e)
       continue
 
     print(scheduled)
