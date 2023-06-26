@@ -11,6 +11,8 @@ from googleapiclient.errors import HttpError
 with open("../tlg.yml", 'r') as stream:
   data_loaded = yaml.safe_load(stream)
 
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+
 SAMPLE_SPREADSHEET_ID = data_loaded['spreadsheet_id']
 SAMPLE_RANGE_NAME = 'default!A1:D'
 
