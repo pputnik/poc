@@ -20,16 +20,19 @@ mydata = gsheet.sheet1.get_all_records()
 
 for line in mydata:
   print(line)
-  if line['Scheduled']:
-    try:
-      scheduled = datetime.strptime(line['Scheduled'], '%b/%d/%Y %H:%M')
-    except Exception as e:
-      print("ERR: this line does not contain valid Scheduled date, will be skipped:")
-      print(line)
-      print(e)
-      continue
+  if not line['Scheduled']:  # just strange line, maybe draft
+    continue
 
-    print(scheduled)
+  try:
+    scheduled = datetime.strptime(line['Scheduled'], '%b/%d/%Y %H:%M')
+  except Exception as e:
+    print("ERR: this line does not contain valid Scheduled date, will be skipped")
+    print(e)
+    continue
+
+  print(now_d - scheduled)
+  #if not line['Posted']:
+
 
 
 
