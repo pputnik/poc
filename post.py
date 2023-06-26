@@ -4,7 +4,7 @@ import datetime
 
 now_d = datetime.datetime.now()
 
-now_s = now_d.strftime("%Y-%m-%d %H:%M:%S")
+now_s = "q"  # now_d.strftime("%Y-%m-%d %H:%M:%S")
 
 print(f"translation={now_s}")
 
