@@ -1,10 +1,11 @@
 import requests
 import yaml
 import datetime
+from datetime import datetime
 
-now = datetime.datetime.now()
+now_d = datetime.datetime.now()
 
-now_s = strftime("%Y-%m-%d %H:%M:%S", now)
+now_s = strftime("%Y-%m-%d %H:%M:%S", now_d)
 print(f"now_s={now_s}")
 
 # load config
