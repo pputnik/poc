@@ -7,7 +7,8 @@ now_d = datetime.datetime.now()
 now_s = now_d.strftime("%Y-%m-%d %H:%M:%S")
 print(f"now_s={now_s}")
 
-photo = "https://cdn.anime-planet.com/characters/primary/coconut-nekopara-1.jpg?t=1625885499"
+# photo = "https://cdn.anime-planet.com/characters/primary/coconut-nekopara-1.jpg?t=1625885499"
+photo = "https://cdn.anime-planet.com/characters/primary/coconut-nekopara-1.jpg"
 
 # load config
 with open("../tlg.yml", 'r') as stream:
