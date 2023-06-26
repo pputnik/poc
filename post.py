@@ -66,7 +66,7 @@ def main():
         continue
 
       # posted, now let's update the spreadsheet
-
+      wsheet.update('B' + str(rownum), 'John')
 
 
 def post(chat_id, message):
