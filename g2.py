@@ -31,8 +31,10 @@ for line in mydata:
     continue
 
   print(now_d - scheduled)
-  print((now_d - scheduled) > 0)
-  #if not line['Posted']:
+  print(type(now_d))
+  print(type(scheduled))
+  break
+  # if not line['Posted']:
 
 
 
