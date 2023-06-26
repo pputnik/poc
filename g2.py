@@ -30,8 +30,7 @@ for line in mydata:
     print(e)
     continue
 
-  print(now_d - scheduled)
-  print(now_d - scheduled)
+  print(now_d > scheduled)
   break
   # if not line['Posted']:
 
