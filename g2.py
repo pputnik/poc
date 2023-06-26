@@ -1,9 +1,9 @@
 import gspread
 import yaml
-import datetime
+from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
-now_d = datetime.datetime.now()
+now_d = datetime.now()
 now_s = now_d.strftime("%Y-%m-%d %H:%M:%S")
 
 
@@ -20,6 +20,15 @@ mydata = gsheet.sheet1.get_all_records()
 
 for line in mydata:
   print(line)
+  if line['Scheduled']:
+    try:
+      scheduled = datetime.strptime(line['Scheduled'], '%b/%d/%y %H:%M')
+    except Exception as e:
+      print("ERR: this line does not contain valid Scheduled date, will be skipped:")
+      print(line)
+      continue
+
+    print(scheduled)
 
 
 
