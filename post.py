@@ -32,9 +32,9 @@ def main():
   rownum = 0
 
   for line in mydata:
-    rownum = rownum +1
+    rownum = rownum + 1
     print(f"{rownum} {line}")
-    if not line['Scheduled']:  # just strange line, maybe draft
+    if not line['Scheduled'] or not line['Text']:  # just strange line, maybe draft
       continue
 
     try:
@@ -51,7 +51,7 @@ def main():
         chat = chat_id
 
       try:
-        result = post(chat_id, message)
+        result = post(chat_id, line['Text'])
       except Exception as e:
         print("ERR: can't post this message, something's wrong")
         print(e)
