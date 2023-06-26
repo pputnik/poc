@@ -29,7 +29,7 @@ def main():
   mydata = gsheet.sheet1.get_all_records()
 
   wsheet = gsheet.worksheet("default")
-  rownum = 0
+  rownum = 1  # the first line is header so we need to skip it
 
   for line in mydata:
     rownum = rownum + 1
@@ -66,7 +66,7 @@ def main():
         continue
 
       # posted, now let's update the spreadsheet
-      wsheet.update('B' + str(rownum), 'John')
+      wsheet.update('B' + str(rownum), now_s)
 
 
 def post(chat_id, message):
