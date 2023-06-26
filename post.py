@@ -69,6 +69,7 @@ def post(chat_id, message):
   global tlg_token
 
   # send msg
+  print("posting")
   url = f"https://api.telegram.org/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={message}"
   print(requests.get(url).json())
 
