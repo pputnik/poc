@@ -1,6 +1,7 @@
 import gspread
 import requests
 import yaml
+import urllib
 from datetime import datetime
 
 DOMAIN = "https://api.telegram.org"
@@ -47,7 +48,7 @@ def main():
       print("--------------------------")
       continue
 
-    print(f"scheduled={scheduled}")
+    # print(f"scheduled={scheduled}")
 
     if now_d > scheduled and not line['Posted']:  # date is in the past but not posted yet
       if line['To test']:
