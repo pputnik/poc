@@ -1,14 +1,13 @@
-
+import datetime
 import requests
 import yaml
-import datetime
+import urllib
 
 now_d = datetime.datetime.now()
 now_s = now_d.strftime("%Y-%m-%d %H:%M:%S")
 print(f"now_s={now_s}")
 
-# photo = "https://cdn.anime-planet.com/characters/primary/coconut-nekopara-1.jpg?t=1625885499"
-photo = "https://cdn.anime-planet.com/characters/primary/coconut-nekopara-1.jpg"
+photo = urllib.parse.quote_plus("https://cdn.anime-planet.com/characters/primary/coconut-nekopara-1.jpg?t=1625885499")
 
 # load config
 with open("../tlg.yml", 'r') as stream:
@@ -25,7 +24,7 @@ caption = """
 # send msg
 # url = f"https://api.telegram.org/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={now_s}"
 url = f"https://api.telegram.org/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={now_s}&caption={caption}"
-print(requests.post(url).json())
+print(requests.get(url).json())
 
 
 
