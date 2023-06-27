@@ -66,10 +66,7 @@ def main():
       try:
         print(f"{rownum} sending... {line}")
         if line['Img URL']:
-          if line['NSFW']:
-            result = send_photo(chat, line['Text'], line['Img URL'], True)
-          else:
-            result = send_photo(chat, line['Text'], line['Img URL'])
+          result = send_photo(chat, line['Text'], line['Img URL'], line['NSFW'])
         else:
           result = send_message(chat, line['Text'])
       except Exception as e:
@@ -87,8 +84,13 @@ def main():
       print()
 
 
-def send_photo(chat_id, message, photo_url, nsfw=False):
+def send_photo(chat_id, message, photo_url, nsfw):
   global tlg_token
+
+  if nsfw:
+    nsfw = True
+  else:
+    nsfw = False
 
   # send msg
   print("sendPhoto")
