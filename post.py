@@ -41,6 +41,11 @@ def main():
       print(f"{rownum} ignore: no 'Scheduled' or 'Text', just strange line, maybe draft {line}")
       continue
 
+    if len(line['Text']) > 1024:
+      print("ERR: line is too long")
+      wsheet.update('B' + str(rownum), "line is too long")
+      continue
+
     try:
       scheduled = datetime.strptime(line['Scheduled'], '%b/%d/%Y %H:%M')
     except Exception as e:
