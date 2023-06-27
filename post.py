@@ -76,6 +76,7 @@ def main():
 
       # posted, now let's update the spreadsheet
       wsheet.update('B' + str(rownum), now_s)
+      print()
 
 
 def send_photo(chat_id, message, photo_url, nsfw=False):
@@ -84,7 +85,7 @@ def send_photo(chat_id, message, photo_url, nsfw=False):
   # send msg
   print("sendPhoto")
   photo_url = urllib.parse.quote_plus(photo_url)
-  url = f"{DOMAIN}/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={photo_url}&caption={message}&has_spoiler={nsfw}"
+  url = f"{DOMAIN}/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={photo_url}&caption={message}&has_spoiler={nsfw}&parse_mode=MarkdownV2"
   result = requests.get(url).json()
   print(result)
 
