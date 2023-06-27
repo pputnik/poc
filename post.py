@@ -6,6 +6,7 @@ import urllib
 from datetime import datetime
 
 DOMAIN = "https://api.telegram.org"
+MKDOWN = "&parse_mode=MarkdownV2"
 tlg_token = ''
 
 def main():
@@ -92,7 +93,7 @@ def send_photo(chat_id, message, photo_url, nsfw=False):
   # send msg
   print("sendPhoto")
   photo_url = urllib.parse.quote_plus(photo_url)
-  url = f"{DOMAIN}/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={photo_url}&caption={message}&has_spoiler={nsfw}&parse_mode=MarkdownV2"
+  url = f"{DOMAIN}/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={photo_url}&caption={message}&has_spoiler={nsfw}{MKDOWN}"
   result = requests.get(url).json()
   print(result)
 
@@ -104,7 +105,7 @@ def send_message(chat_id, message):
 
   # send msg
   print("sendMessage")
-  url = f"{DOMAIN}/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={message}&parse_mode=MarkdownV2"
+  url = f"{DOMAIN}/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={message}{MKDOWN}"
   result = requests.get(url).json()
   print(result)
 
