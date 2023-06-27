@@ -1,5 +1,6 @@
 import gspread
 import requests
+import json
 import yaml
 import urllib
 from datetime import datetime
@@ -68,11 +69,11 @@ def main():
       except Exception as e:
         print("ERR: can't post this message, something's wrong")
         print(e)
-        wsheet.update('B' + str(rownum), e)
+        wsheet.update('B' + str(rownum), json.dumps(e, default=str))
         continue
       if not result['ok']:
         print("ERR: can't post this message, returned status is wrong")
-        wsheet.update('B' + str(rownum), result)
+        wsheet.update('B' + str(rownum), json.dumps(result, default=str))
         continue
 
       # posted, now let's update the spreadsheet
