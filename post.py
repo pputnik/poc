@@ -68,10 +68,11 @@ def main():
       except Exception as e:
         print("ERR: can't post this message, something's wrong")
         print(e)
+        wsheet.update('B' + str(rownum), e)
         continue
       if not result['ok']:
         print("ERR: can't post this message, returned status is wrong")
-        print(result)
+        wsheet.update('B' + str(rownum), result)
         continue
 
       # posted, now let's update the spreadsheet
@@ -101,7 +102,7 @@ def send_message(chat_id, message):
   result = requests.get(url).json()
   print(result)
 
-  return result['ok']
+  return result
 
 
 if __name__ == '__main__':
