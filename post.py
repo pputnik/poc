@@ -69,9 +69,9 @@ def main():
         print("ERR: can't post this message, something's wrong")
         print(e)
         continue
-      if not result:
+      if not result['ok']:
         print("ERR: can't post this message, returned status is wrong")
-        print(e)
+        print(result)
         continue
 
       # posted, now let's update the spreadsheet
@@ -88,7 +88,7 @@ def send_photo(chat_id, message, photo_url, nsfw=False):
   result = requests.get(url).json()
   print(result)
 
-  return result['ok']
+  return result
 
 
 def send_message(chat_id, message):
