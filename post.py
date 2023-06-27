@@ -77,12 +77,13 @@ def main():
       wsheet.update('B' + str(rownum), now_s)
 
 
-def send_photo(chat_id, message, url, nsfw=False):
+def send_photo(chat_id, message, photo_url, nsfw=False):
   global tlg_token
 
   # send msg
   print("sendPhoto")
-  url = f"{DOMAIN}/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={url}&caption={message}&has_spoiler={nsfw}"
+  photo_url = urllib.parse.quote_plus(photo_url)
+  url = f"{DOMAIN}/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={photo_url}&caption={message}&has_spoiler={nsfw}"
   result = requests.get(url).json()
   print(result)
 
