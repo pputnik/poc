@@ -104,7 +104,7 @@ def send_message(chat_id, message):
 
   # send msg
   print("sendMessage")
-  url = f"{DOMAIN}/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={message}"
+  url = f"{DOMAIN}/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={message}&parse_mode=MarkdownV2"
   result = requests.get(url).json()
   print(result)
 
