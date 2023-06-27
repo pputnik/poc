@@ -23,7 +23,7 @@ caption = """
 
 # send msg
 # url = f"https://api.telegram.org/bot{tlg_token}/sendMessage?chat_id={chat_id}&text={now_s}"
-url = f"https://api.telegram.org/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={photo}" # &caption={caption}"
+url = f"https://api.telegram.org/bot{tlg_token}/sendPhoto?chat_id={chat_id}&photo={photo}&caption={caption}&has_spoiler={True}"
 print(requests.get(url).json())
 
 
